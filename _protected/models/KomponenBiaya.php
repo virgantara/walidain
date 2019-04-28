@@ -13,11 +13,14 @@ use Yii;
  * @property int $periode_tagihan_id
  * @property double $biaya_awal
  * @property int $prioritas
+ * @property int $kategori_id
+ * @property int $tahun
  * @property string $created_at
  * @property string $updated_at
  *
  * @property BiayaFakultas[] $biayaFakultas
  * @property PeriodeTagihan $periodeTagihan
+ * @property Kategori $kategori
  * @property Tagihan[] $tagihans
  */
 class KomponenBiaya extends \yii\db\ActiveRecord
@@ -36,13 +39,13 @@ class KomponenBiaya extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['kode', 'nama', 'periode_tagihan_id'], 'required'],
-            [['periode_tagihan_id', 'prioritas'], 'integer'],
+            [['kode', 'nama', 'kategori_id', 'tahun'], 'required'],
+            [['prioritas', 'kategori_id', 'tahun'], 'integer'],
             [['biaya_awal'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['kode'], 'string', 'max' => 5],
             [['nama'], 'string', 'max' => 255],
-            [['periode_tagihan_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeriodeTagihan::className(), 'targetAttribute' => ['periode_tagihan_id' => 'id']],
+            [['kategori_id'], 'exist', 'skipOnError' => true, 'targetClass' => Kategori::className(), 'targetAttribute' => ['kategori_id' => 'id']],
         ];
     }
 
@@ -55,12 +58,18 @@ class KomponenBiaya extends \yii\db\ActiveRecord
             'id' => 'ID',
             'kode' => 'Kode',
             'nama' => 'Nama',
-            'periode_tagihan_id' => 'Periode Tagihan ID',
             'biaya_awal' => 'Biaya Awal',
             'prioritas' => 'Prioritas',
+            'kategori_id' => 'Kategori ID',
+            'tahun' => 'Tahun',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'namaKategori' => 'Kategori'
         ];
+    }
+
+    public function getNamaKategori(){
+        return $this->kategori->nama;
     }
 
     /**
@@ -74,9 +83,14 @@ class KomponenBiaya extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPeriodeTagihan()
+   
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getKategori()
     {
-        return $this->hasOne(PeriodeTagihan::className(), ['id' => 'periode_tagihan_id']);
+        return $this->hasOne(Kategori::className(), ['id' => 'kategori_id']);
     }
 
     /**

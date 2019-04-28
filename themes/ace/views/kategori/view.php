@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\KomponenBiaya */
+/* @var $model app\models\Kategori */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Komponen Biayas', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Kategoris', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="komponen-biaya-view">
+<div class="kategori-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -30,13 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'kode',
             'nama',
-            'periode_tagihan_id',
-            'biaya_awal',
-            'prioritas',
-            'kategori_id',
-            'tahun',
             'created_at',
             'updated_at',
         ],

@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\TagihanSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Tagihans';
+$this->title = 'Tagihan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tagihan-index">
@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Tagihan', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Tagihan', ['tagihan/instant'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -24,17 +24,44 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'urutan',
-            'semester',
-            'tahun',
             'nim',
+            'namaCustomer',
+            'semester',
+            // 'tahun',
+            'namaKomponen',
             //'komponen_id',
-            //'nilai',
-            //'terbayar',
+            'nilai',
+            'terbayar',
             //'edit',
-            //'status_bayar',
+            [
+                'attribute' => 'status_bayar',
+                'label' => 'Status',
+                'format' => 'raw',
+                'filter'=>["1"=>"LUNAS","2"=>"CICILAN","0"=>"BELUM LUNAS"],
+                'value'=>function($model,$url){
+
+                    switch($model->status_bayar)
+                    {
+                        case 1 : 
+                            $st = 'success';
+                            $label = 'LUNAS';
+                        break;
+                        case 2 :
+                            $st = 'warning';
+                            $label = 'CICILAN'; 
+                        break;
+                        default:
+                            $st = 'danger';
+                            $label = 'BELUM LUNAS';
+                        break;
+                    }
+                    
+                    return '<button type="button" class="btn btn-'.$st.' btn-sm" >
+                               <span>'.$label.'</span>
+                            </button>';
+                    
+                },
+            ],
             //'created_at',
             //'updated_at',
 

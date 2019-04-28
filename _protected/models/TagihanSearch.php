@@ -14,6 +14,8 @@ class TagihanSearch extends Tagihan
 
     public $tanggal_awal;
     public $tanggal_akhir;
+    public $namaKomponen;
+    public $namaCustomer;
     /**
      * {@inheritdoc}
      */
@@ -21,7 +23,7 @@ class TagihanSearch extends Tagihan
     {
         return [
             [['id', 'urutan', 'semester', 'tahun', 'komponen_id', 'edit', 'status_bayar'], 'integer'],
-            [['nim', 'created_at', 'updated_at'], 'safe'],
+            [['nim', 'created_at', 'updated_at','namaKomponen','namaCustomer'], 'safe'],
             [['nilai', 'terbayar'], 'number'],
         ];
     }
@@ -45,12 +47,25 @@ class TagihanSearch extends Tagihan
     public function search($params)
     {
         $query = Tagihan::find();
+        $query->joinWith(['komponen as k','customer as c']);
+
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['updated_at'=>SORT_DESC]]
         ]);
+
+        $dataProvider->sort->attributes['namaKomponen'] = [
+            'asc' => ['k.nama'=>SORT_ASC],
+            'desc' => ['k.nama'=>SORT_DESC]
+        ];
+
+        $dataProvider->sort->attributes['namaCustomer'] = [
+            'asc' => ['c.nama'=>SORT_ASC],
+            'desc' => ['c.nama'=>SORT_DESC]
+        ];
 
         $this->load($params);
 
@@ -75,7 +90,9 @@ class TagihanSearch extends Tagihan
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'nim', $this->nim]);
+        $query->andFilterWhere(['like', 'nim', $this->nim])
+            ->andFilterWhere(['like', 'k.nama', $this->namaKomponen])
+            ->andFilterWhere(['like', 'c.nama', $this->namaCustomer]);
 
         return $dataProvider;
     }

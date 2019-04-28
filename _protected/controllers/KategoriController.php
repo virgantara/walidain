@@ -3,20 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\KomponenBiaya;
-use app\models\KomponenBiayaSearch;
 use app\models\Kategori;
-use app\models\Tahun;
-
+use app\models\KategoriSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\ArrayHelper;
 
 /**
- * KomponenBiayaController implements the CRUD actions for KomponenBiaya model.
+ * KategoriController implements the CRUD actions for Kategori model.
  */
-class KomponenBiayaController extends Controller
+class KategoriController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -33,15 +29,13 @@ class KomponenBiayaController extends Controller
         ];
     }
 
-    
-
     /**
-     * Lists all KomponenBiaya models.
+     * Lists all Kategori models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new KomponenBiayaSearch();
+        $searchModel = new KategoriSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -51,7 +45,7 @@ class KomponenBiayaController extends Controller
     }
 
     /**
-     * Displays a single KomponenBiaya model.
+     * Displays a single Kategori model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -64,15 +58,13 @@ class KomponenBiayaController extends Controller
     }
 
     /**
-     * Creates a new KomponenBiaya model.
+     * Creates a new Kategori model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new KomponenBiaya();
-        $kategori = ArrayHelper::map(Kategori::find()->all(),'id','nama');
-        $tahun = ArrayHelper::map(Tahun::find()->all(),'id','nama');
+        $model = new Kategori();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -80,13 +72,11 @@ class KomponenBiayaController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'kategori' => $kategori,
-            'tahun' => $tahun
         ]);
     }
 
     /**
-     * Updates an existing KomponenBiaya model.
+     * Updates an existing Kategori model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -95,9 +85,6 @@ class KomponenBiayaController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $kategori = ArrayHelper::map(Kategori::find()->all(),'id','nama');
-        $tahun = ArrayHelper::map(Tahun::find()->all(),'id','nama');
-        
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -105,13 +92,11 @@ class KomponenBiayaController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'kategori' => $kategori,
-            'tahun' => $tahun
         ]);
     }
 
     /**
-     * Deletes an existing KomponenBiaya model.
+     * Deletes an existing Kategori model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -125,15 +110,15 @@ class KomponenBiayaController extends Controller
     }
 
     /**
-     * Finds the KomponenBiaya model based on its primary key value.
+     * Finds the Kategori model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return KomponenBiaya the loaded model
+     * @return Kategori the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = KomponenBiaya::findOne($id)) !== null) {
+        if (($model = Kategori::findOne($id)) !== null) {
             return $model;
         }
 

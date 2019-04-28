@@ -25,8 +25,6 @@ use Yii;
 class Tagihan extends \yii\db\ActiveRecord
 {
 
-    
-
     /**
      * {@inheritdoc}
      */
@@ -47,6 +45,7 @@ class Tagihan extends \yii\db\ActiveRecord
             [['created_at', 'updated_at'], 'safe'],
             [['nim'], 'string', 'max' => 20],
             [['komponen_id'], 'exist', 'skipOnError' => true, 'targetClass' => KomponenBiaya::className(), 'targetAttribute' => ['komponen_id' => 'id']],
+            [['nim'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['nim' => 'custid']],
         ];
     }
 
@@ -68,7 +67,19 @@ class Tagihan extends \yii\db\ActiveRecord
             'status_bayar' => 'Status Bayar',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'namaKomponen' => 'Komponen',
+            'namaCustomer' => 'Nama'
         ];
+    }
+
+    public function getNamaKomponen()
+    {
+        return $this->komponen->nama;
+    }
+
+    public function getNamaCustomer()
+    {
+        return $this->customer->nama;
     }
 
     /**
@@ -77,5 +88,10 @@ class Tagihan extends \yii\db\ActiveRecord
     public function getKomponen()
     {
         return $this->hasOne(KomponenBiaya::className(), ['id' => 'komponen_id']);
+    }
+
+    public function getCustomer()
+    {
+        return $this->hasOne(Customer::className(), ['custid' => 'nim']);
     }
 }

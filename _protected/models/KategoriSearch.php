@@ -4,25 +4,21 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\KomponenBiaya;
+use app\models\Kategori;
 
 /**
- * KomponenBiayaSearch represents the model behind the search form of `app\models\KomponenBiaya`.
+ * KategoriSearch represents the model behind the search form of `app\models\Kategori`.
  */
-class KomponenBiayaSearch extends KomponenBiaya
+class KategoriSearch extends Kategori
 {
-
-    public $namaKategori;
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'prioritas', 'kategori_id', 'tahun'], 'integer'],
-            [['kode', 'nama', 'created_at', 'updated_at','namaKategori'], 'safe'],
-            [['biaya_awal'], 'number'],
+            [['id'], 'integer'],
+            [['nama', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -44,20 +40,13 @@ class KomponenBiayaSearch extends KomponenBiaya
      */
     public function search($params)
     {
-        $query = KomponenBiaya::find();
-
-        $query->joinWith(['kategori as k']);
+        $query = Kategori::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
-        $dataProvider->sort->attributes['namaKategori'] = [
-            'asc' => ['k.nama'=>SORT_ASC],
-            'desc' => ['k.nama'=>SORT_DESC]
-        ];
 
         $this->load($params);
 
@@ -70,17 +59,11 @@ class KomponenBiayaSearch extends KomponenBiaya
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'biaya_awal' => $this->biaya_awal,
-            'prioritas' => $this->prioritas,
-            'kategori_id' => $this->kategori_id,
-            'tahun' => $this->tahun,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'kode', $this->kode])
-            ->andFilterWhere(['like', 'nama', $this->nama])
-            ->andFilterWhere(['like', 'k.nama', $this->namaKategori]);
+        $query->andFilterWhere(['like', 'nama', $this->nama]);
 
         return $dataProvider;
     }

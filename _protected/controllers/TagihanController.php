@@ -5,9 +5,14 @@ namespace app\controllers;
 use Yii;
 use app\models\Tagihan;
 use app\models\TagihanSearch;
+use app\models\Tahun;
+use app\models\KomponenBiaya;
+
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use yii\httpclient\Client;
 
 /**
  * TagihanController implements the CRUD actions for Tagihan model.
@@ -27,6 +32,126 @@ class TagihanController extends Controller
                 ],
             ],
         ];
+    }
+
+    public function actionGenerateInstant(){
+        $tahun_id = $_POST['Tagihan']['tahun_id'];
+        $komponen_id = $_POST['Tagihan']['komponen_id'];
+        $semester_biaya = $_POST['Tagihan']['semester_biaya'];
+        $nim = $_POST['Tagihan']['nim'];
+            
+        $api_baseurl = Yii::$app->params['api_baseurl'];
+        $client = new Client(['baseUrl' => $api_baseurl]);
+
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('/b/tagihan/generate/mhs')
+            ->addHeaders(['content-type' => 'application/x-www-form-urlencoded'])
+            ->setData([
+                'tahun' => $tahun_id,
+                'komponen_id' => $komponen_id,
+                'semester_biaya' => $semester_biaya,
+                'nim' => $nim
+            ])
+            ->send();
+
+        
+        if ($response->isOk) {
+            $result = $response->data;
+            $out['values'] = $result;
+        }
+
+        echo \yii\helpers\Json::encode($out);
+    }
+
+    public function actionGenerate(){
+        $fakultas_id = $_POST['Tagihan']['fakultas_id'];
+        $tahun_id = $_POST['Tagihan']['tahun_id'];
+        $komponen_id = $_POST['Tagihan']['komponen_id'];
+        $semester_biaya = $_POST['Tagihan']['semester_biaya'];
+        $semester_mhs = $_POST['Tagihan']['semester_mhs'];
+            
+        $api_baseurl = Yii::$app->params['api_baseurl'];
+        $client = new Client(['baseUrl' => $api_baseurl]);
+
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('/b/tagihan/generate')
+            ->addHeaders(['content-type' => 'application/x-www-form-urlencoded'])
+            ->setData([
+                'fid'=>$fakultas_id,
+                'tahun' => $tahun_id,
+                'komponen_id' => $komponen_id,
+                'semester_biaya' => $semester_biaya,
+                'semester_mhs' => $semester_mhs
+            ])
+            ->send();
+
+        
+        if ($response->isOk) {
+            $result = $response->data;
+            $out['values'] = $result;
+        }
+
+        echo \yii\helpers\Json::encode($out);
+    }
+
+    private function getSubcatList($id){
+        $list = KomponenBiaya::find()->where(['tahun'=>$id])->all();
+        $result = [];
+        foreach($list as $item)
+        {
+            $result[] = [
+                'id' => $item->id,
+                'name' => $item->kode.' - '.$item->nama
+            ];
+        }
+
+        return $result;
+    }
+
+    public function actionKomponenTahun() {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $cat_id = $parents[0];
+                $out = self::getSubCatList($cat_id); 
+                // the getSubCatList function will query the database based on the
+                // cat_id and return an array like below:
+                // [
+                //    ['id'=>'<sub-cat-id-1>', 'name'=>'<sub-cat-name1>'],
+                //    ['id'=>'<sub-cat_id_2>', 'name'=>'<sub-cat-name2>']
+                // ]
+                return ['output'=>$out, 'selected'=>''];
+            }
+        }
+        return ['output'=>'', 'selected'=>''];
+    }
+
+    public function actionBulk()
+    {
+        $model = new Tagihan;
+        $tahun = ArrayHelper::map(Tahun::find()->all(),'id','nama');
+        $komponen = ArrayHelper::map(KomponenBiaya::find()->all(),'id','nama');
+        return $this->render('bulk',[
+            'model' => $model,
+            'tahun' => $tahun,
+            'komponen' => $komponen
+        ]);
+    }
+
+    public function actionInstant()
+    {
+        $model = new Tagihan;
+        $tahun = ArrayHelper::map(Tahun::find()->all(),'id','nama');
+        $komponen = ArrayHelper::map(KomponenBiaya::find()->all(),'id','nama');
+        return $this->render('instant',[
+            'model' => $model,
+            'tahun' => $tahun,
+            'komponen' => $komponen
+        ]);
     }
 
     /**

@@ -32,14 +32,87 @@ class ApiController extends Controller
         ];
     }
 
+    public function actionListFakultas() {
+
+        $out = [];
+
+        $api_baseurl = Yii::$app->params['api_baseurl'];
+        $client = new Client(['baseUrl' => $api_baseurl]);
+
+        $response = $client->get('/f/list')->send();
+        
+        if ($response->isOk) {
+            $result = $response->data['values'];
+            $total_sisa = 0;
+            $total_terbayar = 0;
+            $out['values'] = $result;
+        }
+
+        echo \yii\helpers\Json::encode($out);
+
+      
+    }
+
+
+    public function actionTunggakan() {
+
+        $out = [];
+
+        if(!empty($_POST['sd']) && !empty($_POST['ed']))
+        {
+            $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
+            $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
+            
+            // $list = Pasien::find()->addFilterWhere(['like',])
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+
+            $response = $client->get('/b/tagihan/periode/tunggakan', ['startdate' => $sd,'enddate'=>$ed])->send();
+            
+            
+            
+            if ($response->isOk) {
+                $result = $response->data['values'];
+                $total_sisa = 0;
+                $total_terbayar = 0;
+                $out['values'] = [];
+                foreach ($result as $d) {
+                    $total_sisa += $d['sisa'];
+                    $total_terbayar += $d['terbayar'];
+                    $out['values'][] = [
+                        'id' => $d['id'],
+                        'komponen'=> $d['komponen'],
+                        'nama_mahasiswa'=> $d['nama_mahasiswa'],
+                        'semester' => $d['semester'],
+                        'prodi'=> $d['prodi'],
+                        'nilai' => \app\helpers\MyHelper::formatRupiah($d['nilai']),
+                        'terbayar' => \app\helpers\MyHelper::formatRupiah($d['terbayar']),
+                        'sisa' => \app\helpers\MyHelper::formatRupiah($d['sisa']),
+                        'created_at' => $d['created_at'],
+                    ];
+                }
+
+                $out['total_sisa'] = \app\helpers\MyHelper::formatRupiah($total_sisa);
+                $out['total_terbayar'] = \app\helpers\MyHelper::formatRupiah($total_terbayar);
+            }
+        
+        }
+        
+
+        echo \yii\helpers\Json::encode($out);
+
+      
+    }
+
+
     public function actionTagihan() {
 
         $out = [];
 
         if(!empty($_POST['sd']) && !empty($_POST['ed']))
         {
-            $sd = date('Ymd',strtotime($_POST['sd']));
-            $ed = date('Ymd',strtotime($_POST['ed']));
+            $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
+            $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
             
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];

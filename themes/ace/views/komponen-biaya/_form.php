@@ -16,11 +16,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'nama')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'periode_tagihan_id')->textInput() ?>
 
     <?= $form->field($model, 'biaya_awal')->textInput() ?>
 
     <?= $form->field($model, 'prioritas')->textInput() ?>
+
+    <?= $form->field($model, 'kategori_id')->dropDownList($kategori,['prompt'=>'Pilih Kategori']) ?>
+
+    <?= $form->field($model, 'tahun')->dropDownList($tahun,['prompt'=>'Pilih Tahun']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

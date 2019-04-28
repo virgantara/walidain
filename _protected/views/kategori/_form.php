@@ -4,27 +4,15 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\KomponenBiaya */
+/* @var $model app\models\Kategori */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="komponen-biaya-form">
+<div class="kategori-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'kode')->textInput(['maxlength' => true]) ?>
-
     <?= $form->field($model, 'nama')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'periode_tagihan_id')->textInput() ?>
-
-    <?= $form->field($model, 'biaya_awal')->textInput() ?>
-
-    <?= $form->field($model, 'prioritas')->textInput() ?>
-
-    <?= $form->field($model, 'kategori_id')->textInput() ?>
-
-    <?= $form->field($model, 'tahun')->textInput() ?>
 
     <?= $form->field($model, 'created_at')->textInput() ?>
 

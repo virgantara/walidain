@@ -320,15 +320,16 @@ class MenuHelper
 	           
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulk Tagihan',  
-	                'url' => ['/tagihan/bulk'],	        
-	                // 'visible' => Yii::$app->user->can('operatorCabang'),
-	               
+	                'url' => ['/tagihan/bulk'],	           
 	            ],
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Instant Tagihan',  
 	                'url' => ['/tagihan/instant'],	        
-	                // 'visible' => Yii::$app->user->can('operatorCabang'),
-	               
+	            ],
+	            ['label' => '<hr style="padding:0px;margin:0px">'],
+	            [
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i><i class="fa fa-search"></i>&nbsp;Cari Tagihan',  
+	                'url' => ['/tagihan/index'],	        
 	            ],
 	        ]];
 
@@ -340,11 +341,14 @@ class MenuHelper
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	         'visible' => Yii::$app->user->can('admin'),
 	        'items'=>[
-	           [
+	           	[
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan Pembayaran',  
-	                'url' => ['/laporan/pembayaran'],	        
-	                
-	               
+	                'url' => ['/laporan/pembayaran'],	         
+	            ],
+
+	            [
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan Tunggakan',  
+	                'url' => ['/laporan/tunggakan'],	         
 	            ],
 	            
 	            // [
@@ -412,7 +416,21 @@ class MenuHelper
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	        'items'=>[
-	        
+	        	[
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Kategori Komponen <b class="arrow fa fa-angle-down"></b>',  
+	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
+	                'visible' => Yii::$app->user->can('admin'),
+	                'url' => ['#'],
+	                 'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
+	                'items' => [
+
+	                     ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['kategori/index']],
+	                     [
+	                        'label' => ( '<i class="menu-icon fa fa-caret-right"></i>Tambah'),
+	                        'visible' => Yii::$app->user->can('admin'),
+	                        'url' => ['kategori/create']]
+	                ],
+	            ],
 	            [
 	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Komponen Biaya <b class="arrow fa fa-angle-down"></b>',  
 	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",

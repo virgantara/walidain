@@ -3,16 +3,17 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Transaksi;
-use app\models\TransaksiSearch;
+use app\models\Tahun;
+use app\models\TahunSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
- * TransaksiController implements the CRUD actions for Transaksi model.
+ * TahunController implements the CRUD actions for Tahun model.
  */
-class TransaksiController extends AppController
+class TahunController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -20,6 +21,22 @@ class TransaksiController extends AppController
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index', 'view', 'create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['delete', 'update','create'],
+                        'roles' => ['theCreator'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['index','view'],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -30,12 +47,12 @@ class TransaksiController extends AppController
     }
 
     /**
-     * Lists all Transaksi models.
+     * Lists all Tahun models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new TransaksiSearch();
+        $searchModel = new TahunSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -45,7 +62,7 @@ class TransaksiController extends AppController
     }
 
     /**
-     * Displays a single Transaksi model.
+     * Displays a single Tahun model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -58,16 +75,16 @@ class TransaksiController extends AppController
     }
 
     /**
-     * Creates a new Transaksi model.
+     * Creates a new Tahun model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Transaksi();
+        $model = new Tahun();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->urut]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
@@ -76,7 +93,7 @@ class TransaksiController extends AppController
     }
 
     /**
-     * Updates an existing Transaksi model.
+     * Updates an existing Tahun model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -87,7 +104,7 @@ class TransaksiController extends AppController
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->urut]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -96,7 +113,7 @@ class TransaksiController extends AppController
     }
 
     /**
-     * Deletes an existing Transaksi model.
+     * Deletes an existing Tahun model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -110,15 +127,15 @@ class TransaksiController extends AppController
     }
 
     /**
-     * Finds the Transaksi model based on its primary key value.
+     * Finds the Tahun model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Transaksi the loaded model
+     * @return Tahun the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Transaksi::findOne($id)) !== null) {
+        if (($model = Tahun::findOne($id)) !== null) {
             return $model;
         }
 

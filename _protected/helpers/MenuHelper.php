@@ -319,19 +319,21 @@ class MenuHelper
 	        'items'=>[
 	           
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>BUlk Tagihan',  
-	                'url' => ['/departemen/profile','p'=>'visi-misi'],	        
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulk Tagihan',  
+	                'url' => ['/tagihan/bulk'],	        
 	                // 'visible' => Yii::$app->user->can('operatorCabang'),
 	               
 	            ],
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Instant Tagihan',  
-	                'url' => ['/departemen/profile','p'=>'sasaran-tujuan'],	        
+	                'url' => ['/tagihan/instant'],	        
 	                // 'visible' => Yii::$app->user->can('operatorCabang'),
 	               
 	            ],
 	        ]];
 
+	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Transaksi </span>', 'url' => ['/transaksi'],
+	       ];
 	       
 	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Laporan </span><i class="caret"></i>', 'url' => '#',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
@@ -339,17 +341,12 @@ class MenuHelper
 	         'visible' => Yii::$app->user->can('admin'),
 	        'items'=>[
 	           [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan Evaluasi Diri',  
-	                'url' => ['/evaluasi-diri/rekap'],	        
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan Pembayaran',  
+	                'url' => ['/laporan/pembayaran'],	        
 	                
 	               
 	            ],
-	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan EKD',  
-	                'url' => ['/laporan/ekd'],	        
-	                
-	               
-	            ],
+	            
 	            // [
 	            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i>Mutasi Barang',  
 	            //     'url' => '#',	        
@@ -407,51 +404,7 @@ class MenuHelper
 			Yii::$app->user->can('operatorUnit')
 		];
 
-	    if (!in_array($userRole, $acl) || Yii::$app->user->can('admin')) {
-	        // $menuItems[] = [
-	        //     'label' => '<i class="menu-icon fa fa-money"></i><span class="menu-text"> Keuangan </span><i class="caret"></i>', 
-	        //      'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	        //     'url' => '#',
-	        //      'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
-	        //     'items' => [
-	        //         [
-	        //             'label' => '<i class="menu-icon fa fa-caret-right"></i> Kas <b class="arrow fa fa-angle-down"></b>',  
-	        //             'url' => ['#'],
-	        //              'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	        //             'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
-	        //             'items' => [
-	        //                 [
-	        //                     'label' => '<i class="menu-icon fa fa-caret-right"></i>Kas Kecil <b class="arrow fa fa-angle-down"></b>',  
-	        //                     'url' => ['#'],
-	        //                      'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	        //                     'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
-	        //                     'items' => [
-
-	        //                        ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['kas/index','uk'=>'kecil']],
-	        //                         ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Masuk'),'url' => ['kas/masuk','uk'=>'kecil']],
-	        //                         ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Keluar'),'url' => ['kas/keluar','uk'=>'kecil']],
-	        //                     ],
-	        //                 ],
-	        //                 [
-	        //                     'label' => '<i class="menu-icon fa fa-caret-right"></i>Kas Besar <b class="arrow fa fa-angle-down"></b>',  
-	        //                     'url' => ['#'],
-	        //                      'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	        //                     'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
-	        //                     'items' => [
-	        //                         ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['kas/index','uk'=>'besar']],
-	        //                         ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Masuk'),'url' => ['kas/masuk','uk'=>'besar']],
-	        //                         ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Keluar'),'url' => ['kas/keluar','uk'=>'besar']],
-	        //                     ],
-	        //                 ],
-	        //             ],
-	        //         ],
-	        //         ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Piutang'),'url' => ['/piutang/index']],
-	        //         ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Saldo'),'url' => ['/saldo/index']],
-	        //         ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Neraca'),'url' => ['/neraca/index']],
-	        //         ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Laba Rugi'),'url' => ['/keuangan/laba-rugi']],
-	        //     ],
-	        // ];
-	    }
+	   
 	    // display Users to admin+ roles
 	    if (Yii::$app->user->can('admin') || Yii::$app->user->can('admSalesCab') || Yii::$app->user->can('adminSpbu') || Yii::$app->user->can('gudang')){
 
@@ -459,47 +412,37 @@ class MenuHelper
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	        'items'=>[
-	        	// ['label' => '<i class="menu-icon fa fa-caret-right"></i>Gudang<b class="arrow fa fa-angle-down"></b>',  
-	         //        'url' => ['#'],
-	         //        // 'visible' => !Yii::$app->user->can('operatorCabang') && !Yii::$app->user->can('operatorUnit'),
-	         //        'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	         //     'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
-	         //        'items' => [
-
-	         //            ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['sales-gudang/index']],
-	         //            ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Baru'),'url' => ['sales-gudang/create']],
-	         //            // ['label' => ( 'Harga'),'url' => ['barang-harga/index']],
-	         //        ],
-	         //    ],
-	        	 // ['label' => '<i class="menu-icon fa fa-caret-right"></i>Barang<b class="arrow fa fa-angle-down"></b>',  
-	          //       'url' => ['#'],
-	          //       // 'visible' => !Yii::$app->user->can('operatorCabang') && !Yii::$app->user->can('operatorUnit'),
-	          //       'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	          //    'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
-	          //       'items' => [
-
-	          //           ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['sales-master-barang/index']],
-	          //           ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Baru'),'url' => ['sales-master-barang/create']],
-	          //           // ['label' => ( 'Harga'),'url' => ['barang-harga/index']],
-	          //       ],
-	          //   ],
-	           
+	        
 	            [
-	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Unit <b class="arrow fa fa-angle-down"></b>',  
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Komponen Biaya <b class="arrow fa fa-angle-down"></b>',  
 	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	                'visible' => Yii::$app->user->can('admin'),
 	                'url' => ['#'],
 	                 'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	                'items' => [
 
-	                     ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['departemen/index']],
+	                     ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['komponen-biaya/index']],
 	                     [
 	                        'label' => ( '<i class="menu-icon fa fa-caret-right"></i>Tambah'),
 	                        'visible' => Yii::$app->user->can('admin'),
-	                        'url' => ['departemen/create']]
+	                        'url' => ['komponen-biaya/create']]
 	                ],
 	            ],
-	           
+	           	[
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Tahun <b class="arrow fa fa-angle-down"></b>',  
+	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
+	                'visible' => Yii::$app->user->can('theCreator'),
+	                'url' => ['#'],
+	                 'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
+	                'items' => [
+
+	                     ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['tahun/index']],
+	                     [
+	                        'label' => ( '<i class="menu-icon fa fa-caret-right"></i>Tambah'),
+	                      
+	                        'url' => ['tahun/create']]
+	                ],
+	            ],
 	            
 	        ]];
 

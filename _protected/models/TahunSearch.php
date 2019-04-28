@@ -4,25 +4,21 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Tagihan;
+use app\models\Tahun;
 
 /**
- * TagihanSearch represents the model behind the search form of `app\models\Tagihan`.
+ * TahunSearch represents the model behind the search form of `app\models\Tahun`.
  */
-class TagihanSearch extends Tagihan
+class TahunSearch extends Tahun
 {
-
-    public $tanggal_awal;
-    public $tanggal_akhir;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'urutan', 'semester', 'tahun', 'komponen_id', 'edit', 'status_bayar'], 'integer'],
-            [['nim', 'created_at', 'updated_at'], 'safe'],
-            [['nilai', 'terbayar'], 'number'],
+            [['id'], 'integer'],
+            [['nama', 'hijriyah', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -44,7 +40,7 @@ class TagihanSearch extends Tagihan
      */
     public function search($params)
     {
-        $query = Tagihan::find();
+        $query = Tahun::find();
 
         // add conditions that should always apply here
 
@@ -63,19 +59,12 @@ class TagihanSearch extends Tagihan
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'urutan' => $this->urutan,
-            'semester' => $this->semester,
-            'tahun' => $this->tahun,
-            'komponen_id' => $this->komponen_id,
-            'nilai' => $this->nilai,
-            'terbayar' => $this->terbayar,
-            'edit' => $this->edit,
-            'status_bayar' => $this->status_bayar,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'nim', $this->nim]);
+        $query->andFilterWhere(['like', 'nama', $this->nama])
+            ->andFilterWhere(['like', 'hijriyah', $this->hijriyah]);
 
         return $dataProvider;
     }

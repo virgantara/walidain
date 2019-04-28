@@ -28,7 +28,8 @@ class AppAsset extends AssetBundle
         'css/fonts.googleapis.com.css',
         'css/ace-skins.min.css',
         'css/ace-rtl.min.css',
-        'css/jquery.datetextentry.css'
+        'css/jquery.datetextentry.css',
+        'css/loading.css'
     ];
 
     public $js = [

@@ -2,5 +2,5 @@
 
 return [
 
-   'api_baseurl' => 'http://localhost:2019',
+   'api_baseurl' => 'http://localhost:1926',
 ];

@@ -24,6 +24,9 @@ use Yii;
  */
 class Tagihan extends \yii\db\ActiveRecord
 {
+
+    
+
     /**
      * {@inheritdoc}
      */

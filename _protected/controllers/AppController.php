@@ -31,9 +31,18 @@ class AppController extends Controller
                         'roles' => ['theCreator','admin'],
                     ],
                     [
-                        // other rules
+                        'controllers' => ['tagihan'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete','bulk','instant'],
+                        'allow' => true,
+                        'roles' => ['theCreator','admin'],
                     ],
-
+                    [
+                        'controllers' => ['transaksi'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['theCreator','admin'],
+                    ],
+                    
                 ], // rules
 
             ], // access

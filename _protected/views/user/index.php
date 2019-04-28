@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             // role
             [
-                'attribute'=>'item_name',
+                'attribute'=>'access_role',
                 'filter' => $searchModel->rolesList,
                 'value' => function ($data) {
                     return $data->roleName;

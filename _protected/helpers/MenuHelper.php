@@ -310,45 +310,29 @@ class MenuHelper
 	        // ]];
 	    }
 
-	    if (Yii::$app->user->can('operatorCabang'))
+	    if (Yii::$app->user->can('admin'))
 	    {
-	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Profil </span><i class="caret"></i>', 'url' => '#',
+	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Tagihan </span><i class="caret"></i>', 'url' => '#',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	         'visible' => Yii::$app->user->can('operatorCabang') && !Yii::$app->user->can('admin'),
+	         'visible' => Yii::$app->user->can('admin'),
 	        'items'=>[
 	           
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Visi & Misi',  
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>BUlk Tagihan',  
 	                'url' => ['/departemen/profile','p'=>'visi-misi'],	        
-	                'visible' => Yii::$app->user->can('operatorCabang'),
+	                // 'visible' => Yii::$app->user->can('operatorCabang'),
 	               
 	            ],
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Tujuan & Sasaran',  
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Instant Tagihan',  
 	                'url' => ['/departemen/profile','p'=>'sasaran-tujuan'],	        
-	                'visible' => Yii::$app->user->can('operatorCabang'),
+	                // 'visible' => Yii::$app->user->can('operatorCabang'),
 	               
 	            ],
 	        ]];
 
-	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> SPMI </span><i class="caret"></i>', 'url' => '#',
-	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
-	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	        'items'=>[
-	           
-	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Isian Evaluasi Diri',  
-	                'url' => ['/evaluasi-diri/index'],	        
-	                'visible' => Yii::$app->user->can('operatorCabang'),
-	               
-	            ],
-
-
-	           
-	            
-	        ]];
-
+	       
 	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Laporan </span><i class="caret"></i>', 'url' => '#',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',

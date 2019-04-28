@@ -9,7 +9,7 @@ $params = array_merge(
 
 $config = [
     'id' => 'basic',
-    'name' => 'SPMI Online | Universitas Darussalam Gontor',
+    'name' => 'E-Billing Online',
     'language' => 'en',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log', 'app\components\Aliases'],

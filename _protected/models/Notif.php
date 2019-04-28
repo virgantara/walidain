@@ -68,12 +68,7 @@ class Notif extends \yii\db\ActiveRecord
     public static function listNotif()
     {
         $total = 0;
-        $du = DepartemenUser::find()->where(['user_id'=>Yii::$app->user->identity->id])->one();
-        if(!empty($du)){
-            $notif = Notif::find();
-            $notif->where('departemen_to_id = :p1 AND is_read_to = 0',[':p1'=>$du->departemen_id]);
-            $total = count($notif->all());
-        }
+        
         return $total;
     }
 

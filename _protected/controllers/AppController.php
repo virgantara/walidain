@@ -28,7 +28,7 @@ class AppController extends Controller
                         'controllers' => ['user'],
                         'actions' => ['index', 'view', 'create', 'update', 'delete'],
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'roles' => ['theCreator','admin'],
                     ],
                     [
                         // other rules

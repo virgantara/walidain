@@ -9,8 +9,6 @@ use yii\helpers\ArrayHelper;
 use app\models\Perusahaan;
 
 
-$list=Perusahaan::find()->all();
-$listData=ArrayHelper::map($list,'id_perusahaan','nama');
 
 /* @var $this yii\web\View */
 /* @var $user app\models\User */
@@ -45,8 +43,7 @@ $listData=ArrayHelper::map($list,'id_perusahaan','nama');
         <?php foreach (AuthItem::getRoles() as $item_name): ?>
             <?php $roles[$item_name->name] = $item_name->name ?>
         <?php endforeach ?>
-        <?= $form->field($user, 'item_name')->dropDownList($roles) ?>
-        <?= $form->field($user, 'perusahaan_id')->dropDownList($listData, ['prompt'=>'..Pilih Perusahaan..']);?>
+        <?= $form->field($user, 'access_role')->dropDownList($roles) ?>
     </div>
     </div>
 

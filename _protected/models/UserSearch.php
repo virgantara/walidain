@@ -19,7 +19,7 @@ class UserSearch extends User
     public function rules()
     {
         return [
-            [['username', 'email', 'status', 'item_name'], 'safe'],
+            [['username', 'email', 'status', 'access_role'], 'safe'],
         ];
     }
 
@@ -47,7 +47,7 @@ class UserSearch extends User
 
         // if user is not 'theCreator' ( You ), do not show him users with this role
         if (!Yii::$app->user->can('theCreator')) {
-            $query->where(['!=', 'item_name', 'theCreator']);
+            $query->where(['!=', 'access_role', 'theCreator']);
         }
 
         $dataProvider = new ActiveDataProvider([
@@ -57,9 +57,9 @@ class UserSearch extends User
         ]);
 
         // make item_name (Role) sortable
-        $dataProvider->sort->attributes['item_name'] = [
-            'asc' => ['item_name' => SORT_ASC],
-            'desc' => ['item_name' => SORT_DESC],
+        $dataProvider->sort->attributes['access_role'] = [
+            'asc' => ['access_role' => SORT_ASC],
+            'desc' => ['access_role' => SORT_DESC],
         ];
 
         if (!($this->load($params) && $this->validate())) {
@@ -75,7 +75,7 @@ class UserSearch extends User
 
         $query->andFilterWhere(['like', 'username', $this->username])
               ->andFilterWhere(['like', 'email', $this->email])
-              ->andFilterWhere(['like', 'item_name', $this->item_name]);
+              ->andFilterWhere(['like', 'access_role', $this->access_role]);
 
         return $dataProvider;
     }

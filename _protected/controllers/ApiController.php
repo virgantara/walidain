@@ -32,6 +32,40 @@ class ApiController extends Controller
         ];
     }
 
+    public function actionListKampus() {
+
+        $out = [];
+
+        $api_baseurl = Yii::$app->params['api_baseurl'];
+        $client = new Client(['baseUrl' => $api_baseurl]);
+
+        $response = $client->get('/k/list')->send();
+        
+        if ($response->isOk) {
+            $result = $response->data['values'];
+            $out['values'] = $result;
+        }
+        header('Content-Type: application/json');
+        echo \yii\helpers\Json::encode($out); 
+    }
+
+    public function actionListProdi() {
+
+        $out = [];
+
+        $api_baseurl = Yii::$app->params['api_baseurl'];
+        $client = new Client(['baseUrl' => $api_baseurl]);
+
+        $response = $client->get('/p/list')->send();
+        
+        if ($response->isOk) {
+            $result = $response->data['values'];
+            $out['values'] = $result;
+        }
+        header('Content-Type: application/json');
+        echo \yii\helpers\Json::encode($out); 
+    }
+
     public function actionListFakultas() {
 
         $out = [];
@@ -47,27 +81,31 @@ class ApiController extends Controller
             $total_terbayar = 0;
             $out['values'] = $result;
         }
-
-        echo \yii\helpers\Json::encode($out);
-
-      
+        header('Content-Type: application/json');
+        echo \yii\helpers\Json::encode($out); 
     }
 
 
     public function actionTunggakan() {
 
         $out = [];
-
+        ob_start();
         if(!empty($_POST['sd']) && !empty($_POST['ed']))
         {
             $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
             $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
-            
+            $kampus = $_POST['kampus'];
+            $prodi = $_POST['prodi'];
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
 
-            $response = $client->get('/b/tagihan/periode/tunggakan', ['startdate' => $sd,'enddate'=>$ed])->send();
+            $response = $client->get('/b/tagihan/periode/tunggakan', [
+                'startdate' => $sd,
+                'enddate'=>$ed,
+                'kampus' => $kampus,
+                'prodi' => $prodi
+            ])->send();
             
             
             
@@ -98,9 +136,9 @@ class ApiController extends Controller
         
         }
         
-
+        header('Content-Type: application/json');
         echo \yii\helpers\Json::encode($out);
-
+        
       
     }
 
@@ -108,17 +146,24 @@ class ApiController extends Controller
     public function actionTagihan() {
 
         $out = [];
-
+         ob_start();
         if(!empty($_POST['sd']) && !empty($_POST['ed']))
         {
             $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
             $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
+            $kampus = $_POST['kampus'];
+            $prodi = $_POST['prodi'];
             
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
 
-            $response = $client->get('/b/tagihan/periode', ['startdate' => $sd,'enddate'=>$ed])->send();
+            $response = $client->get('/b/tagihan/periode', [
+                'startdate' => $sd,
+                'enddate'=>$ed,
+                'kampus' => $kampus,
+                'prodi' => $prodi
+            ])->send();
             
             
             
@@ -149,7 +194,7 @@ class ApiController extends Controller
         
         }
         
-
+        header('Content-Type: application/json');
         echo \yii\helpers\Json::encode($out);
 
       

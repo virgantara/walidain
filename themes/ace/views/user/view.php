@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw'
             ],
             [
-                'attribute'=>'item_name',
+                'attribute'=>'access_role',
                 'value' => '<span class="'.CssHelper::roleCss($model->getRoleName()).'">
                                 '.$model->getRoleName().'
                             </span>',

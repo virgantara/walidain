@@ -63,7 +63,22 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
     ) ?> 
         </div>
     </div>
-     
+     <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kampus</label>
+        <div class="col-lg-2 col-sm-10">
+          <select id="kampus">
+              
+          </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Prodi</label>
+        <div class="col-lg-2 col-sm-10">
+          <select id="prodi">
+              
+          </select>
+        </div>
+    </div>
     <div class="col-sm-2">
         
     </div>
@@ -96,9 +111,11 @@ $script = "
 function getTagihan(){
     let sd = $('#tagihansearch-tanggal_awal').val();
     let ed = $('#tagihansearch-tanggal_akhir').val();
+    let kampus = $('#kampus').val();
+    let prodi = $('#prodi').val();
     $.ajax({
         type : 'POST',
-        data : 'sd='+sd+'&ed='+ed,
+        data : 'sd='+sd+'&ed='+ed+'&kampus='+kampus+'&prodi='+prodi,
         url : '/api/tunggakan',
         beforeSend : function(){
             $('#loading').show();
@@ -108,7 +125,7 @@ function getTagihan(){
             $('#loading').hide();
         },
         success : function(data){
-
+            
             var data = $.parseJSON(data);
             
             $('#loading').hide();  
@@ -146,8 +163,75 @@ function getTagihan(){
     });
 }
 
+
+function getListKampus(){
+    $.ajax({
+        type : 'POST',
+        url : '/api/list-kampus',
+        beforeSend : function(){
+            $('#loading').show();
+        },
+        error : function(err){
+            console.log(err);
+            $('#loading').hide();
+        },
+        success : function(data){
+
+            var data = $.parseJSON(data);
+            
+            $('#loading').hide();  
+            $('#kampus').empty();
+            var row = '';
+                   
+            $.each(data.values,function(i, obj){
+                row += '<option value=\"'+obj.kode_kampus+'\">'+obj.nama_kampus+'</option>';
+                
+            });
+
+           
+            $('#kampus').append(row);
+            
+        }
+
+    });
+}
+
+function getListProdi(){
+    $.ajax({
+        type : 'POST',
+        url : '/api/list-prodi',
+        beforeSend : function(){
+            $('#loading').show();
+        },
+        error : function(err){
+            console.log(err);
+            $('#loading').hide();
+        },
+        success : function(data){
+
+            var data = $.parseJSON(data);
+            
+            $('#loading').hide();  
+            $('#prodi').empty();
+            var row = '';
+                   
+            $.each(data.values,function(i, obj){
+                row += '<option value=\"'+obj.kode_prodi+'\">'+obj.nama_prodi+'</option>';
+                
+            });
+
+           
+            $('#prodi').append(row);
+            
+        }
+
+    });
+}
+
+
 $(document).ready(function(){
-    
+    getListKampus();
+    getListProdi();
     $('#search').click(function(){
         getTagihan();
     });

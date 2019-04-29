@@ -107,10 +107,10 @@ class UserController extends AppController
         $oldRole = (isset($role)) ? $auth->getRole($role) : $auth->getRole('member');
 
         // set property item_name of User object to this role name, so we can use it in our form
-        $user->item_name = $oldRole->name;
+        $user->access_role = $oldRole->name;
 
         if (!$user->load(Yii::$app->request->post())) {
-            return $this->render('update', ['user' => $user, 'role' => $user->item_name]);
+            return $this->render('update', ['user' => $user, 'role' => $user->access_role]);
         }
 
         // only if user entered new password we want to hash and save it
@@ -123,13 +123,13 @@ class UserController extends AppController
             $user->removeAccountActivationToken();
         }         
         
-        $user->access_role = $user->item_name;
+        $user->access_role = $user->access_role;
         if (!$user->save()) {
-            return $this->render('update', ['user' => $user, 'role' => $user->item_name]);
+            return $this->render('update', ['user' => $user, 'role' => $user->access_role]);
         }
 
         // take new role from the form
-        $newRole = $auth->getRole($user->item_name);
+        $newRole = $auth->getRole($user->access_role);
         // get user id too
         $userId = $user->getId();
         

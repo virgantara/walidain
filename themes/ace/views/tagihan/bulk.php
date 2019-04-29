@@ -60,6 +60,14 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kampus</label>
+        <div class="col-lg-2 col-sm-10">
+          <select id="kampus">
+              
+          </select>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Semester Biaya</label>
         <div class="col-lg-2 col-sm-10">
           <?= Html::input('text','semester_biaya','', ['id'=>'semester_biaya']) ?>
@@ -98,6 +106,39 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 
 $script = "
+
+
+function getListKampus(){
+    $.ajax({
+        type : 'POST',
+        url : '/api/list-kampus',
+        beforeSend : function(){
+            $('#loading').show();
+        },
+        error : function(err){
+            console.log(err);
+            $('#loading').hide();
+        },
+        success : function(data){
+
+            var data = $.parseJSON(data);
+            
+            $('#loading').hide();  
+            $('#kampus').empty();
+            var row = '';
+                   
+            $.each(data.values,function(i, obj){
+                row += '<option value=\"'+obj.kode_kampus+'\">'+obj.nama_kampus+'</option>';
+                
+            });
+
+           
+            $('#kampus').append(row);
+            
+        }
+
+    });
+}
 
 function generate(){
     let obj = new Object;
@@ -167,7 +208,7 @@ function getListFakultas(){
 $(document).ready(function(){
     
     getListFakultas();
-
+    getListKampus();
     $('#generate').click(function(){
         generate();
     });

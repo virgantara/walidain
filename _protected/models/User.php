@@ -41,7 +41,7 @@ class User extends UserIdentity
     /**
      * @var \app\rbac\models\Role
      */
-    public $access_role;
+    // public $item_name;
 
     /**
      * Returns the validation rules for attributes.
@@ -251,7 +251,7 @@ class User extends UserIdentity
     {
         // if user has some role assigned, return it's name
         if ($this->role) {
-            return $this->role->item_name;
+            return $this->access_role;
         }
         
         // user does not have role assigned, but if he is authenticated '@'

@@ -41,7 +41,7 @@ class User extends UserIdentity
     /**
      * @var \app\rbac\models\Role
      */
-    public $item_name;
+    public $access_role;
 
     /**
      * Returns the validation rules for attributes.
@@ -75,7 +75,7 @@ class User extends UserIdentity
 
             ['status', 'required'],
             // ['perusahaan_id', 'required'],
-            ['item_name', 'string', 'min' => 3, 'max' => 64]
+            ['access_role', 'string', 'min' => 3, 'max' => 64]
         ];
     }
 

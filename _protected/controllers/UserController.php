@@ -63,13 +63,13 @@ class UserController extends AppController
 
         $user->setPassword($user->password);
         $user->generateAuthKey();
-        $user->access_role = $user->item_name;
+        // $user->item_name = $user->access_role;
         if (!$user->save()) {
             return $this->render('create', ['user' => $user]);
         }
 
         $auth = Yii::$app->authManager;
-        $role = $auth->getRole($user->item_name);
+        $role = $auth->getRole($user->access_role);
         $info = $auth->assign($role, $user->getId());
 
         if (!$info) {

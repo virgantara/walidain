@@ -10,7 +10,7 @@ class MenuHelper
 {
     public static function getMenuItems()
     {
-
+    	
     	$userRole = Yii::$app->user->identity->access_role;
         $menuItems = [];
 		if(!Yii::$app->user->isGuest){
@@ -224,6 +224,7 @@ class MenuHelper
 	    	Yii::$app->user->can('gudang')
 	    ];
 	    
+
 	    if (Yii::$app->user->can('theCreator') ||
 	    	Yii::$app->user->can('admin') 
 	    	|| Yii::$app->user->can('gudang') 

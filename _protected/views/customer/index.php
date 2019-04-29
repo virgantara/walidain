@@ -29,10 +29,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'custid',
             'nama',
             'va_code',
-            // 'kampus',
+            'kampus',
             'nama_kampus',
             //'kode_prodi',
-            'nama_prodi',
+            //'nama_prodi',
             //'created_at',
             //'updated_at',
 

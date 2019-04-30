@@ -351,6 +351,10 @@ class MenuHelper
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan Tunggakan',  
 	                'url' => ['/laporan/tunggakan'],	         
 	            ],
+	            [
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan Rekapitulasi Tunggakan',  
+	                'url' => ['/laporan/rekap-tunggakan'],	         
+	            ],
 	            
 	            // [
 	            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i>Mutasi Barang',  

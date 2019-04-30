@@ -82,6 +82,16 @@ class Tagihan extends \yii\db\ActiveRecord
         return $this->customer->nama;
     }
 
+    public function getNamaProdi()
+    {
+        return $this->customer->nama_prodi;
+    }
+
+    public function getNamaKampus()
+    {
+        return $this->customer->nama_kampus;
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

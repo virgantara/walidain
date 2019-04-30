@@ -85,6 +85,53 @@ class ApiController extends Controller
         echo \yii\helpers\Json::encode($out); 
     }
 
+    public function actionRekapTunggakan() {
+
+        $out = [];
+        ob_start();
+        if(!empty($_POST['sd']) && !empty($_POST['ed']))
+        {
+            $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
+            $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
+            // $list = Pasien::find()->addFilterWhere(['like',])
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+
+            $response = $client->get('/b/tunggakan/rekap', [
+                'startdate' => $sd,
+                'enddate'=>$ed
+            ])->send();
+            
+            
+            
+            if ($response->isOk) {
+                $result = $response->data['values'];
+                $total_sisa = 0;
+                $total_terbayar = 0;
+                $out['values'] = [];
+                foreach ($result as $d) {
+                    $total_sisa += $d['sisa'];
+                    // $total_terbayar += $d['terbayar'];
+                    $out['values'][] = [
+                        // 'id' => $d['id'],
+                        'prodi' => $d['prodi'],
+                        'semester'=> $d['semester'],
+                        'sisa'=> \app\helpers\MyHelper::formatRupiah($d['sisa']),
+                        'total' => $d['total'],
+                    ];
+                }
+
+                $out['total_sisa'] = \app\helpers\MyHelper::formatRupiah($total_sisa);
+                // $out['total_terbayar'] = \app\helpers\MyHelper::formatRupiah($total_terbayar);
+            }
+        
+        }
+        
+        header('Content-Type: application/json');
+        echo \yii\helpers\Json::encode($out);
+        
+      
+    }
 
     public function actionTunggakan() {
 
@@ -119,6 +166,7 @@ class ApiController extends Controller
                     $total_terbayar += $d['terbayar'];
                     $out['values'][] = [
                         'id' => $d['id'],
+                        'custid' => $d['custid'],
                         'komponen'=> $d['komponen'],
                         'nama_mahasiswa'=> $d['nama_mahasiswa'],
                         'semester' => $d['semester'],
@@ -178,6 +226,7 @@ class ApiController extends Controller
                     $out['values'][] = [
                         'id' => $d['id'],
                         'komponen'=> $d['komponen'],
+                        'custid' => $d['custid'],
                         'nama_mahasiswa'=> $d['nama_mahasiswa'],
                         'semester' => $d['semester'],
                         'prodi'=> $d['prodi'],

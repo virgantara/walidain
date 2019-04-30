@@ -147,6 +147,7 @@ function generate(){
     obj.komponen_id = $('#komponen_id').val();
     obj.semester_biaya = $('#semester_biaya').val();
     obj.semester_mhs = $('#semester_mhs').val();
+    obj.kampus = $('#kampus').val();
 
     $.ajax({
         type : 'POST',

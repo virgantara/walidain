@@ -70,6 +70,7 @@ class TagihanController extends Controller
         $komponen_id = $_POST['Tagihan']['komponen_id'];
         $semester_biaya = $_POST['Tagihan']['semester_biaya'];
         $semester_mhs = $_POST['Tagihan']['semester_mhs'];
+        $kampus = $_POST['Tagihan']['kampus'];
             
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
@@ -83,7 +84,8 @@ class TagihanController extends Controller
                 'tahun' => $tahun_id,
                 'komponen_id' => $komponen_id,
                 'semester_biaya' => $semester_biaya,
-                'semester_mhs' => $semester_mhs
+                'semester_mhs' => $semester_mhs,
+                'kampus' => $kampus
             ])
             ->send();
 

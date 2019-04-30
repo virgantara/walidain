@@ -24,7 +24,7 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
   
     <?php $form = ActiveForm::begin([
         'method' => 'get',
-        'action' => ['laporan/tunggakan'],
+        'action' => ['laporan/rekap-tunggakan'],
         'options' => [
             'class' => 'form-horizontal'
         ]
@@ -63,22 +63,7 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
     ) ?> 
         </div>
     </div>
-     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kampus</label>
-        <div class="col-lg-2 col-sm-10">
-          <select id="kampus">
-              
-          </select>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Prodi</label>
-        <div class="col-lg-2 col-sm-10">
-          <select id="prodi">
-              
-          </select>
-        </div>
-    </div>
+    
     <div class="col-sm-2">
         
     </div>
@@ -111,12 +96,11 @@ $script = "
 function getTagihan(){
     let sd = $('#tagihansearch-tanggal_awal').val();
     let ed = $('#tagihansearch-tanggal_akhir').val();
-    let kampus = $('#kampus').val();
-    let prodi = $('#prodi').val();
+    
     $.ajax({
         type : 'POST',
-        data : 'sd='+sd+'&ed='+ed+'&kampus='+kampus+'&prodi='+prodi,
-        url : '/api/tunggakan',
+        data : 'sd='+sd+'&ed='+ed,
+        url : '/api/rekap-tunggakan',
         beforeSend : function(){
             $('#loading').show();
         },
@@ -131,30 +115,23 @@ function getTagihan(){
             $('#loading').hide();  
             $('#tabel_tagihan').empty();
             var row = '<thead>';
-                   row += '<tr><th>No</th><th>Komponen</th><th>CID</th><th>Nama</th><th>Prodi</th><th>Semester</th><th>Nilai</th><th>Terbayar</th><th>Sisa Tagihan</th><th>Tanggal</th></tr>';
+                   row += '<tr><th>No</th><th>Prodi</th><th>Semester</th><th>Nominal</th><th>Jml Mhs</th></tr>';
                 row += '</thead>';
                 row += '<tbody>';
 
             $.each(data.values,function(i, obj){
                 row += '<tr>';
                 row += '<td>'+eval(i+1)+'</td>';
-                row += '<td>'+obj.komponen+'</td>';
-                row += '<td>'+obj.custid+'</td>';
-                row += '<td>'+obj.nama_mahasiswa+'</td>';
                 row += '<td>'+obj.prodi+'</td>';
                 row += '<td>'+obj.semester+'</td>';
-                row += '<td style=\"text-align:right\">'+obj.nilai+'</td>';
-                row += '<td style=\"text-align:right\">'+obj.terbayar+'</td>';
                 row += '<td style=\"text-align:right\">'+obj.sisa+'</td>';
-                row += '<td>'+obj.created_at+'</td>';
+                row += '<td>'+obj.total+'</td>';
                 row += '</tr>';
             });
 
             row += '<tr>';
-            row += '<td colspan=\"7\"  style=\"text-align:right\">Total</td>';
-            row += '<td style=\"text-align:right\">'+data.total_terbayar+'</td>';
+            row += '<td colspan=\"4\"  style=\"text-align:right\">Total</td>';
             row += '<td style=\"text-align:right\">'+data.total_sisa+'</td>';
-            row += '<td>&nbsp;</td>';
             row += '</tr>';            
             row += '</tbody>';
             $('#tabel_tagihan').append(row);

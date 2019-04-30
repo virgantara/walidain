@@ -131,7 +131,7 @@ function getTagihan(){
             $('#loading').hide();  
             $('#tabel_tagihan').empty();
             var row = '<thead>';
-                   row += '<tr><th>No</th><th>Komponen</th><th>Nama</th><th>Prodi</th><th>Semester</th><th>Nilai</th><th>Terbayar</th><th>Sisa Tagihan</th><th>Tanggal</th></tr>';
+                   row += '<tr><th>No</th><th>Komponen</th><th>CID</th><th>Nama</th><th>Prodi</th><th>Semester</th><th>Nilai</th><th>Terbayar</th><th>Sisa Tagihan</th><th>Tanggal</th></tr>';
                 row += '</thead>';
                 row += '<tbody>';
 
@@ -139,6 +139,7 @@ function getTagihan(){
                 row += '<tr>';
                 row += '<td>'+eval(i+1)+'</td>';
                 row += '<td>'+obj.komponen+'</td>';
+                row += '<td>'+obj.custid+'</td>';
                 row += '<td>'+obj.nama_mahasiswa+'</td>';
                 row += '<td>'+obj.prodi+'</td>';
                 row += '<td>'+obj.semester+'</td>';

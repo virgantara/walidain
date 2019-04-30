@@ -34,6 +34,95 @@ class LaporanController extends Controller
         ];
     }
 
+    public function actionRekapTunggakan(){
+
+        $model = new TagihanSearch();
+
+        if(!empty($_GET['export']))
+        {
+            
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            
+            
+            // Add column headers
+            $sheet->setCellValue('A3', 'No')
+                ->setCellValue('B3', 'Prodi')
+                ->setCellValue('C3', 'Semester')
+                ->setCellValue('D3', 'Nominal')
+                ->setCellValue('E3', 'Jml Mhs');
+;
+
+            $sheet->mergeCells('A1:E1')->getStyle('A1:E1')->getAlignment()->setHorizontal('center');
+            $sheet->setCellValue('A1','LAPORAN REKAP TUNGGAKAN');
+
+            $sheet->mergeCells('A2:E2')->getStyle('A2:E2')->getAlignment()->setHorizontal('center');
+            $sheet->setCellValue('A2','Tanggal '.$_GET['TagihanSearch']['tanggal_awal'].' s/d '.$_GET['TagihanSearch']['tanggal_akhir']);
+
+            //Put each record in a new cell
+
+            $sheet->getColumnDimension('A')->setWidth(5);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(8);
+            $sheet->getColumnDimension('D')->setWidth(15);
+            $sheet->getColumnDimension('E')->setWidth(8);
+            $i= 0;
+            $ii = 4;
+
+            $total = 0;
+
+            $sd = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_awal'])).'000001';
+            $ed = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_akhir'])).'235959';
+            
+            // $list = Pasien::find()->addFilterWhere(['like',])
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+
+            $response = $client->get('/b/tunggakan/rekap', ['startdate' => $sd,'enddate'=>$ed])->send();
+            
+            if ($response->isOk) {
+                $result = $response->data['values'];
+                $total_sisa = 0;
+                $total_terbayar = 0;
+                foreach ($result as $q => $d) {
+                    $total_sisa += $d['sisa'];
+                    // $total_terbayar += $d['terbayar'];
+                    
+                    $sheet->setCellValue('A'.$ii, $q+1);
+                    $sheet->setCellValue('B'.$ii, $d['prodi']);
+                    $sheet->setCellValue('C'.$ii, $d['semester']);
+                    $sheet->setCellValue('D'.$ii, $d['sisa']);
+                    $sheet->setCellValue('E'.$ii, $d['total']);
+                    $ii++;
+                }
+
+                
+                $sheet->setCellValue('A'.$ii, '');
+                $sheet->setCellValue('B'.$ii, '');
+                $sheet->setCellValue('C'.$ii, 'Total');
+                $sheet->setCellValue('D'.$ii, $total_sisa);
+                // $sheet->setCellValue('E'.$ii, $total_sisa);
+                $sheet->setCellValue('E'.$ii, '');
+                $sheet->setTitle('Laporan Tunggakan');
+                
+                ob_end_clean();
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename="laporan_tunggakan.xlsx"');
+                header('Cache-Control: max-age=0');
+                
+                $writer = new Xlsx($spreadsheet);
+                $writer->save('php://output');
+                exit;
+            }
+            
+            
+
+        }
+
+        return $this->render('tunggakan_rekap',[
+            'model' => $model
+        ]);
+    }
 
     public function actionTunggakan(){
 

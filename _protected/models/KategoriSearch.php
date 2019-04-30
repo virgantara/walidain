@@ -18,7 +18,7 @@ class KategoriSearch extends Kategori
     {
         return [
             [['id'], 'integer'],
-            [['nama', 'created_at', 'updated_at'], 'safe'],
+            [['nama','kode', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -63,7 +63,8 @@ class KategoriSearch extends Kategori
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'nama', $this->nama]);
+        $query->andFilterWhere(['like', 'nama', $this->nama])
+        ->andFilterWhere(['like', 'kode', $this->kode]);
 
         return $dataProvider;
     }

@@ -462,7 +462,7 @@ class MenuHelper
 	                     ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['customer/index']],
 	                     [
 	                        'label' => ( '<i class="menu-icon fa fa-caret-right"></i>Tambah'),
-	                        'visible' => Yii::$app->user->can('admin'),
+	                        'visible' => Yii::$app->user->can('theCreator'),
 	                        'url' => ['customer/create']]
 	                ],
 	            ],

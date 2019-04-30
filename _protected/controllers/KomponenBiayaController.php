@@ -71,7 +71,9 @@ class KomponenBiayaController extends Controller
     public function actionCreate()
     {
         $model = new KomponenBiaya();
-        $kategori = ArrayHelper::map(Kategori::find()->all(),'id','nama');
+        $kategori = ArrayHelper::map(Kategori::find()->all(),'id',function($data){
+            return $data->kode.' - '.$data->nama;
+        });
         $tahun = ArrayHelper::map(Tahun::find()->all(),'id','nama');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {

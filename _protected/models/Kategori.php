@@ -30,7 +30,8 @@ class Kategori extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama'], 'required'],
+            [['nama','kode'], 'required'],
+            [['kode'],'unique'],
             [['created_at', 'updated_at'], 'safe'],
             [['nama'], 'string', 'max' => 255],
         ];
@@ -44,6 +45,7 @@ class Kategori extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'nama' => 'Nama',
+            'kode' => 'Kode',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

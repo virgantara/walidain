@@ -11,7 +11,11 @@ use yii\widgets\ActiveForm;
 <div class="komponen-biaya-form">
 
     <?php $form = ActiveForm::begin(); ?>
+<?= $form->field($model, 'tahun')->dropDownList($tahun,['prompt'=>'Pilih Tahun']) ?>
 
+    <?= $form->field($model, 'kategori_id')->dropDownList($kategori,['prompt'=>'Pilih Kategori']) ?>
+
+    
     <?= $form->field($model, 'kode')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'nama')->textInput(['maxlength' => true]) ?>
@@ -19,12 +23,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'biaya_awal')->textInput() ?>
 
-    <?= $form->field($model, 'prioritas')->textInput() ?>
+    <?= $form->field($model, 'prioritas')->dropDownList([1,2,3,4,5,6,7,8,9,10]) ?>
 
-    <?= $form->field($model, 'kategori_id')->dropDownList($kategori,['prompt'=>'Pilih Kategori']) ?>
-
-    <?= $form->field($model, 'tahun')->dropDownList($tahun,['prompt'=>'Pilih Tahun']) ?>
-
+    
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>

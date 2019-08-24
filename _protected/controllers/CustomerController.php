@@ -8,6 +8,8 @@ use app\models\CustomerSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\httpclient\Client;
+
 
 /**
  * CustomerController implements the CRUD actions for Customer model.
@@ -27,6 +29,90 @@ class CustomerController extends Controller
                 ],
             ],
         ];
+    }
+
+    public function actionSinkronisasi()
+    {
+
+        $model = new Customer;
+
+        if(!empty($_GET['tahun_masuk']))
+        {
+             $out = [];
+
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+            $tahun = $_GET['tahun_masuk'];
+            $kampus = $_GET['kampus'];
+            $prodi = $_GET['prodi'];
+
+            $response = $client->get('/m/kampus/prodi', [
+                'kampus' => $kampus,
+                'prodi' => $prodi,
+                'tahun' => $tahun
+            ])->send();
+            
+            if ($response->isOk) {
+                $result = $response->data['values'];
+                $connection = \Yii::$app->db;
+                $transaction = $connection->beginTransaction();
+                $errors = '';
+                try 
+                {
+                    foreach($result as $item)
+                    {
+                        
+                        $cust = Customer::findOne($item['nim']);
+                        if(empty($cust))
+                        {
+                            $cust = new Customer;
+                            $cust->custid = $item['nim'];
+                            $cust->nama = $item['nm'];
+                            $cust->va_code = $item['va'];
+                            $cust->kampus = $item['k'];
+                            $cust->nama_kampus = $item['nmk'];
+                            $cust->kode_prodi = $item['kdp'];
+                            $cust->nama_prodi = $item['nmp'];
+                            $cust->save();   
+                            if($cust->validate())
+                            {
+                                $cust->save();
+                            }
+
+                            else
+                            {
+                                
+                                foreach($cust->getErrors() as $attribute){
+                                    foreach($attribute as $error){
+                                        $errors .= $error.' ';
+                                    }
+                                }
+
+                                throw new Exception;
+                                
+                            }
+                        }
+
+                    }
+
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Data successfully synced'));
+                    $transaction->commit();
+                } catch (\Exception $e) {
+                    Yii::$app->session->setFlash('error', Yii::t('app', $errors));
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
+                    Yii::$app->session->setFlash('error', Yii::t('app', $errors));
+                    $transaction->rollBack();
+                    throw $e;
+                }
+            }
+            
+        }
+
+        return $this->render('sinkronisasi',[
+            'model' => $model
+        ]);
     }
 
     /**

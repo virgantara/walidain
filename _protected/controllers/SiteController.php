@@ -86,6 +86,10 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+
+        // $hash = Yii::$app->getSecurity()->generatePasswordHash('admingontor');
+        // print_r($hash);
+        // exit;
         if (Yii::$app->user->isGuest) {
             $this->redirect(['/site/login']);
         }

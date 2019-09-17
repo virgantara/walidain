@@ -105,7 +105,7 @@ class LaporanController extends Controller
                 $sheet->setCellValue('E'.$ii, '');
                 $sheet->setTitle('Laporan Tunggakan');
                 
-                ob_end_clean();
+                // ob_end_clean();
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename="laporan_tunggakan.xlsx"');
                 header('Cache-Control: max-age=0');
@@ -322,7 +322,7 @@ class LaporanController extends Controller
                 $sheet->setCellValue('I'.$ii, '');
                 $sheet->setTitle('Laporan Pembayaran');
                 
-                ob_end_clean();
+                // ob_end_clean();
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename="laporan_pembayaran.xlsx"');
                 header('Cache-Control: max-age=0');

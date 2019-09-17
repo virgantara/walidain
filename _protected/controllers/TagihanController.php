@@ -13,6 +13,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\httpclient\Client;
+use app\models\Customer;
+use app\models\SimakMastermahasiswa;
 
 /**
  * TagihanController implements the CRUD actions for Tagihan model.
@@ -130,6 +132,83 @@ class TagihanController extends Controller
             }
         }
         return ['output'=>'', 'selected'=>''];
+    }
+
+    public function actionBulanan()
+    {
+        $model = new Tagihan;
+        $tahun = ArrayHelper::map(Tahun::find()->all(),'id',function($data){
+            return $data->nama.' - '.$data->hijriyah.' H';
+        });
+        $komponen = ArrayHelper::map(KomponenBiaya::find()->all(),'id','nama');
+
+
+        if(!empty($_POST['nilai']))
+        {
+
+
+            $query = SimakMastermahasiswa::find()->where([
+                'kode_prodi' => $_POST['prodi'],
+                'kampus' => $_POST['kampus'],
+                'semester' => $_POST['semester_mhs']
+            ]);
+
+            $listCustomer = $query->all();
+            $k = KomponenBiaya::findOne($_POST['komponen']);
+            $transaction = \Yii::$app->db->beginTransaction();
+            $errors = '';
+            try 
+            {
+                foreach($listCustomer as $c)
+                {
+
+                    $t = Tagihan::find()->where([
+                        'komponen_id' => $_POST['komponen'],
+                        'nim' => $c->nim_mhs,
+                        'tahun' => $_POST['tahun'],
+
+                    ]);
+
+                    if(!empty($t)) continue;
+                    
+                    $t = new Tagihan;
+                    $t->tahun = $_POST['tahun'];
+                    $t->komponen_id = $_POST['komponen'];
+                    $t->nilai = $_POST['nilai'];
+                    $t->urutan = $k->prioritas;
+                    $t->nim = $c->nim_mhs;
+                    $t->semester = $c->semester;
+                    if(!$t->save())
+                    {
+                        $errors = \app\helpers\MyHelper::logError($t);
+                        Yii::$app->session->setFlash('danger', $errors);
+                        return $this->render('bulanan',[
+                            'model' => $model,
+                            'tahun' => $tahun,
+                            'komponen' => $komponen
+                        ]);
+                    }
+
+                }
+
+                Yii::$app->session->setFlash('success', " Data telah tersimpan");
+
+                $transaction->commit();
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
+            } catch (\Throwable $e) {
+                $transaction->rollBack();
+                
+                throw $e;
+            }
+        }
+
+        return $this->render('bulanan',[
+            'model' => $model,
+            'tahun' => $tahun,
+            'komponen' => $komponen
+        ]);
     }
 
     public function actionBulk()

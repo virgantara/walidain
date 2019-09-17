@@ -40,12 +40,13 @@ class Tagihan extends \yii\db\ActiveRecord
     {
         return [
             [['urutan', 'semester', 'tahun', 'komponen_id', 'edit', 'status_bayar'], 'integer'],
-            [['semester', 'tahun', 'komponen_id', 'nilai'], 'required'],
+            [[ 'tahun', 'komponen_id', 'nilai'], 'required'],
             [['nilai', 'terbayar'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['nim'], 'string', 'max' => 20],
             [['komponen_id'], 'exist', 'skipOnError' => true, 'targetClass' => KomponenBiaya::className(), 'targetAttribute' => ['komponen_id' => 'id']],
             [['nim'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['nim' => 'custid']],
+             [['tahun'], 'exist', 'skipOnError' => true, 'targetClass' => Tahun::className(), 'targetAttribute' => ['tahun' => 'id']],
         ];
     }
 
@@ -70,6 +71,11 @@ class Tagihan extends \yii\db\ActiveRecord
             'namaKomponen' => 'Komponen',
             'namaCustomer' => 'Nama'
         ];
+    }
+
+    public function getNamaTahun()
+    {
+        return $this->tahun0->nama.' '.$this->tahun0->hijriyah;
     }
 
     public function getNamaKomponen()
@@ -103,5 +109,10 @@ class Tagihan extends \yii\db\ActiveRecord
     public function getCustomer()
     {
         return $this->hasOne(Customer::className(), ['custid' => 'nim']);
+    }
+
+    public function getTahun0()
+    {
+        return $this->hasOne(Tahun::className(), ['id' => 'tahun']);
     }
 }

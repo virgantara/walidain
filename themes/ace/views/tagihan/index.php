@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'namaCustomer',
             'namaProdi',
             'namaKampus',
-            // 'tahun',
+            'namaTahun',
             'namaKomponen',
             'semester',
             //'komponen_id',

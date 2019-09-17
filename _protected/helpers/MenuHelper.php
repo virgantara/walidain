@@ -37,11 +37,10 @@ class MenuHelper
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	         'visible' => Yii::$app->user->can('admin'),
-	        'items'=>[
-	           
+	        'items'=>[	           
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulk Tagihan',  
-	                'url' => ['/tagihan/bulk'],	           
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulanan',  
+	                'url' => ['/tagihan/bulanan'],	           
 	            ],
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Instant Tagihan',  

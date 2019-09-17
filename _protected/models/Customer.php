@@ -61,4 +61,14 @@ class Customer extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
         ];
     }
+
+    public function getSaldo()
+    {
+        $query = (new \yii\db\Query())->from('bill_transaksi');
+        $query->where(['custid'=>$this->custid]);
+        $sumDebet = $query->sum('DEBET');
+        $sumKredit = $query->sum('KREDIT');
+        $saldo = $sumKredit - $sumDebet;
+        return $saldo;
+    }
 }

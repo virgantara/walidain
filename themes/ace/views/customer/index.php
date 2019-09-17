@@ -29,6 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'nama_kampus',
             //'kode_prodi',
             'nama_prodi',
+            'saldo',
             //'created_at',
             //'updated_at',
 

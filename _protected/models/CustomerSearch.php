@@ -11,6 +11,7 @@ use app\models\Customer;
  */
 class CustomerSearch extends Customer
 {
+    public $saldo;
     /**
      * {@inheritdoc}
      */
@@ -46,6 +47,8 @@ class CustomerSearch extends Customer
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        
 
         $this->load($params);
 

@@ -171,21 +171,28 @@ class LaporanController extends Controller
 
             $sd = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_awal'])).'000001';
             $ed = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_akhir'])).'235959';
+             $kampus = $_GET['kampus'];
+            $prodi = $_GET['prodi'];
             
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
 
-            $response = $client->get('/b/tagihan/periode/tunggakan', ['startdate' => $sd,'enddate'=>$ed])->send();
+            $response = $client->get('/b/tagihan/periode/tunggakan', [
+                'startdate' => $sd,
+                'enddate'=>$ed,
+                'kampus' => $kampus,
+                'prodi' => $prodi
+            ])->send();
             
             if ($response->isOk) {
                 $result = $response->data['values'];
+                    
                 $total_sisa = 0;
                 $total_terbayar = 0;
                 foreach ($result as $q => $d) {
                     $total_sisa += $d['sisa'];
                     $total_terbayar += $d['terbayar'];
-                    
                     $sheet->setCellValue('A'.$ii, $q+1);
                     $sheet->setCellValue('B'.$ii, $d['komponen']);
                     $sheet->setCellValue('C'.$ii, $d['nama_mahasiswa']);
@@ -210,14 +217,14 @@ class LaporanController extends Controller
                 $sheet->setCellValue('I'.$ii, '');
                 $sheet->setTitle('Laporan Tunggakan');
                 
-                ob_end_clean();
+                // ob_end_clean();
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename="laporan_tunggakan.xlsx"');
                 header('Cache-Control: max-age=0');
                 
                 $writer = new Xlsx($spreadsheet);
                 $writer->save('php://output');
-                exit;
+                die();
             }
             
             

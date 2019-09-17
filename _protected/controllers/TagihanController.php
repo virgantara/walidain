@@ -167,7 +167,7 @@ class TagihanController extends Controller
                         'nim' => $c->nim_mhs,
                         'tahun' => $_POST['tahun'],
 
-                    ]);
+                    ])->one();
 
                     if(!empty($t)) continue;
                     
@@ -182,6 +182,7 @@ class TagihanController extends Controller
                     {
                         $errors = \app\helpers\MyHelper::logError($t);
                         Yii::$app->session->setFlash('danger', $errors);
+
                         return $this->render('bulanan',[
                             'model' => $model,
                             'tahun' => $tahun,

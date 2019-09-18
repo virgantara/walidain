@@ -67,7 +67,15 @@ $this->params['breadcrumbs'][] = $this->title;
             //'created_at',
             //'updated_at',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'visibleButtons' => [
+                    
+                    'delete' => function ($model) {
+                        return $model->status_bayar != 1;
+                    },
+                ]
+            ],
         ],
     ]); ?>
 </div>

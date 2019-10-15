@@ -12,21 +12,28 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'urutan')->textInput() ?>
+    <?= $form->field($model, 'urutan')->textInput(['readonly'=>true]) ?>
 
-    <?= $form->field($model, 'semester')->textInput() ?>
+    <?= $form->field($model, 'semester')->textInput(['readonly'=>true]) ?>
 
-    <?= $form->field($model, 'tahun')->textInput() ?>
+    <?= $form->field($model, 'tahun')->textInput(['readonly'=>true]) ?>
 
-    <?= $form->field($model, 'nim')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'nim')->textInput(['maxlength' => true,'readonly'=>true]) ?>
 
-    <?= $form->field($model, 'komponen_id')->textInput() ?>
+    <?= $form->field($model, 'namaKomponen')->textInput(['readonly'=>true]) ?>
 
     <?= $form->field($model, 'nilai')->textInput() ?>
 
     <?= $form->field($model, 'terbayar')->textInput() ?>
 
-    <?= $form->field($model, 'status_bayar')->textInput() ?>
+    <?php 
+    $list_status = [
+        0 => 'BELUM LUNAS',
+        1 => 'LUNAS',
+        2 => 'CICILAN'
+    ];
+    ?>
+    <?= $form->field($model, 'status_bayar')->dropDownList($list_status) ?>
 
 
     <div class="form-group">

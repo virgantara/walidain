@@ -29,6 +29,7 @@ class TransaksiController extends AppController
         ];
     }
 
+    
     /**
      * Lists all Transaksi models.
      * @return mixed

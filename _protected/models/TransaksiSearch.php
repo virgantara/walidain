@@ -11,6 +11,13 @@ use app\models\Transaksi;
  */
 class TransaksiSearch extends Transaksi
 {
+    public $tanggal_awal;
+    public $tanggal_akhir;
+    public $namaKomponen;
+    public $namaCustomer;
+    public $namaProdi;
+    public $namaKampus;
+    public $namaTahun;
     /**
      * {@inheritdoc}
      */

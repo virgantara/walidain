@@ -32,6 +32,78 @@ class ApiController extends Controller
         ];
     }
 
+    public function actionRekapTransaksi() 
+    {
+
+        $out = [];
+        ob_start();
+        if(!empty($_POST['sd']) && !empty($_POST['ed']))
+        {
+            $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
+            $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
+            // $list = Pasien::find()->addFilterWhere(['like',])
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+
+            $response = $client->get('/b/transaksi/list', [
+                'startdate' => $sd,
+                'enddate'=>$ed
+            ])->send();
+            
+            
+            
+            if ($response->isOk) {
+                $result = $response->data['values'];
+                $total_sisa = 0;
+                $total_terbayar = 0;
+                $out['values'] = [];
+                $list_nim = [];
+                foreach ($result as $d) {
+                    $total_sisa += $d['sisa'];
+
+                    if(!in_array($d['nim'], $list_nim))
+                    {
+                        $list_nim[] = $d['nim'];
+                        $out['values'][] = [
+                        // 'id' => $d['id'],
+                            'p' => $d['p'],
+                            'nim' => $d['nim'],
+                            'n'=> $d['n'],
+                            'nr' => $d['nr'],
+                            'nl'=> \app\helpers\MyHelper::formatRupiah($d['nl']),
+                            'd' => $d['d'],
+                        ];
+                    }    
+
+                    else
+                    {
+                        $out['values'][] = [
+                            // 'id' => $d['id'],
+                            'p' => '',
+                            'nim' => '',
+                            'n'=> '',
+                            'nr' => $d['nr'],
+                            'nl'=> \app\helpers\MyHelper::formatRupiah($d['nl']),
+                            'd' => $d['d'],
+                        ];
+                    }
+
+                    // $total_terbayar += $d['terbayar'];
+                    
+                }
+
+                // $out['total_sisa'] = \app\helpers\MyHelper::formatRupiah($total_sisa);
+                // $out['total_terbayar'] = \app\helpers\MyHelper::formatRupiah($total_terbayar);
+            }
+        
+        }
+        
+        header('Content-Type: application/json');
+        echo \yii\helpers\Json::encode($out);
+        
+      
+    }
+
     public function actionListKampus() {
 
         $out = [];
@@ -85,7 +157,8 @@ class ApiController extends Controller
         echo \yii\helpers\Json::encode($out); 
     }
 
-    public function actionRekapTunggakan() {
+    public function actionRekapTunggakan() 
+    {
 
         $out = [];
         ob_start();

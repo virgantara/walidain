@@ -73,6 +73,7 @@ class Tagihan extends \yii\db\ActiveRecord
         ];
     }
 
+
     public function getNamaTahun()
     {
         return $this->tahun0->nama.' '.$this->tahun0->hijriyah;

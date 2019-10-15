@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Tagihan */
 
-$this->title = $model->id;
+$this->title = $model->namaKomponen;
 $this->params['breadcrumbs'][] = ['label' => 'Tagihans', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -29,16 +29,34 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'urutan',
+            
             'semester',
             'tahun',
             'nim',
-            'komponen_id',
+            'namaKomponen',
             'nilai',
             'terbayar',
             'edit',
-            'status_bayar',
+            [
+                'label' => 'status_bayar',
+
+                'value' => function($data){
+                    switch($data->status_bayar)
+                    {
+                        case 1 : 
+                            return 'LUNAS';
+                        break;
+                        case 2 :
+                            
+                            return 'CICILAN'; 
+                        break;
+                        default:
+                            
+                            return 'BELUM LUNAS';
+                        break;
+                    }
+                }   
+            ],
             'created_at',
             'updated_at',
         ],

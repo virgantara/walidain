@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
 $this->title = 'Laporan Pembayaran';
 $this->params['breadcrumbs'][] = $this->title;
 
-$model->tanggal_awal = !empty($_GET['Tagihan']['tanggal_awal']) ? $_GET['Tagihan']['tanggal_awal'] : date('Y-m-d');
+$model->tanggal_awal = !empty($_GET['Tagihan']['tanggal_awal']) ? $_GET['Tagihan']['tanggal_awal'] : date('Y-m-01');
 $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagihan']['tanggal_akhir'] : date('Y-m-d');
 ?>
 <div class="sales-stok-gudang-index">
@@ -66,7 +66,7 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
     <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kampus</label>
         <div class="col-lg-2 col-sm-10">
-          <select id="kampus">
+          <select id="kampus" name="kampus">
               
           </select>
         </div>
@@ -74,7 +74,7 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
     <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Prodi</label>
         <div class="col-lg-2 col-sm-10">
-          <select id="prodi">
+          <select id="prodi" name="prodi">
               
           </select>
         </div>

@@ -158,7 +158,12 @@ class MenuHelper
 	                        'url' => ['tahun/create']]
 	                ],
 	            ],
-
+	            [
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Batas Pembayaran',  
+	                'visible' => Yii::$app->user->can('theCreator'),
+	                'url' => ['batas-pembayaran/index'],
+	                
+	            ],
 	            [
 	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Sinkronisasi',  
 	                'visible' => Yii::$app->user->can('theCreator'),

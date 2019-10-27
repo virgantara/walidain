@@ -55,6 +55,9 @@ class MenuHelper
 
 	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Transaksi </span>', 'url' => ['/transaksi'],
 	       ];
+
+	       $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Pencekalan </span>', 'url' => ['/simak-pencekalan'],
+	       ];
 	       
 	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Laporan </span><i class="caret"></i>', 'url' => '#',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",

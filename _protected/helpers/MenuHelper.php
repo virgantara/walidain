@@ -163,7 +163,7 @@ class MenuHelper
 	            ],
 	            [
 	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Batas Pembayaran',  
-	                'visible' => Yii::$app->user->can('theCreator'),
+	                'visible' => Yii::$app->user->can('admin'),
 	                'url' => ['batas-pembayaran/index'],
 	                
 	            ],

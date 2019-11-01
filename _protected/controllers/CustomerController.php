@@ -5,6 +5,8 @@ namespace app\controllers;
 use Yii;
 use app\models\Customer;
 use app\models\CustomerSearch;
+use app\models\SimakMastermahasiswa;
+
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -36,20 +38,19 @@ class CustomerController extends Controller
 
         $model = new Customer;
 
-        if(!empty($_GET['tahun_masuk']))
+        if(!empty($_GET['kampus']) && !empty($_GET['prodi']))
         {
              $out = [];
 
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
-            $tahun = $_GET['tahun_masuk'];
+            // $tahun = $_GET['tahun_masuk'];
             $kampus = $_GET['kampus'];
             $prodi = $_GET['prodi'];
 
             $response = $client->get('/m/kampus/prodi', [
                 'kampus' => $kampus,
                 'prodi' => $prodi,
-                'tahun' => $tahun
             ])->send();
             
             if ($response->isOk) {
@@ -59,38 +60,59 @@ class CustomerController extends Controller
                 $errors = '';
                 try 
                 {
+
                     foreach($result as $item)
                     {
+                        $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$item['nim']])->one();
+                        $header = '';
+                        switch ($mhs->kampus) {
+                            case 1:
+                                $header = '751050';
+                                $mhs->va_code = \app\helpers\MyHelper::parseVACode($header, $mhs->nim_mhs);
+                                $mhs->save(false,['va_code']);
+                            break;
+                            case 3:
+                            case 8:
+                                $header = '751051';
+                                $mhs->va_code = \app\helpers\MyHelper::parseVACode($header, $mhs->nim_mhs);
+                                $mhs->save(false,['va_code']);
+                                break;
+                            
+                            default:
+                                # code...
+                                break;
+                        }
+
                         
+
                         $cust = Customer::findOne($item['nim']);
                         if(empty($cust))
-                        {
                             $cust = new Customer;
-                            $cust->custid = $item['nim'];
-                            $cust->nama = $item['nm'];
-                            $cust->va_code = $item['va'];
-                            $cust->kampus = $item['k'];
-                            $cust->nama_kampus = $item['nmk'];
-                            $cust->kode_prodi = $item['kdp'];
-                            $cust->nama_prodi = $item['nmp'];
-                            $cust->save();   
-                            if($cust->validate())
-                            {
-                                $cust->save();
-                            }
 
-                            else
-                            {
-                                
-                                foreach($cust->getErrors() as $attribute){
-                                    foreach($attribute as $error){
-                                        $errors .= $error.' ';
-                                    }
+                        $cust->custid = $item['nim'];
+                        $cust->nama = $item['nm'];
+                        $cust->va_code = $mhs->va_code;
+                        $cust->kampus = $item['k'];
+                        $cust->nama_kampus = $item['nmk'];
+                        $cust->kode_prodi = $item['kdp'];
+                        $cust->nama_prodi = $item['nmp'];
+                        $cust->save();   
+                        if($cust->validate())
+                        {
+                            $cust->save();
+                        }
+
+                        else
+                        {
+                            
+                            foreach($cust->getErrors() as $attribute){
+                                foreach($attribute as $error){
+                                    $errors .= $error.' ';
                                 }
-
-                                throw new Exception;
-                                
                             }
+
+                            throw new Exception;
+                            
                         }
 
                     }

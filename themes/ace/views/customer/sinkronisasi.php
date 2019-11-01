@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 
 $this->title = 'Sinkronisasi Data Mahasiswa';
 $this->params['breadcrumbs'][] = $this->title;
-$tahun_masuk = !empty($_GET['tahun_masuk']) ? $_GET['tahun_masuk'] : '';
+// $tahun_masuk = !empty($_GET['tahun_masuk']) ? $_GET['tahun_masuk'] : '';
 ?>
 <div class="sales-stok-gudang-index">
 
@@ -49,20 +49,7 @@ $tahun_masuk = !empty($_GET['tahun_masuk']) ? $_GET['tahun_masuk'] : '';
           </select>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Tahun Masuk/Angkatan</label>
-        <div class="col-lg-2 col-sm-10">
-          <select name="tahun_masuk" class="form-control">
-              <?php 
-              for($i=date('Y');$i>2009;$i--)
-              {
-                $selected = $tahun_masuk == $i ? 'selected' : '';
-                echo '<option '.$selected.' value="'.$i.'">'.$i.'</option>';
-              }
-            ?>
-          </select>
-        </div>
-    </div>
+   
     <div class="col-sm-2">
         
     </div>
@@ -118,7 +105,7 @@ function getListKampus(){
 
            
             $('#kampus').append(row);
-            
+            $('#kampus').val(".(!empty($_GET['kampus']) ? $_GET['kampus'] : 0).");
         }
 
     });
@@ -150,7 +137,7 @@ function getListProdi(){
 
            
             $('#prodi').append(row);
-            
+            $('#prodi').val(".(!empty($_GET['prodi']) ? $_GET['prodi'] : 0).");
         }
 
     });

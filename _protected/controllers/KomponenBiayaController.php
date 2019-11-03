@@ -33,7 +33,30 @@ class KomponenBiayaController extends Controller
         ];
     }
 
-    
+    public function actionAjaxGetKomponen()
+    {
+        $out = [];
+        if(Yii::$app->request->isAjax)
+        {
+            $id = !empty($_POST['id']) ? $_POST['id'] : 0;
+            $model = KomponenBiaya::findOne($id);
+
+            if(!empty($model))
+            {
+                $out = [
+                    'kd' => $model->kode,
+                    'nm' => $model->nama,
+                    'pr' => $model->prioritas,
+                    'b' => $model->biaya_awal,
+                    't' => $model->tahun
+                ];    
+            }
+            
+        }
+        
+        header('Content-Type: application/json');
+        echo \yii\helpers\Json::encode($out);
+    }
 
     /**
      * Lists all KomponenBiaya models.
@@ -74,6 +97,17 @@ class KomponenBiayaController extends Controller
         $kategori = ArrayHelper::map(Kategori::find()->all(),'id',function($data){
             return $data->kode.' - '.$data->nama;
         });
+
+        $list_prioritas = [
+            '1' => 'HIGH',
+            '2' => 'MED',
+            '3' => 'LOW',
+            '4' => 'SLIGHTLY LOW',
+            '5' => 'LOWEST',
+
+        ];
+
+
         $tahun = ArrayHelper::map(Tahun::find()->all(),'id','nama');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -83,7 +117,8 @@ class KomponenBiayaController extends Controller
         return $this->render('create', [
             'model' => $model,
             'kategori' => $kategori,
-            'tahun' => $tahun
+            'tahun' => $tahun,
+            'list_prioritas' => $list_prioritas
         ]);
     }
 
@@ -100,6 +135,14 @@ class KomponenBiayaController extends Controller
         $kategori = ArrayHelper::map(Kategori::find()->all(),'id','nama');
         $tahun = ArrayHelper::map(Tahun::find()->all(),'id','nama');
         
+         $list_prioritas = [
+            '1' => 'HIGH',
+            '2' => 'MED',
+            '3' => 'LOW',
+            '4' => 'SLIGHTLY LOW',
+            '5' => 'LOWEST',
+
+        ];
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -108,7 +151,8 @@ class KomponenBiayaController extends Controller
         return $this->render('update', [
             'model' => $model,
             'kategori' => $kategori,
-            'tahun' => $tahun
+            'tahun' => $tahun,
+            'list_prioritas' => $list_prioritas
         ]);
     }
 

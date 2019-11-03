@@ -6,6 +6,8 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\KomponenBiaya */
 /* @var $form yii\widgets\ActiveForm */
+
+
 ?>
 
 <div class="komponen-biaya-form">
@@ -23,7 +25,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'biaya_awal')->textInput() ?>
 
-    <?= $form->field($model, 'prioritas')->dropDownList([1,2,3,4,5,6,7,8,9,10]) ?>
+    <?= $form->field($model, 'prioritas')->dropDownList($list_prioritas) ?>
 
     
     <div class="form-group">

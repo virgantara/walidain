@@ -36,6 +36,88 @@ class TagihanController extends Controller
         ];
     }
 
+    public function actionDu()
+    {
+        $model = new Tagihan;
+        $tahun = ArrayHelper::map(Tahun::find()->all(),'id',function($data){
+            return $data->id.' - '.$data->nama.' / '.$data->hijriyah;
+        });
+        $komponen = ArrayHelper::map(KomponenBiaya::find()->all(),'id','nama');
+
+
+        if(!empty($_POST['nilai']))
+        {
+            $query = SimakMastermahasiswa::find()->where([
+                'kode_prodi' => $_POST['prodi'],
+                'kampus' => $_POST['kampus'],
+                'semester' => $_POST['semester_mhs']
+            ]);
+
+            $listCustomer = $query->all();
+            $k = KomponenBiaya::findOne($_POST['komponen']);
+            $transaction = \Yii::$app->db->beginTransaction();
+            $errors = '';
+
+            // print_r($listCustomer);exit;
+            try 
+            {
+                foreach($listCustomer as $c)
+                {
+
+                    $t = Tagihan::find()->where([
+                        'komponen_id' => $_POST['komponen'],
+                        'nim' => $c->nim_mhs,
+                        'tahun' => $_POST['tahun'],
+
+                    ])->one();
+
+                    if(!empty($t)) continue;
+                    
+                    $t = new Tagihan;
+                    $t->tahun = $_POST['tahun'];
+                    $t->komponen_id = $_POST['komponen'];
+                    $t->nilai = $_POST['nilai'];
+                    $t->urutan = $k->prioritas;
+                    $t->nim = $c->nim_mhs;
+                    $t->semester = $c->semester;
+
+
+
+                    if(!$t->save())
+                    {
+                        // print_r($c->attributes);exit;
+                        $errors = \app\helpers\MyHelper::logError($t);
+                        Yii::$app->session->setFlash('danger', $errors);
+
+                        return $this->render('du',[
+                            'model' => $model,
+                            'tahun' => $tahun,
+                            'komponen' => $komponen
+                        ]);
+                    }
+
+                }
+
+                Yii::$app->session->setFlash('success', " Data telah tersimpan");
+
+                $transaction->commit();
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
+            } catch (\Throwable $e) {
+                $transaction->rollBack();
+                
+                throw $e;
+            }
+        }
+
+        return $this->render('du',[
+            'model' => $model,
+            'tahun' => $tahun,
+            'komponen' => $komponen
+        ]);
+    }
+
     public function actionGenerateInstant(){
         $tahun_id = $_POST['Tagihan']['tahun_id'];
         $komponen_id = $_POST['Tagihan']['komponen_id'];

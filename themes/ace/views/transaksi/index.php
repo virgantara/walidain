@@ -31,8 +31,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'KREDIT',
             //'REFFBANK',
             //'TRANSNO',
-            //'created_at',
-            //'updated_at',
+            'created_at',
+            'updated_at',
 
             // ['class' => 'yii\grid\ActionColumn'],
         ],

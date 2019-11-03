@@ -34,7 +34,37 @@ $this->params['breadcrumbs'][] = $this->title;
             //'komponen_id',
             'nilai',
             'terbayar',
-            //'edit',
+            [
+                
+                'attribute' => 'urutan',
+                'label' => 'Prioritas',
+                'format' => 'raw',
+                'filter'=>[
+                    '1' => 'HIGH',
+                    '2' => 'MED',
+                    '3' => 'LOW',
+                    '4' => 'SLIGHTLY LOW',
+                    '5' => 'LOWEST',
+
+                ],
+                'value'=>function($model,$url){
+                    $listPrioritas = [
+                        '1' => 'HIGH',
+                        '2' => 'MED',
+                        '3' => 'LOW',
+                        '4' => 'SLIGHTLY LOW',
+                        '5' => 'LOWEST',
+
+                    ];
+                    
+                    $label = $listPrioritas[$model->urutan];
+                    
+                    return '<button type="button" class="btn btn-success btn-sm" >
+                               <span>'.$label.'</span>
+                            </button>';
+                    
+                },
+            ],
             [
                 'attribute' => 'status_bayar',
                 'label' => 'Status',

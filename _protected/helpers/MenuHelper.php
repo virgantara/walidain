@@ -38,9 +38,15 @@ class MenuHelper
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	         'visible' => Yii::$app->user->can('admin'),
 	        'items'=>[	           
+	            
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulanan',  
-	                'url' => ['/tagihan/bulanan'],	           
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Daftar Ulang & Bulanan',  
+	                'url' => ['/tagihan/du'],	           
+	            ],
+	            ['label' => '<hr style="padding:0px;margin:0px">'],
+	            // [
+	            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulanan',  
+	            //     'url' => ['/tagihan/bulanan'],	           
 	            ],
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Instant Tagihan',  

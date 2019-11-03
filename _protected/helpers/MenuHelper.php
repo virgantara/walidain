@@ -47,7 +47,7 @@ class MenuHelper
 	            // [
 	            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulanan',  
 	            //     'url' => ['/tagihan/bulanan'],	           
-	            ],
+	            // ],
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Instant Tagihan',  
 	                'url' => ['/tagihan/instant'],	        

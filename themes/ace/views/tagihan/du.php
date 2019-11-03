@@ -61,6 +61,12 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Semester Mahasiswa Sekarang</label>
+        <div class="col-lg-2 col-sm-10">
+          <?= Html::input('number','semester_mhs','', ['id'=>'semester_mhs']) ?>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Tahun</label>
         <div class="col-lg-2 col-sm-10">
           <?= Html::dropDownList('tahun','',$tahun, ['prompt'=>'..Pilih Tahun..','id'=>'tahun_id']) ?>
@@ -85,12 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Semester</label>
-        <div class="col-lg-2 col-sm-10">
-          <?= Html::input('number','semester_mhs','', ['id'=>'semester_mhs']) ?>
-        </div>
-    </div>
+    
     <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
         <div class="col-lg-2 col-sm-10">

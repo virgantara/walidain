@@ -73,7 +73,7 @@ class CustomerController extends Controller
                             break;
                             case 3:
                             case 8:
-                                $header = '751051';
+                                $header = '751066';
                                 $mhs->va_code = \app\helpers\MyHelper::parseVACode($header, $mhs->nim_mhs);
                                 $mhs->save(false,['va_code']);
                                 break;

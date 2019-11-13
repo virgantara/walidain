@@ -61,6 +61,7 @@ class CustomerController extends Controller
                 try 
                 {
 
+
                     foreach($result as $item)
                     {
                         $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$item['nim']])->one();

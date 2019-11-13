@@ -48,6 +48,7 @@ class KomponenBiayaController extends Controller
                     'nm' => $model->nama,
                     'pr' => $model->prioritas,
                     'b' => $model->biaya_awal,
+                    'm' => $model->biaya_minimal,
                     't' => $model->tahun
                 ];    
             }

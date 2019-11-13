@@ -27,7 +27,7 @@ class TagihanSearch extends Tagihan
     {
         return [
             [['id', 'urutan', 'semester', 'tahun', 'komponen_id', 'edit', 'status_bayar'], 'integer'],
-            [['nim', 'created_at', 'updated_at','namaKomponen','namaCustomer','namaProdi','namaKampus','namaTahun'], 'safe'],
+            [['nim', 'created_at', 'updated_at','namaKomponen','namaCustomer','namaProdi','namaKampus','namaTahun','nilai_minimal'], 'safe'],
             [['nilai', 'terbayar'], 'number'],
         ];
     }

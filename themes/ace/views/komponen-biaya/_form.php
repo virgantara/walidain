@@ -24,6 +24,7 @@ use yii\widgets\ActiveForm;
 
 
     <?= $form->field($model, 'biaya_awal')->textInput() ?>
+    <?= $form->field($model, 'biaya_minimal')->textInput() ?>
 
     <?= $form->field($model, 'prioritas')->dropDownList($list_prioritas) ?>
 

@@ -10,16 +10,14 @@ use Yii;
  * @property int $id
  * @property string $kode
  * @property string $nama
- * @property int $periode_tagihan_id
  * @property double $biaya_awal
+ * @property double $biaya_minimal
  * @property int $prioritas
  * @property int $kategori_id
  * @property int $tahun
  * @property string $created_at
  * @property string $updated_at
  *
- * @property BiayaFakultas[] $biayaFakultas
- * @property PeriodeTagihan $periodeTagihan
  * @property Kategori $kategori
  * @property Tagihan[] $tagihans
  */
@@ -40,8 +38,8 @@ class KomponenBiaya extends \yii\db\ActiveRecord
     {
         return [
             [['kode', 'nama', 'kategori_id', 'tahun'], 'required'],
+            [['biaya_awal', 'biaya_minimal'], 'number'],
             [['prioritas', 'kategori_id', 'tahun'], 'integer'],
-            [['biaya_awal'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['kode'], 'string', 'max' => 5],
             [['nama'], 'string', 'max' => 255],
@@ -59,31 +57,19 @@ class KomponenBiaya extends \yii\db\ActiveRecord
             'kode' => 'Kode',
             'nama' => 'Nama',
             'biaya_awal' => 'Biaya Awal',
+            'biaya_minimal' => 'Biaya Minimal',
             'prioritas' => 'Prioritas',
             'kategori_id' => 'Kategori ID',
             'tahun' => 'Tahun',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
-            'namaKategori' => 'Kategori'
         ];
     }
 
+    
     public function getNamaKategori(){
         return $this->kategori->nama;
     }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBiayaFakultas()
-    {
-        return $this->hasMany(BiayaFakultas::className(), ['bill_komponen_biaya_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-   
 
     /**
      * @return \yii\db\ActiveQuery

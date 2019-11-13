@@ -98,6 +98,12 @@ $this->params['breadcrumbs'][] = $this->title;
           <?= Html::input('text','nilai','',['id'=>'nilai_tagihan']) ?>
         </div>
     </div>
+     <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
+        <div class="col-lg-2 col-sm-10">
+          <?= Html::input('text','nilai_minimal','',['id'=>'nilai_minimal']) ?>
+        </div>
+    </div>
     <div class="col-sm-2">
         
     </div>
@@ -145,6 +151,7 @@ function getKomponen(id){
             
             $('#loading').hide();  
             $('#nilai_tagihan').val(data.b);
+            $('#nilai_minimal').val(data.m);
         }
 
     });

@@ -33,6 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'semester',
             //'komponen_id',
             'nilai',
+            'nilai_minimal',
             'terbayar',
             [
                 

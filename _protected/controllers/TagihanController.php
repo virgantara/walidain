@@ -77,12 +77,13 @@ class TagihanController extends Controller
                     $t->tahun = $_POST['tahun'];
                     $t->komponen_id = $_POST['komponen'];
                     $t->nilai = $_POST['nilai'];
+                    $t->nilai_minimal = $_POST['nilai_minimal'];
                     $t->urutan = $k->prioritas;
                     $t->nim = $c->nim_mhs;
                     $t->semester = $c->semester;
 
 
-
+                    
                     if(!$t->save())
                     {
                         // print_r($c->attributes);exit;

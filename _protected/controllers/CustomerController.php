@@ -85,7 +85,7 @@ class CustomerController extends Controller
                         }
 
                         
-
+                        
                         $cust = Customer::findOne($item['nim']);
                         if(empty($cust))
                             $cust = new Customer;
@@ -97,7 +97,7 @@ class CustomerController extends Controller
                         $cust->nama_kampus = $item['nmk'];
                         $cust->kode_prodi = $item['kdp'];
                         $cust->nama_prodi = $item['nmp'];
-                        $cust->save();   
+                        
                         if($cust->validate())
                         {
                             $cust->save();
@@ -105,6 +105,8 @@ class CustomerController extends Controller
 
                         else
                         {
+
+                            
                             
                             foreach($cust->getErrors() as $attribute){
                                 foreach($attribute as $error){

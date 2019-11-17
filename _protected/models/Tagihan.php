@@ -43,7 +43,7 @@ class Tagihan extends \yii\db\ActiveRecord
             [[ 'tahun', 'komponen_id', 'nilai'], 'required'],
             [['nilai', 'terbayar'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
-            [['nim'], 'string', 'max' => 20],
+            [['nim'], 'string', 'max' => 255],
             [['komponen_id'], 'exist', 'skipOnError' => true, 'targetClass' => KomponenBiaya::className(), 'targetAttribute' => ['komponen_id' => 'id']],
             [['nim'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['nim' => 'custid']],
              [['tahun'], 'exist', 'skipOnError' => true, 'targetClass' => Tahun::className(), 'targetAttribute' => ['tahun' => 'id']],

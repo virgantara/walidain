@@ -50,7 +50,8 @@ class TagihanController extends Controller
             $query = SimakMastermahasiswa::find()->where([
                 'kode_prodi' => $_POST['prodi'],
                 'kampus' => $_POST['kampus'],
-                'semester' => $_POST['semester_mhs']
+                'semester' => $_POST['semester_mhs'],
+                'status_aktivitas' => 'A'
             ]);
 
             $listCustomer = $query->all();
@@ -86,7 +87,7 @@ class TagihanController extends Controller
                     
                     if(!$t->save())
                     {
-                        // print_r($c->attributes);exit;
+                        
                         $errors = \app\helpers\MyHelper::logError($t);
                         Yii::$app->session->setFlash('danger', $errors);
 

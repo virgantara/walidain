@@ -4,7 +4,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
 use kartik\depdrop\DepDrop;
-
+use yii\jui\AutoComplete;
+use yii\web\JsExpression;
 // use app\models\TagihanSearch;
 
 // use keygenqt\autocompleteAjax\AutocompleteAjax;
@@ -52,16 +53,51 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Semester Komponen</label>
+     <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
         <div class="col-lg-2 col-sm-10">
-          <?= Html::input('text','semester_biaya','', ['id'=>'semester_biaya']) ?>
+          <?= Html::input('text','nilai','',['id'=>'nilai_tagihan']) ?>
+        </div>
+    </div>
+     <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
+        <div class="col-lg-2 col-sm-10">
+          <?= Html::input('text','nilai_minimal','',['id'=>'nilai_minimal']) ?>
         </div>
     </div>
     <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> NIM</label>
         <div class="col-lg-2 col-sm-10">
-          <?= Html::input('text','nim','', ['id'=>'nim']) ?>
+             <?php 
+    AutoComplete::widget([
+    'name' => 'nama_mhs',
+    'id' => 'nama_mhs',
+    'clientOptions' => [
+         'source' =>new JsExpression('function(request, response) {
+                        $.getJSON("'.Url::to(['api/ajax-cari-mhs/']).'", {
+                            term: request.term
+                        }, response);
+             }'),
+    // 'source' => Url::to(['api/ajax-pasien-daftar/']),
+        'autoFill'=>true,
+        'minLength'=>'1',
+        'select' => new JsExpression("function( event, ui ) {
+            if(ui.item.id != 0){
+                $('#nim').val(ui.item.nim);
+                $('#semester_biaya').val(ui.item.smt);
+            }
+            
+
+         }")
+    ],
+    'options' => [
+        'size' => '40'
+    ]
+ ]); 
+ ?>  
+        <input type="text" placeholder="Ketik Nama/NIM Mhs" class="form-control" id="nama_mhs" name="nama_mhs"/>
+         <?= Html::input('hidden','semester_biaya','', ['id'=>'semester_biaya']) ?>
+      <?= Html::input('hidden','nim','', ['id'=>'nim']) ?>
         </div>
     </div>
     
@@ -126,9 +162,38 @@ function generate(){
     });
 }
 
+
+function getKomponen(id){
+    $.ajax({
+        type : 'POST',
+        url : '".Url::to(['komponen-biaya/ajax-get-komponen'])."',
+        data : 'id='+id,
+        beforeSend : function(){
+            $('#loading').show();
+        },
+        error : function(err){
+            console.log(err);
+            $('#loading').hide();
+        },
+        success : function(data){
+
+            var data = $.parseJSON(data);
+            
+            $('#loading').hide();  
+            $('#nilai_tagihan').val(data.b);
+            $('#nilai_minimal').val(data.m);
+        }
+
+    });
+}
+
 $(document).ready(function(){
     
+    $('#komponen_id').change(function(){
+        var id = $(this).val();
 
+        getKomponen(id);
+    });
     $('#generate').click(function(){
         generate();
     });

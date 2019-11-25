@@ -362,42 +362,9 @@ class ApiController extends Controller
       
     }
 
-    public function actionAjaxPasienDaftar() {
+    
 
-        $q = $_GET['term'];
-        
-        // $list = Pasien::find()->addFilterWhere(['like',])
-        $api_baseurl = Yii::$app->params['api_baseurl'];
-        $client = new Client(['baseUrl' => $api_baseurl]);
-        $jenis_rawat = $_GET['jenis_rawat'];
-        $response = $client->get('/p/daftar', ['key' => $q,'jenis'=>$jenis_rawat])->send();
-        
-        $out = [];
-        
-        if ($response->isOk) {
-            $result = $response->data['values'];
-            foreach ($result as $d) {
-                $out[] = [
-                    'id' => $d['NoMedrec'],
-                    'label'=> $d['NAMA'].' '.$d['NoMedrec'],
-                    'nodaftar'=> $d['NODAFTAR'],
-                    'jenispx'=> $d['KodeGol'],
-                    'namagol' => $d['NamaGol'],
-                    'tgldaftar' => $d['TGLDAFTAR'],
-                    'jamdaftar' => $d['JamDaftar'],
-                    'kodeunit' => $d['KodeUnit'],
-                    'namaunit' => $d['unit_tipe'] == 2 ? 'Poli '.$d['NamaUnit'] : $d['NamaUnit']  
-                ];
-            }
-        }
-        
-
-        echo \yii\helpers\Json::encode($out);
-
-      
-    }
-
-    public function actionAjaxPasien() {
+    public function actionAjaxCariMhs() {
 
         $q = $_GET['term'];
         
@@ -405,7 +372,7 @@ class ApiController extends Controller
        
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
-        $response = $client->get('/pasien/nama', ['key' => $q])->send();
+        $response = $client->get('/m/cari', ['key' => $q])->send();
         
         $out = [];
         
@@ -413,8 +380,10 @@ class ApiController extends Controller
             $result = $response->data['values'];
             foreach ($result as $d) {
                 $out[] = [
-                    'id' => $d['NoMedrec'],
-                    'label'=> $d['NAMA'].' - '.$d['NoMedrec']
+                    'id' => $d['id'],
+                    'nim' => $d['nim_mhs'],
+                    'smt' => $d['semester'],
+                    'label'=> $d['nim_mhs'].' - '.$d['nama_mahasiswa']
                 ];
             }
         }

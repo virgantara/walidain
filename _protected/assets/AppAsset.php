@@ -25,6 +25,7 @@ class AppAsset extends AssetBundle
         'css/bootstrap.min.css',
         'font-awesome/4.5.0/css/font-awesome.min.css',
         'css/ace.min.css',
+        'css/style.css',
         'css/fonts.googleapis.com.css',
         'css/ace-skins.min.css',
         'css/ace-rtl.min.css',

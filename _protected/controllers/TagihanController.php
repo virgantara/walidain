@@ -87,7 +87,7 @@ class TagihanController extends Controller
                     
                     if(!$t->save())
                     {
-                        
+                        // print_r($t->attributes);exit;
                         $errors = \app\helpers\MyHelper::logError($t);
                         Yii::$app->session->setFlash('danger', $errors);
 
@@ -396,8 +396,10 @@ class TagihanController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        
+        if (!Yii::$app->request->isAjax) {
+            return $this->redirect(['index']);
+        }
     }
 
     /**

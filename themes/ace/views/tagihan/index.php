@@ -2,7 +2,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-
+use yii\widgets\Pjax;
+use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\TagihanSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -18,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Create Tagihan', ['tagihan/instant'], ['class' => 'btn btn-success']) ?>
     </p>
-
+    <?php Pjax::begin(['id' => 'pjax-container']); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -105,8 +106,39 @@ $this->params['breadcrumbs'][] = $this->title;
                     'delete' => function ($model) {
                         return $model->status_bayar != 1;
                     },
-                ]
+                ],
+                'buttons' => [
+                   
+                    'delete' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                                   'title'        => 'delete',
+                                    'onclick' => "
+                                    if (confirm('Buang data ini?')) {
+                                        $.ajax('$url', {
+                                            type: 'POST'
+                                        }).done(function(data) {
+                                            $.pjax.reload({container: '#pjax-container'});
+                                            
+                                        });
+                                    }
+                                    return false;
+                                ",
+                                    // 'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
+                                    // 'data-method'  => 'post',
+                        ]);
+                    }
+                ],
+                'urlCreator' => function ($action, $model, $key, $index) {
+                    
+                    if ($action === 'delete') {
+                        $url =Url::to(['tagihan/delete','id'=>$model->id]);
+                        return $url;
+                    }
+
+                  
+                }
             ],
         ],
     ]); ?>
+    <?php Pjax::end(); ?>
 </div>

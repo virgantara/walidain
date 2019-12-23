@@ -78,7 +78,7 @@ class KomponenBiayaSearch extends KomponenBiaya
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', self::tableName().'.kode', $this->kode])
+        $query->andFilterWhere(['like', self::tableName().'kode', $this->kode])
             ->andFilterWhere(['like', self::tableName().'.nama', $this->nama])
             ->andFilterWhere(['like', 'k.nama', $this->namaKategori]);
 

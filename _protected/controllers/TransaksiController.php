@@ -107,7 +107,9 @@ class TransaksiController extends AppController
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        if (!Yii::$app->request->isAjax) {
+            return $this->redirect(['index']);
+        }
     }
 
     /**

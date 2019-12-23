@@ -99,6 +99,23 @@ class Tagihan extends \yii\db\ActiveRecord
         return $this->customer->nama_kampus;
     }
 
+    public function getStatusPembayaran()
+    {
+        if($this->terbayar >= $this->nilai)
+        {
+            return 1;
+        }
+
+        else if($this->terbayar >= $this->nilai_minimal && $this->terbayar > 0)
+        {
+            return 2;
+        }
+
+        else{
+            return 0;
+        }
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

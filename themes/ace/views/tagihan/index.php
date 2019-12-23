@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter'=>["1"=>"LUNAS","2"=>"CICILAN","0"=>"BELUM LUNAS"],
                 'value'=>function($model,$url){
 
-                    switch($model->status_bayar)
+                    switch($model->statusPembayaran)
                     {
                         case 1 : 
                             $st = 'success';
@@ -132,6 +132,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     
                     if ($action === 'delete') {
                         $url =Url::to(['tagihan/delete','id'=>$model->id]);
+                        return $url;
+                    }
+
+                    else if ($action === 'update') {
+                        $url =Url::to(['tagihan/update','id'=>$model->id]);
+                        return $url;
+                    }
+
+                    else if ($action === 'view') {
+                        $url =Url::to(['tagihan/view','id'=>$model->id]);
                         return $url;
                     }
 

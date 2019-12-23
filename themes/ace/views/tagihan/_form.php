@@ -26,14 +26,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'terbayar')->textInput() ?>
 
-    <?php 
-    $list_status = [
-        0 => 'BELUM LUNAS',
-        1 => 'LUNAS',
-        2 => 'CICILAN'
-    ];
-    ?>
-    <?= $form->field($model, 'status_bayar')->dropDownList($list_status) ?>
+   
 
 
     <div class="form-group">

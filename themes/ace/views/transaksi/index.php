@@ -15,8 +15,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    <?php Pjax::begin(['id' => 'pjax-container']); ?>
     <div class="table-responsive">
+    <?php Pjax::begin(['id' => 'pjax-container']); ?>
+    
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -96,6 +97,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
-</div>
+
     <?php Pjax::end(); ?>
+    </div>
 </div>

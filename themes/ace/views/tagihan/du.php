@@ -120,12 +120,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     <?php ActiveForm::end(); ?>
-
+ <div class="table-responsive">
 <table id="tabel_tagihan" class="table table-bordered table-striped">
     
     
 </table>
-   
+   </div>
 </div>
 </div>
 <?php

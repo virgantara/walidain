@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Create Tagihan', ['tagihan/instant'], ['class' => 'btn btn-success']) ?>
     </p>
+    <div class="table-responsive">
     <?php Pjax::begin(['id' => 'pjax-container']); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -151,4 +152,5 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
     <?php Pjax::end(); ?>
+</div>
 </div>

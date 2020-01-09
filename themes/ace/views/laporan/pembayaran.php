@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
 
 // use app\models\TagihanSearch;
@@ -66,7 +67,7 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
     <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kampus</label>
         <div class="col-lg-2 col-sm-10">
-          <select id="kampus" name="kampus">
+          <select id="kampus" name="kampus"  class="form-control">
               
           </select>
         </div>
@@ -74,9 +75,18 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
     <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Prodi</label>
         <div class="col-lg-2 col-sm-10">
-          <select id="prodi" name="prodi">
+          <select id="prodi" name="prodi" class="form-control">
               
           </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Komponen</label>
+        <div class="col-lg-2 col-sm-10">
+          <?= Html::dropDownList('komponen', null,
+      ArrayHelper::map(\app\models\KomponenBiaya::find()->all(), 'id', function($data){
+        return $data->tahun.' - '.$data->nama;
+      }),['class' => 'form-control', 'id' => 'komponen','prompt'=>'Semua Komponen']) ?>
         </div>
     </div>
     <div class="col-sm-2">
@@ -113,9 +123,10 @@ function getTagihan(){
     let ed = $('#tagihansearch-tanggal_akhir').val();
     let kampus = $('#kampus').val();
     let prodi = $('#prodi').val();
+    let komponen = $('#komponen').val();
     $.ajax({
         type : 'POST',
-        data : 'sd='+sd+'&ed='+ed+'&kampus='+kampus+'&prodi='+prodi,
+        data : 'sd='+sd+'&ed='+ed+'&kampus='+kampus+'&prodi='+prodi+'&komponen='+komponen,
         url : '/api/tagihan',
         beforeSend : function(){
             $('#loading').show();
@@ -213,7 +224,7 @@ function getListProdi(){
             
             $('#loading').hide();  
             $('#prodi').empty();
-            var row = '';
+            var row = '<option value=\"\">Semua Prodi</option>';
                    
             $.each(data.values,function(i, obj){
                 row += '<option value=\"'+obj.kode_prodi+'\">'+obj.nama_prodi+'</option>';

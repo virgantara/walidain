@@ -344,7 +344,6 @@ class LaporanController extends Controller
         if(!empty($_GET['export']))
         {
             
-            // print_r($_GET);exit;
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
             
@@ -359,7 +358,7 @@ class LaporanController extends Controller
                 ->setCellValue('G3', 'Terbayar')
                 ->setCellValue('H3', 'Sisa')
                 ->setCellValue('I3', 'Tanggal');
-;
+
 
             $sheet->mergeCells('A1:L1')->getStyle('A1:I1')->getAlignment()->setHorizontal('center');
             $sheet->setCellValue('A1','LAPORAN PEMBAYARAN');
@@ -373,7 +372,7 @@ class LaporanController extends Controller
             $sheet->getColumnDimension('B')->setWidth(25);
             $sheet->getColumnDimension('C')->setWidth(35);
             $sheet->getColumnDimension('D')->setWidth(8);
-            $sheet->getColumnDimension('E')->setWidth(10);
+            $sheet->getColumnDimension('E')->setWidth(25);
             $sheet->getColumnDimension('F')->setWidth(20);
             $sheet->getColumnDimension('G')->setWidth(20);
             $sheet->getColumnDimension('H')->setWidth(20);
@@ -444,6 +443,7 @@ class LaporanController extends Controller
             
 
         }
+
 
         return $this->render('pembayaran',[
             'model' => $model

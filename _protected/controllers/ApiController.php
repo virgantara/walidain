@@ -276,6 +276,7 @@ class ApiController extends Controller
             $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
             $kampus = $_POST['kampus'];
             $prodi = $_POST['prodi'];
+            $komponen = $_POST['komponen'];
             
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
@@ -285,7 +286,8 @@ class ApiController extends Controller
                 'startdate' => $sd,
                 'enddate'=>$ed,
                 'kampus' => $kampus,
-                'prodi' => $prodi
+                'prodi' => $prodi,
+                'komponen' => $komponen
             ])->send();
             
             

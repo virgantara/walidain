@@ -82,8 +82,13 @@ class LaporanController extends Controller
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
-
-            $response = $client->get('/b/transaksi/list', ['startdate' => $sd,'enddate'=>$ed])->send();
+            $client_token = Yii::$app->params['client_token'];
+             $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
+            $response = $client->get('/b/transaksi/list', ['startdate' => $sd,'enddate'=>$ed],$headers)->send();
             
             if ($response->isOk) {
                 $result = $response->data['values'];
@@ -174,12 +179,17 @@ class LaporanController extends Controller
 
             $sd = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_awal'])).'000001';
             $ed = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_akhir'])).'235959';
-            
+            $client_token = Yii::$app->params['client_token'];
+             $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
 
-            $response = $client->get('/b/tunggakan/rekap', ['startdate' => $sd,'enddate'=>$ed])->send();
+            $response = $client->get('/b/tunggakan/rekap', ['startdate' => $sd,'enddate'=>$ed],$headers)->send();
             
             if ($response->isOk) {
                 $result = $response->data['values'];
@@ -278,13 +288,18 @@ class LaporanController extends Controller
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
-
+            $client_token = Yii::$app->params['client_token'];
+             $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
             $response = $client->get('/b/tagihan/periode/tunggakan', [
                 'startdate' => $sd,
                 'enddate'=>$ed,
                 'kampus' => $kampus,
                 'prodi' => $prodi
-            ])->send();
+            ],$headers)->send();
             
             if ($response->isOk) {
                 $result = $response->data['values'];
@@ -390,13 +405,18 @@ class LaporanController extends Controller
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
-
+            $client_token = Yii::$app->params['client_token'];
+             $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
             $response = $client->get('/b/tagihan/periode', [
                 'startdate' => $sd,
                 'enddate'=>$ed,
                 'kampus'=>$kampus,
                 'prodi' => $prodi
-            ])->send();
+            ],$headers)->send();
             
             if ($response->isOk) {
                 $result = $response->data['values'];

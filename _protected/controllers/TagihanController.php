@@ -128,11 +128,15 @@ class TagihanController extends Controller
             
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
-
+        $client_token = Yii::$app->params['client_token'];
+        
         $response = $client->createRequest()
             ->setMethod('POST')
             ->setUrl('/b/tagihan/generate/mhs')
-            ->addHeaders(['content-type' => 'application/x-www-form-urlencoded'])
+            ->addHeaders([
+                'content-type' => 'application/x-www-form-urlencoded',
+                'x-access-token'=>$client_token
+            ])
             ->setData([
                 'tahun' => $tahun_id,
                 'komponen_id' => $komponen_id,
@@ -160,11 +164,12 @@ class TagihanController extends Controller
             
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
+        $client_token = Yii::$app->params['client_token'];
 
         $response = $client->createRequest()
             ->setMethod('POST')
             ->setUrl('/b/tagihan/generate')
-            ->addHeaders(['content-type' => 'application/x-www-form-urlencoded'])
+            ->addHeaders(['content-type' => 'application/x-www-form-urlencoded','x-access-token'=>$client_token])
             ->setData([
                 'fid'=>$fakultas_id,
                 'tahun' => $tahun_id,

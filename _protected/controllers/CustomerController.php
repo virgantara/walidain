@@ -44,14 +44,19 @@ class CustomerController extends Controller
 
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
+            $client_token = Yii::$app->params['client_token'];
             // $tahun = $_GET['tahun_masuk'];
             $kampus = $_GET['kampus'];
             $prodi = $_GET['prodi'];
-
+             $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
             $response = $client->get('/m/kampus/prodi', [
                 'kampus' => $kampus,
                 'prodi' => $prodi,
-            ])->send();
+            ],$headers)->send();
             
             if ($response->isOk) {
                 $result = $response->data['values'];

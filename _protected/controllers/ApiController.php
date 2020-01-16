@@ -46,11 +46,16 @@ class ApiController extends Controller
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
-
+            $client_token = Yii::$app->params['client_token'];
+            $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
             $response = $client->get('/b/transaksi/list', [
                 'startdate' => $sd,
                 'enddate'=>$ed
-            ])->send();
+            ],$headers)->send();
             
             
             
@@ -112,8 +117,13 @@ class ApiController extends Controller
 
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
-
-        $response = $client->get('/k/list')->send();
+        $client_token = Yii::$app->params['client_token'];
+        $headers = [
+            'headers' => [
+                'x-access-token'=>$client_token
+            ]
+        ];
+        $response = $client->get('/k/list',[],$headers)->send();
         
         if ($response->isOk) {
             $result = $response->data['values'];
@@ -129,8 +139,13 @@ class ApiController extends Controller
 
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
-
-        $response = $client->get('/p/list')->send();
+        $client_token = Yii::$app->params['client_token'];
+         $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
+        $response = $client->get('/p/list',[],$headers)->send();
         
         if ($response->isOk) {
             $result = $response->data['values'];
@@ -146,8 +161,13 @@ class ApiController extends Controller
 
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
-
-        $response = $client->get('/f/list')->send();
+         $client_token = Yii::$app->params['client_token'];
+         $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
+        $response = $client->get('/f/list',[],$headers)->send();
         
         if ($response->isOk) {
             $result = $response->data['values'];
@@ -171,11 +191,16 @@ class ApiController extends Controller
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
-
+            $client_token = Yii::$app->params['client_token'];
+             $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
             $response = $client->get('/b/tunggakan/rekap', [
                 'startdate' => $sd,
                 'enddate'=>$ed
-            ])->send();
+            ],$headers)->send();
             
             
             
@@ -221,13 +246,18 @@ class ApiController extends Controller
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
-
+            $client_token = Yii::$app->params['client_token'];
+             $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
             $response = $client->get('/b/tagihan/periode/tunggakan', [
                 'startdate' => $sd,
                 'enddate'=>$ed,
                 'kampus' => $kampus,
                 'prodi' => $prodi
-            ])->send();
+            ],$headers)->send();
             
             
             
@@ -277,18 +307,23 @@ class ApiController extends Controller
             $kampus = $_POST['kampus'];
             $prodi = $_POST['prodi'];
             $komponen = $_POST['komponen'];
-            
+            $client_token = Yii::$app->params['client_token'];
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
-
+            $client_token = Yii::$app->params['client_token'];
+             $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
             $response = $client->get('/b/tagihan/periode', [
                 'startdate' => $sd,
                 'enddate'=>$ed,
                 'kampus' => $kampus,
                 'prodi' => $prodi,
                 'komponen' => $komponen
-            ])->send();
+            ],$headers)->send();
             
             
             
@@ -336,7 +371,13 @@ class ApiController extends Controller
         // $list = Pasien::find()->addFilterWhere(['like',])
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
-        $response = $client->get('/d/ekd', ['tahun' => $ta,'prodi'=>$prodi])->send();
+        $client_token = Yii::$app->params['client_token'];
+         $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
+        $response = $client->get('/d/ekd', ['tahun' => $ta,'prodi'=>$prodi],$headers)->send();
         
         $out = [];
         
@@ -374,7 +415,13 @@ class ApiController extends Controller
        
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
-        $response = $client->get('/m/cari', ['key' => $q])->send();
+         $client_token = Yii::$app->params['client_token'];
+         $headers = [
+                'headers' => [
+                    'x-access-token'=>$client_token
+                ]
+            ];
+        $response = $client->get('/m/cari', ['key' => $q],$headers)->send();
         
         $out = [];
         

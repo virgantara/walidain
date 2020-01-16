@@ -48,11 +48,7 @@ class CustomerController extends Controller
             // $tahun = $_GET['tahun_masuk'];
             $kampus = $_GET['kampus'];
             $prodi = $_GET['prodi'];
-             $headers = [
-                'headers' => [
-                    'x-access-token'=>$client_token
-                ]
-            ];
+            $headers = ['x-access-token'=>$client_token];
             $response = $client->get('/m/kampus/prodi', [
                 'kampus' => $kampus,
                 'prodi' => $prodi,

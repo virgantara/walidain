@@ -29,7 +29,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'nim',
             'namaCustomer',
             'namaProdi',
-            'namaKampus',
+            [
+                'attribute' => 'namaKampus',
+                'label' => 'Kampus',
+                'format' => 'raw',
+                'filter'=>["Siman"=>"Siman","Mantingan"=>"Mantingan","Mantingan Reguler"=>"Mantingan Reguler"],
+                'value'=>function($model,$url){
+
+                    
+                    return $model->namaKampus;
+                    
+                },
+            ],
             'namaTahun',
             'namaKomponen',
             'semester',

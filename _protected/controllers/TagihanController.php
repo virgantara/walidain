@@ -13,7 +13,6 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\httpclient\Client;
-use app\models\Customer;
 use app\models\SimakMastermahasiswa;
 
 /**

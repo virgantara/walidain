@@ -24,6 +24,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'nilai')->textInput() ?>
 
+    <?= $form->field($model, 'nilai_minimal')->textInput() ?>
+
     <?= $form->field($model, 'terbayar')->textInput() ?>
 
    

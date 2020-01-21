@@ -79,13 +79,21 @@ use Yii;
  * @property int $is_synced
  * @property string $kode_pd
  * @property string $va_code
+ * @property int $kamar_id
+ * @property int $is_eligible
  * @property string $created_at
  * @property string $updated_at
  *
+ * @property Tagihan[] $tagihans
+ * @property Transaksi[] $transaksis
+ * @property ErpRiwayatPelanggaran[] $erpRiwayatPelanggarans
  * @property SimakMahasiswaOrtu[] $simakMahasiswaOrtus
  * @property SimakMahasiswaProgramTambahan[] $simakMahasiswaProgramTambahans
  * @property SimakMasterprogramstudi $kodeProdi
- * @property SimakTahfidzKelompokAnggota[] $simakTahfidzKelompokAnggotas
+ * @property ErpKamar $kamar
+ * @property SimakKampus $kampus0
+ * @property SimakPencekalan[] $simakPencekalans
+ * @property SimakTahfidzKelompokAnggotum[] $simakTahfidzKelompokAnggota
  * @property SimakTahfidzNilai[] $simakTahfidzNilais
  */
 class SimakMastermahasiswa extends \yii\db\ActiveRecord
@@ -107,7 +115,7 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
             [['nim_mhs', 'nama_mahasiswa'], 'required'],
             [['tgl_lahir', 'tgl_masuk', 'tgl_lulus', 'tgl_sk_yudisium', 'created_at', 'updated_at'], 'safe'],
             [['keterangan'], 'string'],
-            [['status_bayar', 'status_mahasiswa', 'is_synced'], 'integer'],
+            [['status_bayar', 'status_mahasiswa', 'is_synced', 'kamar_id', 'is_eligible'], 'integer'],
             [['kode_pt', 'asal_prodi', 'kode_pos'], 'string', 'max' => 6],
             [['kode_fakultas', 'kode_prodi', 'kode_jenjang_studi', 'jenis_kelamin', 'semester_awal', 'batas_studi', 'status_awal', 'asal_jenjang_studi', 'semester', 'rt', 'rw'], 'string', 'max' => 5],
             [['nim_mhs', 'nama_asal_pt', 'telepon', 'hp'], 'string', 'max' => 25],
@@ -128,6 +136,8 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
             [['gol_darah', 'kampus'], 'string', 'max' => 2],
             [['nim_mhs'], 'unique'],
             [['kode_prodi'], 'exist', 'skipOnError' => true, 'targetClass' => SimakMasterprogramstudi::className(), 'targetAttribute' => ['kode_prodi' => 'kode_prodi']],
+            [['kamar_id'], 'exist', 'skipOnError' => true, 'targetClass' => ErpKamar::className(), 'targetAttribute' => ['kamar_id' => 'id']],
+            [['kampus'], 'exist', 'skipOnError' => true, 'targetClass' => SimakKampus::className(), 'targetAttribute' => ['kampus' => 'kode_kampus']],
         ];
     }
 
@@ -209,9 +219,35 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
             'is_synced' => 'Is Synced',
             'kode_pd' => 'Kode Pd',
             'va_code' => 'Va Code',
+            'kamar_id' => 'Kamar ID',
+            'is_eligible' => 'Is Eligible',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTagihans()
+    {
+        return $this->hasMany(Tagihan::className(), ['nim' => 'nim_mhs']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTransaksis()
+    {
+        return $this->hasMany(Transaksi::className(), ['CUSTID' => 'nim_mhs']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getErpRiwayatPelanggarans()
+    {
+        return $this->hasMany(ErpRiwayatPelanggaran::className(), ['nim' => 'nim_mhs']);
     }
 
     /**
@@ -241,9 +277,33 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSimakTahfidzKelompokAnggotas()
+    public function getKamar()
     {
-        return $this->hasMany(SimakTahfidzKelompokAnggota::className(), ['nim' => 'nim_mhs']);
+        return $this->hasOne(ErpKamar::className(), ['id' => 'kamar_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getKampus0()
+    {
+        return $this->hasOne(SimakKampus::className(), ['kode_kampus' => 'kampus']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSimakPencekalans()
+    {
+        return $this->hasMany(SimakPencekalan::className(), ['nim' => 'nim_mhs']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSimakTahfidzKelompokAnggota()
+    {
+        return $this->hasMany(SimakTahfidzKelompokAnggotum::className(), ['nim' => 'nim_mhs']);
     }
 
     /**
@@ -252,5 +312,25 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
     public function getSimakTahfidzNilais()
     {
         return $this->hasMany(SimakTahfidzNilai::className(), ['nim' => 'nim_mhs']);
+    }
+
+    public function getSaldo()
+    {
+        $query = (new \yii\db\Query())->from('bill_transaksi');
+        $query->where(['custid'=>$this->nim_mhs]);
+        $sumDebet = $query->sum('DEBET');
+        $sumKredit = $query->sum('KREDIT');
+        $saldo = $sumKredit - $sumDebet;
+        return $saldo;
+    }
+
+    public function getNamaKampus()
+    {
+        return $this->kampus0->nama_kampus;
+    }
+
+    public function getNamaProdi()
+    {
+        return $this->kodeProdi->nama_prodi;
     }
 }

@@ -20,6 +20,8 @@ use Yii;
  * @property string $TRANSNO
  * @property string $created_at
  * @property string $updated_at
+ *
+ * @property SimakMastermahasiswa $cUST
  */
 class Transaksi extends \yii\db\ActiveRecord
 {
@@ -37,8 +39,8 @@ class Transaksi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['TRXDATE'], 'required'],
             [['TRXDATE', 'created_at', 'updated_at'], 'safe'],
+            [['DEBET', 'KREDIT'], 'required'],
             [['DEBET', 'KREDIT'], 'integer'],
             [['CUSTID'], 'string', 'max' => 25],
             [['METODE'], 'string', 'max' => 15],
@@ -47,6 +49,7 @@ class Transaksi extends \yii\db\ActiveRecord
             [['KDCHANNEL'], 'string', 'max' => 5],
             [['REFFBANK'], 'string', 'max' => 14],
             [['TRANSNO'], 'string', 'max' => 16],
+            [['CUSTID'], 'exist', 'skipOnError' => true, 'targetClass' => SimakMastermahasiswa::className(), 'targetAttribute' => ['CUSTID' => 'nim_mhs']],
         ];
     }
 
@@ -70,5 +73,18 @@ class Transaksi extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCUST()
+    {
+        return $this->hasOne(SimakMastermahasiswa::className(), ['nim_mhs' => 'CUSTID']);
+    }
+
+    public function getNamaCustomer()
+    {
+        return $this->cUST->nama_mahasiswa;
     }
 }

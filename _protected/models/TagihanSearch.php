@@ -51,7 +51,13 @@ class TagihanSearch extends Tagihan
     public function search($params)
     {
         $query = Tagihan::find();
-        $query->joinWith(['komponen as k','customer as c','tahun0 as t']);
+        $query->joinWith([
+            'komponen as k',
+            'nim0 as c',
+            'tahun0 as t',
+            'nim0.kodeProdi as p',
+            'nim0.kampus0 as kps'
+        ]);
 
 
         // add conditions that should always apply here
@@ -67,18 +73,18 @@ class TagihanSearch extends Tagihan
         ];
 
         $dataProvider->sort->attributes['namaCustomer'] = [
-            'asc' => ['c.nama'=>SORT_ASC],
-            'desc' => ['c.nama'=>SORT_DESC]
+            'asc' => ['c.nama_mahasiswa'=>SORT_ASC],
+            'desc' => ['c.nama_mahasiswa'=>SORT_DESC]
         ];
 
         $dataProvider->sort->attributes['namaProdi'] = [
-            'asc' => ['c.nama_prodi'=>SORT_ASC],
-            'desc' => ['c.nama_prodi'=>SORT_DESC]
+            'asc' => ['p.nama_prodi'=>SORT_ASC],
+            'desc' => ['p.nama_prodi'=>SORT_DESC]
         ];
 
         $dataProvider->sort->attributes['namaKampus'] = [
-            'asc' => ['c.nama_kampus'=>SORT_ASC],
-            'desc' => ['c.nama_kampus'=>SORT_DESC]
+            'asc' => ['kps.nama_kampus'=>SORT_ASC],
+            'desc' => ['kps.nama_kampus'=>SORT_DESC]
         ];
 
         $dataProvider->sort->attributes['namaTahun'] = [
@@ -94,6 +100,9 @@ class TagihanSearch extends Tagihan
             return $dataProvider;
         }
 
+        if(!empty($this->namaKampus))
+            $query->where(['kps.nama_kampus'=> $this->namaKampus]);
+
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
@@ -104,16 +113,18 @@ class TagihanSearch extends Tagihan
             'nilai' => $this->nilai,
             'terbayar' => $this->terbayar,
             'edit' => $this->edit,
-            'status_bayar' => $this->status_bayar,
+            self::tableName().'.status_bayar' => $this->status_bayar,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
 
+
+
         $query->andFilterWhere(['like', 'nim', $this->nim])
             ->andFilterWhere(['like', 'k.nama', $this->namaKomponen])
-            ->andFilterWhere(['like', 'c.nama', $this->namaCustomer])
-            ->andFilterWhere(['like', 'c.nama_prodi', $this->namaProdi])
-            ->andFilterWhere(['like', 'c.nama_kampus', $this->namaKampus])
+            ->andFilterWhere(['like', 'c.nama_mahasiswa', $this->namaCustomer])
+            ->andFilterWhere(['like', 'p.nama_prodi', $this->namaProdi])
+            
             ->andFilterWhere(['like', 't.nama', $this->namaTahun]);
 
         return $dataProvider;

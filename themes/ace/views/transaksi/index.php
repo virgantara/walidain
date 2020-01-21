@@ -23,9 +23,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'METODE',
+            [
+                'attribute' => 'METODE',
+                'label' => 'Metode',
+                'format' => 'raw',
+                'filter'=>["TOPUP"=>"TOPUP","PAYMENT"=>"PAYMENT"],
+                'value'=>function($model,$url){
+
+                    
+                    return $model->METODE;
+                    
+                },
+            ],
             'CUSTID',
-            
+            'namaCustomer',
             'TRXDATE',
             'NOREFF',
             //'FIDBANK',

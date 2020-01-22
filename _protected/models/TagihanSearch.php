@@ -107,7 +107,7 @@ class TagihanSearch extends Tagihan
         $query->andFilterWhere([
             'id' => $this->id,
             'urutan' => $this->urutan,
-            'semester' => $this->semester,
+            self::tableName().'.semester' => $this->semester,
             'tahun' => $this->tahun,
             'komponen_id' => $this->komponen_id,
             'nilai' => $this->nilai,

@@ -34,6 +34,27 @@ class CustomerController extends Controller
         ];
     }
 
+    public function actionFixPembayaran($tahun)
+    {
+        $listKonfirmasi = \app\models\SimakKonfirmasipembayaran::find()->where([
+            'pembayaran' => '01',
+            'tahun_id' => $tahun
+        ])->all();
+
+        foreach($listKonfirmasi as $item)
+        {
+            $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$item->nim])->one();
+
+            if(!empty($mhs))
+            {
+                $mhs->status_aktivitas = 'A';
+                $mhs->save(false,['status_aktivitas']);
+            }
+        }
+
+        die();
+    }
+
 
     /**
      * Lists all Customer models.

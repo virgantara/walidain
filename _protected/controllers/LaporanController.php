@@ -276,6 +276,7 @@ class LaporanController extends Controller
             $ed = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_akhir'])).'235959';
              $kampus = $_GET['kampus'];
             $prodi = $_GET['prodi'];
+            $komponen = $_GET['komponen'];
             
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
@@ -286,7 +287,8 @@ class LaporanController extends Controller
                 'startdate' => $sd,
                 'enddate'=>$ed,
                 'kampus' => $kampus,
-                'prodi' => $prodi
+                'prodi' => $prodi,
+                'komponen' => $komponen
             ],$headers)->send();
             
             if ($response->isOk) {

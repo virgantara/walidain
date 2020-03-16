@@ -219,8 +219,8 @@ class ApiController extends Controller
         ob_start();
         if(!empty($_POST['sd']) && !empty($_POST['ed']))
         {
-            $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
-            $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
+            // $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
+            // $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
             $kampus = $_POST['kampus'];
             $prodi = $_POST['prodi'];
             $komponen = $_POST['komponen'];
@@ -230,8 +230,8 @@ class ApiController extends Controller
             $client_token = Yii::$app->params['client_token'];
            $headers = ['x-access-token'=>$client_token];
             $response = $client->get('/b/tagihan/periode/tunggakan', [
-                'startdate' => $sd,
-                'enddate'=>$ed,
+                // 'startdate' => $sd,
+                // 'enddate'=>$ed,
                 'kampus' => $kampus,
                 'prodi' => $prodi,
                 'komponen' => $komponen

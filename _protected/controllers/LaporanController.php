@@ -284,8 +284,7 @@ class LaporanController extends Controller
             $client_token = Yii::$app->params['client_token'];
             $headers = ['x-access-token'=>$client_token];
             $response = $client->get('/b/tagihan/periode/tunggakan', [
-                'startdate' => $sd,
-                'enddate'=>$ed,
+                
                 'kampus' => $kampus,
                 'prodi' => $prodi,
                 'komponen' => $komponen

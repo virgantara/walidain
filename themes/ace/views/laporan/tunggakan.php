@@ -29,7 +29,7 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
             'class' => 'form-horizontal'
         ]
     ]); ?>
-    <div class="form-group">
+  <!--   <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Tanggal Awal</label>
         <div class="col-lg-2 col-sm-10">
           <?= yii\jui\DatePicker::widget(
@@ -62,7 +62,7 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
         ]      
     ) ?> 
         </div>
-    </div>
+    </div> -->
      <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kampus</label>
         <div class="col-lg-2 col-sm-10">
@@ -118,14 +118,14 @@ $uid = !empty($_GET['unit_id']) ? $_GET['unit_id'] : '';
 $script = "
 
 function getTagihan(){
-    let sd = $('#tagihansearch-tanggal_awal').val();
-    let ed = $('#tagihansearch-tanggal_akhir').val();
+    // let sd = $('#tagihansearch-tanggal_awal').val();
+    // let ed = $('#tagihansearch-tanggal_akhir').val();
     let kampus = $('#kampus').val();
     let prodi = $('#prodi').val();
     let komponen = $('#komponen').val();
     $.ajax({
         type : 'POST',
-        data : 'sd='+sd+'&ed='+ed+'&kampus='+kampus+'&prodi='+prodi+'&komponen='+komponen,
+        data : 'kampus='+kampus+'&prodi='+prodi+'&komponen='+komponen,
         url : '/api/tunggakan',
         beforeSend : function(){
             $('#loading').show();

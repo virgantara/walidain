@@ -217,7 +217,7 @@ class ApiController extends Controller
 
         $out = [];
         ob_start();
-        if(!empty($_POST['sd']) && !empty($_POST['ed']))
+        if(!empty($_POST['kampus']) && !empty($_POST['komponen']))
         {
             // $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
             // $ed = date('Ymd',strtotime($_POST['ed'])).'235959';

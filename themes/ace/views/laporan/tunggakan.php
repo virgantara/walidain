@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
-
+use yii\helpers\ArrayHelper;
 // use app\models\TagihanSearch;
 
 // use keygenqt\autocompleteAjax\AutocompleteAjax;
@@ -79,6 +79,15 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
           </select>
         </div>
     </div>
+   <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Komponen</label>
+        <div class="col-lg-2 col-sm-10">
+          <?= Html::dropDownList('komponen', null,
+      ArrayHelper::map(\app\models\KomponenBiaya::find()->all(), 'id', function($data){
+        return $data->tahun.' - '.$data->nama;
+      }),['class' => 'form-control', 'id' => 'komponen','prompt'=>'Semua Komponen']) ?>
+        </div>
+    </div>
     <div class="col-sm-2">
         
     </div>
@@ -113,9 +122,10 @@ function getTagihan(){
     let ed = $('#tagihansearch-tanggal_akhir').val();
     let kampus = $('#kampus').val();
     let prodi = $('#prodi').val();
+    let komponen = $('#komponen').val();
     $.ajax({
         type : 'POST',
-        data : 'sd='+sd+'&ed='+ed+'&kampus='+kampus+'&prodi='+prodi,
+        data : 'sd='+sd+'&ed='+ed+'&kampus='+kampus+'&prodi='+prodi+'&komponen='+komponen,
         url : '/api/tunggakan',
         beforeSend : function(){
             $('#loading').show();

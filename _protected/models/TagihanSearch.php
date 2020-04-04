@@ -19,6 +19,7 @@ class TagihanSearch extends Tagihan
     public $namaProdi;
     public $namaKampus;
     public $namaTahun;
+    public $excludeWisuda;
 
     /**
      * {@inheritdoc}
@@ -39,6 +40,38 @@ class TagihanSearch extends Tagihan
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
+    }
+
+    public function searchManual()
+    {
+        $query = Tagihan::find();
+        $query->joinWith([
+            'komponen as k',
+            'nim0 as c',
+            'tahun0 as t',
+            'nim0.kodeProdi as p',
+            'nim0.kampus0 as kps'
+        ]);
+
+        // grid filtering conditions
+        $query->andWhere([
+            'k.tahun' => $this->tahun,
+            'p.kode_prodi' => $this->namaProdi,
+            'c.kampus' => $this->namaKampus,
+            'c.status_aktivitas' => 'A'
+        ]);
+
+        $query->andWhere('terbayar < nilai');
+
+        if($this->excludeWisuda == 1)
+        {
+            $query->andWhere(['NOT LIKE','k.kode','06%',false]);
+        }
+
+        $query->orderBy(['c.nama_mahasiswa'=>SORT_ASC]);
+            
+
+        return $query->all();
     }
 
     /**

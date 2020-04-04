@@ -3,6 +3,9 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\Tagihan;
+use app\models\TagihanSearch;
+use app\models\Tahun;
 use app\models\SimakPencekalan;
 use app\models\SimakPencekalanSearch;
 use app\models\SimakTahunakademik;
@@ -37,59 +40,87 @@ class SimakPencekalanController extends Controller
      */
     public function actionIndex()
     {
+
+        $tahun_tagihan = Tahun::find()->all();
         $results = [];
         $tahun_akademik = SimakTahunakademik::find()->where(['buka'=>'Y'])->one();
         $tahunaktif = $tahun_akademik->tahun_id;
         if(!empty($_GET['btn-lihat']))
         {
-            $results = SimakMastermahasiswa::find()->where([
-                'kampus'=>$_GET['kampus'],
-                'kode_prodi'=>$_GET['prodi'],
-                'status_aktivitas' => 'A'
-            ])
-            ->orderBy(['nama_mahasiswa'=>SORT_ASC])
-            ->all();
+
+            $searchModel = new TagihanSearch;
+            $searchModel->tahun = $_GET['tahun_tagihan'];
+            $searchModel->namaKampus = $_GET['kampus'];
+            $searchModel->namaProdi = $_GET['prodi'];
+            $searchModel->excludeWisuda = $_GET['exclude_wisuda'];
+            $results = $searchModel->searchManual();
+
+
         }
 
         if(!empty($_POST['btn-simpan']))
         {
-            $results = SimakMastermahasiswa::find()->where([
-                'kampus'=>$_POST['kampus'],
-                'kode_prodi'=>$_POST['prodi'],
-                'status_aktivitas' => 'A'
-            ])
-            ->orderBy(['nama_mahasiswa'=>SORT_ASC])
-            ->all();
+            
+            $searchModel = new TagihanSearch;
+            $searchModel->tahun = $_POST['tahun_tagihan'];
+            $searchModel->namaKampus = $_POST['kampus'];
+            $searchModel->namaProdi = $_POST['prodi'];
+            $searchModel->excludeWisuda = $_POST['exclude_wisuda'];
+            $results = $searchModel->searchManual();
+            $transaction = \Yii::$app->db->beginTransaction();
+            $errors = '';
 
-            foreach($results as $item)
+            // print_r($results);exit;
+            try 
             {
-                $p = SimakPencekalan::find()->where([
-                    'tahun_id' => $tahunaktif,
-                    'nim' => $item->nim_mhs
-                ])->one();
+                foreach($results as $item)
+                {
+                    $p = SimakPencekalan::find()->where([
+                        'tahun_id' => $tahunaktif,
+                        'nim' => $item->nim
+                    ])->one();
 
-                if(empty($p))
-                    $p = new SimakPencekalan;
+                    if(empty($p))
+                        $p = new SimakPencekalan;
 
-                // print_r($_POST);exit;
-                // $p->tahfidz = !empty($_POST['tahfidz_'.$tahunaktif.'_'.$item->nim_mhs]) ? 1 : 0;
-                // $p->akpam = !empty($_POST['akpam_'.$tahunaktif.'_'.$item->nim_mhs]) ? 1 : 0;
-                $p->adm = !empty($_POST['adm_'.$tahunaktif.'_'.$item->nim_mhs]) ? 1 : 0;
-                // $p->akademik = !empty($_POST['akademik_'.$tahunaktif.'_'.$item->nim_mhs]) ? 1 : 0;
-                $p->nim = $item->nim_mhs;
-                $p->tahun_id = $tahunaktif;
+                    // print_r($_POST);exit;
+                    // $p->tahfidz = !empty($_POST['tahfidz_'.$tahunaktif.'_'.$item->nim_mhs]) ? 1 : 0;
+                    // $p->akpam = !empty($_POST['akpam_'.$tahunaktif.'_'.$item->nim_mhs]) ? 1 : 0;
+                    $p->adm = 1;
+                    // $p->akademik = !empty($_POST['akademik_'.$tahunaktif.'_'.$item->nim_mhs]) ? 1 : 0;
+                    $p->nim = $item->nim;
+                    $p->tahun_id = $tahunaktif;
 
-                $p->save();
+                    // print_r($p->attributes);exit;
+
+                    if(!$p->save())
+                    {
+                        $errors = \app\helpers\MyHelper::logError($p);
+                        Yii::$app->session->setFlash('danger', $errors);
+                    }
+                }
+
+                $transaction->commit();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Data successfully saved'));
+                // $this->redirect(['index']);
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
+            } catch (\Throwable $e) {
+                $transaction->rollBack();
+                
+                throw $e;
             }
 
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Data successfully saved'));
+            
         }
         // $searchModel = new SimakPencekalanSearch();
         // $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'results' => $results,
-            'tahunaktif' => $tahunaktif
+            'tahunaktif' => $tahunaktif,
+            'tahun_tagihan' => $tahun_tagihan
             // 'searchModel' => $searchModel,
             // 'dataProvider' => $dataProvider,
         ]);

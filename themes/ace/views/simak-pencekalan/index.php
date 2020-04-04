@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
@@ -7,12 +8,13 @@ use yii\widgets\ActiveForm;
 /* @var $searchModel app\models\SimakPencekalanSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Simak Pencekalans';
+$this->title = 'Pencekalan';
 $this->params['breadcrumbs'][] = $this->title;
 
 $kampus = !empty($_GET['kampus']) ? $_GET['kampus'] : 0;
 $prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : 0;
-
+$tahun = !empty($_GET['tahun_tagihan']) ? $_GET['tahun_tagihan'] : 0;
+$exclude_wisuda = !empty($_GET['exclude_wisuda']) ? $_GET['exclude_wisuda'] : 1;
 ?>
 <div class="row">
 <div class="col-xs-12">
@@ -42,7 +44,20 @@ $prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : 0;
           </select>
         </div>
     </div>
-
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Tahun Tagihan</label>
+        <div class="col-lg-2 col-sm-10">
+          <?=Html::dropDownList('tahun_tagihan',$tahun,ArrayHelper::map($tahun_tagihan,'id',function($data){
+            return $data->id.' - '.$data->nama.' / '.$data->hijriyah;
+        }));?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Exclude Wisuda?</label>
+        <div class="col-lg-2 col-sm-10">
+            <?=Html::radioList('exclude_wisuda',$exclude_wisuda,['1'=>'Ya','2'=>'Tidak']);?>
+        </div>
+    </div>
      <div class="clearfix form-actions">
         <div class="col-md-offset-3 col-md-9">
 
@@ -60,7 +75,7 @@ $prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : 0;
 <div class="row">
     <div class="col-xs-12">
         
-        <?php if (Yii::$app->session->hasFlash('success')): ?>
+<?php if (Yii::$app->session->hasFlash('success')): ?>
     <div class="alert alert-success alert-dismissable">
          <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
          <i class="icon fa fa-check"></i><?= Yii::$app->session->getFlash('success') ?>
@@ -79,6 +94,8 @@ $prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : 0;
 
 <input type="hidden" name="kampus" value="<?=$kampus;?>"/>
 <input type="hidden" name="prodi" value="<?=$prodi;?>"/>
+<input type="hidden" name="tahun_tagihan" value="<?=$tahun;?>"/>
+<input type="hidden" name="exclude_wisuda" value="<?=$exclude_wisuda;?>"/>
 <table class="table table-striped table-bordered" id="table-mahasiswa">
 
   <thead>
@@ -86,10 +103,9 @@ $prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : 0;
       <th width="5%">No</th>
       <th width="25%">NIM</th>
       <th width="30%">Nama</th>
-      <th width="10%">Tahfidz</th>
-      <th width="10%">AKPAM</th>
-      <th width="10%">ADM</th>
-      <th width="10%">Akademik</th>
+      <th width="10%">Komponen</th>
+      <th width="10%">Nilai</th>
+      <th width="10%">Terbayar</th>
       
     </tr>
   </thead>
@@ -101,7 +117,7 @@ $prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : 0;
 
         $cekal = \app\models\SimakPencekalan::find()->where([
             'tahun_id' => $tahunaktif,
-            'nim' => $item->nim_mhs
+            'nim' => $item->nim
         ])->one();
 
         $checkedTahfidz = '';
@@ -111,21 +127,18 @@ $prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : 0;
         if(!empty($cekal))
         {
 
-            $checkedTahfidz = $cekal->tahfidz ? 'Tercekal' :'';
-            $checkedAkpam = $cekal->akpam  ? 'Tercekal' :'';
             $checkedAdm = $cekal->adm  ? 'checked' :'';
-            $checkedAkademik = $cekal->akademik ? 'Tercekal' :'';    
+                
         }
         
     ?>
 <tr>
     <td><?=$q+1;?></td>
-    <td><?=$item->nim_mhs;?></td>
-    <td><?=$item->nama_mahasiswa;?></td>
-    <td><?=$checkedTahfidz;?></td>
-    <td><?=$checkedAkpam;?></td>
-    <td><input type="checkbox" name="adm_<?=$tahunaktif;?>_<?=$item->nim_mhs;?>" <?=$checkedAdm;?>></td>
-    <td><?=$checkedAkademik;?></td>
+    <td><?=$item->nim;?></td>
+    <td><?=$item->nim0->nama_mahasiswa;?></td>
+    <td><?=$item->komponen->nama;?></td>
+    <td><?=$item->nilai;?></td>
+    <td><?=$item->terbayar;?></td>
 </tr>
     <?php 
   }

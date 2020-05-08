@@ -21,6 +21,7 @@ class TagihanSearch extends Tagihan
     public $namaTahun;
     public $excludeWisuda;
 
+
     /**
      * {@inheritdoc}
      */
@@ -92,7 +93,6 @@ class TagihanSearch extends Tagihan
             'nim0.kampus0 as kps'
         ]);
 
-        $query->andWhere(['t.buka' => 'Y']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -138,21 +138,12 @@ class TagihanSearch extends Tagihan
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'urutan' => $this->urutan,
-            self::tableName().'.semester' => $this->semester,
-            'tahun' => $this->tahun,
-            'komponen_id' => $this->komponen_id,
-            'nilai' => $this->nilai,
-            'terbayar' => $this->terbayar,
-            'edit' => $this->edit,
-            self::tableName().'.status_bayar' => $this->status_bayar,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            self::tableName().'.semester' => $this->semester,    
+            self::tableName().'.urutan' => $this->urutan,
         ]);
 
 
-
+        $query->andWhere([self::tableName().'.tahun' => $this->tahun]);
         $query->andFilterWhere(['like', 'nim', $this->nim])
             ->andFilterWhere(['like', 'k.nama', $this->namaKomponen])
             ->andFilterWhere(['like', 'c.nama_mahasiswa', $this->namaCustomer])

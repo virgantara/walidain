@@ -337,6 +337,7 @@ class TagihanController extends Controller
         $model = new Tagihan;
         $tahun = Tahun::getTahunAktif();
         $model->tahun = $tahun->id;
+
         $komponen = ArrayHelper::map(KomponenBiaya::find()->where(['tahun'=>$tahun->id])->all(),'id','nama');
         return $this->render('instant',[
             'model' => $model,
@@ -352,6 +353,10 @@ class TagihanController extends Controller
     public function actionIndex()
     {
         $searchModel = new TagihanSearch();
+
+        $tahun = Tahun::getTahunAktif();
+        $searchModel->tahun = $tahun->id;
+        
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

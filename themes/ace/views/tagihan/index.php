@@ -124,46 +124,46 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->status_bayar != 1;
                     },
                 ],
-                'buttons' => [
+                // 'buttons' => [
                    
-                    'delete' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
-                                   'title'        => 'delete',
-                                    'onclick' => "
-                                    if (confirm('Buang data ini?')) {
-                                        $.ajax('$url', {
-                                            type: 'POST'
-                                        }).done(function(data) {
-                                            $.pjax.reload({container: '#pjax-container'});
+                //     'delete' => function ($url, $model) {
+                //         return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                //                    'title'        => 'delete',
+                //                     'onclick' => "
+                //                     if (confirm('Buang data ini?')) {
+                //                         $.ajax('$url', {
+                //                             type: 'POST'
+                //                         }).done(function(data) {
+                //                             $.pjax.reload({container: '#pjax-container'});
                                             
-                                        });
-                                    }
-                                    return false;
-                                ",
-                                    // 'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                    // 'data-method'  => 'post',
-                        ]);
-                    }
-                ],
-                'urlCreator' => function ($action, $model, $key, $index) {
+                //                         });
+                //                     }
+                //                     return false;
+                //                 ",
+                //                     // 'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
+                //                     // 'data-method'  => 'post',
+                //         ]);
+                //     }
+                // ],
+                // 'urlCreator' => function ($action, $model, $key, $index) {
                     
-                    if ($action === 'delete') {
-                        $url =Url::to(['tagihan/delete','id'=>$model->id]);
-                        return $url;
-                    }
+                //     if ($action === 'delete') {
+                //         $url =Url::to(['tagihan/delete','id'=>$model->id]);
+                //         return $url;
+                //     }
 
-                    else if ($action === 'update') {
-                        $url =Url::to(['tagihan/update','id'=>$model->id]);
-                        return $url;
-                    }
+                //     else if ($action === 'update') {
+                //         $url =Url::to(['tagihan/update','id'=>$model->id]);
+                //         return $url;
+                //     }
 
-                    else if ($action === 'view') {
-                        $url =Url::to(['tagihan/view','id'=>$model->id]);
-                        return $url;
-                    }
+                //     else if ($action === 'view') {
+                //         $url =Url::to(['tagihan/view','id'=>$model->id]);
+                //         return $url;
+                //     }
 
                   
-                }
+                // }
             ],
             
 ];?>

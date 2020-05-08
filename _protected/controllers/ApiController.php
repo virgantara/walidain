@@ -398,7 +398,7 @@ class ApiController extends Controller
                     'id' => $d['id'],
                     'nim' => $d['nim_mhs'],
                     'smt' => $d['semester'],
-                    'label'=> $d['nim_mhs'].' - '.$d['nama_mahasiswa']
+                    'label'=> $d['nim_mhs'].' - '.$d['nama_mahasiswa'].' - '.$d['nama_prodi'].' - Semester '.$d['semester']
                 ];
             }
         }

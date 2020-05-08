@@ -34,40 +34,33 @@ $this->params['breadcrumbs'][] = $this->title;
     
     
     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Tahun</label>
-        <div class="col-lg-2 col-sm-10">
-          <?= Html::dropDownList('tahun','',$tahun, ['prompt'=>'..Pilih Tahun..','id'=>'tahun_id']) ?>
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Tahun Aktif Tagihan</label>
+        <div class="col-sm-9">
+          <?= Html::textInput('tahun',$model->tahun, ['id'=>'tahun_id','class'=>'form-control','readonly'=>'readonly']) ?>
         </div>
     </div>
      <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Komponen</label>
-        <div class="col-lg-2 col-sm-10">
-            <?= DepDrop::widget([
-                'name' => 'komponen',
-                'options' => ['id'=>'komponen_id'],
-                'pluginOptions'=>[
-                    'depends'=>['tahun_id'],
-                    'placeholder' => 'Pilih Komponen...',
-                    'url' => Url::to(['/tagihan/komponen-tahun'])
-                ]   
-            ]) ?>
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Komponen</label>
+        <div class="col-sm-9">
+            <?= Html::dropDownList('komponen','',$komponen,['id'=>'komponen_id','class'=>'form-control','prompt'=>'- Pilih Komponen -']);?>
+                
         </div>
     </div>
      <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
-        <div class="col-lg-2 col-sm-10">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
+        <div class="col-sm-9">
           <?= Html::input('text','nilai','',['id'=>'nilai_tagihan']) ?>
         </div>
     </div>
      <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
-        <div class="col-lg-2 col-sm-10">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
+        <div class="col-sm-9">
           <?= Html::input('text','nilai_minimal','',['id'=>'nilai_minimal']) ?>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> NIM</label>
-        <div class="col-lg-2 col-sm-10">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> NIM</label>
+        <div class="col-sm-9">
              <?php 
     AutoComplete::widget([
     'name' => 'nama_mhs',
@@ -101,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         
     </div>
 <div class="col-sm-3">

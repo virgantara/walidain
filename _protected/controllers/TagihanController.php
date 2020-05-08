@@ -335,8 +335,9 @@ class TagihanController extends Controller
     public function actionInstant()
     {
         $model = new Tagihan;
-        $tahun = ArrayHelper::map(Tahun::find()->all(),'id','nama');
-        $komponen = ArrayHelper::map(KomponenBiaya::find()->all(),'id','nama');
+        $tahun = Tahun::getTahunAktif();
+        $model->tahun = $tahun->id;
+        $komponen = ArrayHelper::map(KomponenBiaya::find()->where(['tahun'=>$tahun->id])->all(),'id','nama');
         return $this->render('instant',[
             'model' => $model,
             'tahun' => $tahun,

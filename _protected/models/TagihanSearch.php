@@ -92,7 +92,7 @@ class TagihanSearch extends Tagihan
             'nim0.kampus0 as kps'
         ]);
 
-
+        $query->andWhere(['t.buka' => 'Y']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

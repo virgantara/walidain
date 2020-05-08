@@ -56,7 +56,7 @@ class KomponenBiaya extends \yii\db\ActiveRecord
             'id' => 'ID',
             'kode' => 'Kode',
             'nama' => 'Nama',
-            'biaya_awal' => 'Biaya Awal',
+            'biaya_awal' => 'Nominal Biaya',
             'biaya_minimal' => 'Biaya Minimal',
             'prioritas' => 'Prioritas',
             'kategori_id' => 'Kategori ID',

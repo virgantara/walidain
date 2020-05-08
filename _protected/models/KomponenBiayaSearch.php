@@ -21,7 +21,7 @@ class KomponenBiayaSearch extends KomponenBiaya
     {
         return [
             [['id', 'prioritas', 'kategori_id', 'tahun'], 'integer'],
-            [['kode', 'nama', 'created_at', 'updated_at','namaKategori'], 'safe'],
+            [['kode', 'nama', 'created_at', 'updated_at','namaKategori','biaya_minimal'], 'safe'],
             [['biaya_awal'], 'number'],
         ];
     }
@@ -52,6 +52,11 @@ class KomponenBiayaSearch extends KomponenBiaya
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'tahun' => SORT_DESC
+                ]
+            ]
         ]);
 
         $dataProvider->sort->attributes['namaKategori'] = [
@@ -67,21 +72,34 @@ class KomponenBiayaSearch extends KomponenBiaya
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'biaya_awal' => $this->biaya_awal,
-            'prioritas' => $this->prioritas,
-            'kategori_id' => $this->kategori_id,
-            'tahun' => $this->tahun,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ]);
+        if(!empty($this->tahun))
+        {
+            $query->andWhere(['tahun'=>$this->tahun]);
+        }
+
+        if(!empty($this->kategori_id))
+        {
+            $query->andWhere(['kategori_id'=>$this->kategori_id]);
+        }
 
         $query->andFilterWhere(['like', self::tableName().'kode', $this->kode])
-            ->andFilterWhere(['like', self::tableName().'.nama', $this->nama])
-            ->andFilterWhere(['like', 'k.nama', $this->namaKategori]);
+            ->andFilterWhere(['like', self::tableName().'.nama', $this->nama]);
+            // ->andFilterWhere(['like', 'k.nama', $this->namaKategori]);
 
         return $dataProvider;
+    }
+
+    public static function getKategoriList()
+    {
+        $list = \yii\helpers\ArrayHelper::map(Kategori::find()->all(),'id','nama');
+
+        return $list;
+    }
+
+    public static function getTahunList()
+    {
+        $list = \yii\helpers\ArrayHelper::map(Tahun::find()->orderBy(['id'=>SORT_DESC])->all(),'id','nama');
+
+        return $list;
     }
 }

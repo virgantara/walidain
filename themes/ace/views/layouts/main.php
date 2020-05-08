@@ -2,6 +2,7 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use app\assets\SweetalertAsset;
 use app\assets\AppAsset;
 use app\widgets\Alert;
 use yii\widgets\Menu;
@@ -13,7 +14,7 @@ use kartik\nav\NavX;
 use yii\helpers\Url;
 
 AppAsset::register($this);
-
+SweetalertAsset::register($this);
 $theme = $this->theme;
 ?>
 <?php $this->beginPage() ?>

@@ -8,6 +8,7 @@ use app\models\CustomerSearch;
 use app\models\SimakMastermahasiswa;
 use app\models\SimakMastermahasiswaSearch;
 
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -32,6 +33,60 @@ class CustomerController extends Controller
                 ],
             ],
         ];
+    }
+
+    public function actionGetJumlahMahasiswaPerSemester()
+    {
+        $dataPost = $_POST['dataPost'];
+        $prodi = $dataPost['prodi'];
+        $semester = $dataPost['semester'];
+        $kampus = $dataPost['kampus'];
+
+        $jml = SimakMastermahasiswa::find()->where([
+            'kode_prodi' => $prodi,
+            'status_aktivitas'=>'A',
+            'semester' => $semester,
+            'kampus' => $kampus
+        ])->count();        
+
+        $out = [
+            'prodi' => $prodi,
+            'jumlah' => $jml
+        ];
+
+        echo \yii\helpers\Json::encode($out);
+        die();
+    }
+
+    public function actionSubsemester()
+    {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $prodi = $parents[0];
+                $out = (new \yii\db\Query())
+                    ->select(['semester as id', 'semester as name'])
+                    ->from('simak_mastermahasiswa')
+                    ->where([
+                      'kode_prodi' => $prodi,
+                      'status_aktivitas' => 'A'
+                    ])
+                    ->groupBy(['semester'])
+                    ->orderBy(['semester'=>SORT_ASC])
+                    ->all();
+
+                // the getSubCatList function will query the database based on the
+                // cat_id and return an array like below:
+                // [
+                //    ['id'=>'<sub-cat-id-1>', 'name'=>'<sub-cat-name1>'],
+                //    ['id'=>'<sub-cat_id_2>', 'name'=>'<sub-cat-name2>']
+                // ]
+                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                return;
+            }
+        }
+        // select semester from simak_mastermahasiswa where kode_prodi = 1 and status_aktivitas = 'A' group by semester order by semester
     }
 
     public function actionFixPembayaran($tahun)

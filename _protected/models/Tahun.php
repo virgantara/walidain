@@ -31,7 +31,7 @@ class Tahun extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'nama', 'hijriyah'], 'required'],
+            [['id', 'nama', 'hijriyah','buka'], 'required'],
             [['id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['nama', 'hijriyah'], 'string', 'max' => 150],
@@ -46,6 +46,7 @@ class Tahun extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'buka' => 'Status Buka',
             'nama' => 'Nama',
             'hijriyah' => 'Hijriyah',
             'created_at' => 'Created At',
@@ -60,5 +61,12 @@ class Tahun extends \yii\db\ActiveRecord
     public function getBiayaFakultas()
     {
         return $this->hasMany(BiayaFakultas::className(), ['tahun_akademik' => 'id']);
+    }
+
+    public static function getTahunAktif()
+    {
+        $tahun = Tahun::find()->where(['buka' => 'Y'])->one();
+
+        return $tahun;
     }
 }

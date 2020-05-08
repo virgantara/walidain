@@ -9,6 +9,8 @@ use Yii;
 class MyHelper
 {
 
+	
+
 	public static function parseVACode($header, $nim)
 	{
 		return $header.str_pad(substr($nim, 0,2).substr($nim, -6,6),10,'0',STR_PAD_LEFT);

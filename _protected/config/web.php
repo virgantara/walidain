@@ -24,6 +24,11 @@ $config = [
         ],
      
     ],
+    'aliases' => [
+        '@bower' => '@vendor/bower',
+        '@npm'   => '@app/../node_modules',
+    ],
+    'timeZone' => 'Asia/Jakarta',
     'components' => [
         'pdf' => [
             'class' => \kartik\mpdf\Pdf::classname(),

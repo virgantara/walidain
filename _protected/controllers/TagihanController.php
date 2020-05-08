@@ -38,10 +38,9 @@ class TagihanController extends Controller
     public function actionDu()
     {
         $model = new Tagihan;
-        $tahun = ArrayHelper::map(Tahun::find()->all(),'id',function($data){
-            return $data->id.' - '.$data->nama.' / '.$data->hijriyah;
-        });
-        $komponen = ArrayHelper::map(KomponenBiaya::find()->all(),'id','nama');
+        $tahun = Tahun::getTahunAktif();
+        $model->tahun = $tahun->id;
+        $komponen = ArrayHelper::map(KomponenBiaya::find()->where(['tahun'=>$tahun->id])->all(),'id','nama');
 
 
         if(!empty($_POST['nilai']))
@@ -61,6 +60,28 @@ class TagihanController extends Controller
             // print_r($listCustomer);exit;
             try 
             {
+
+                if(empty($_POST['prodi']))
+                {
+                    $errors .= 'Prodi harus diisi';
+                        
+                    throw new \Exception;
+                }
+
+                if(empty($_POST['kampus']))
+                {
+                    $errors .= 'Kampus harus diisi';
+                        
+                    throw new \Exception;
+                }
+
+                if(empty($_POST['semester_mhs']))
+                {
+                    $errors .= 'Semester Mahasiswa harus diisi';
+                        
+                    throw new \Exception;
+                }
+
                 foreach($listCustomer as $c)
                 {
 
@@ -82,19 +103,14 @@ class TagihanController extends Controller
                     $t->nim = $c->nim_mhs;
                     $t->semester = $c->semester;
 
-
-                    
                     if(!$t->save())
                     {
                         // print_r($t->attributes);exit;
-                        $errors = \app\helpers\MyHelper::logError($t);
-                        Yii::$app->session->setFlash('danger', $errors);
-
-                        return $this->render('du',[
-                            'model' => $model,
-                            'tahun' => $tahun,
-                            'komponen' => $komponen
-                        ]);
+                        $errors .= \app\helpers\MyHelper::logError($t);
+                        
+                        throw new \Exception($errors);
+                        
+                        
                     }
 
                 }
@@ -103,12 +119,16 @@ class TagihanController extends Controller
 
                 $transaction->commit();
             } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw $e;
-            } catch (\Throwable $e) {
+                $errors .= $e->getMessage();
+                Yii::$app->session->setFlash('danger', $errors);
                 $transaction->rollBack();
                 
-                throw $e;
+            } catch (\Throwable $e) {
+                $errors .= $e->getMessage();
+                Yii::$app->session->setFlash('danger', $errors);
+                $transaction->rollBack();
+                
+                
             }
         }
 

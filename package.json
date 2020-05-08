@@ -1,0 +1,23 @@
+{
+  "name": "ebilling",
+  "version": "1.0.0",
+  "description": "Ini adalah project mini dari ERP.",
+  "main": "index.js",
+  "dependencies": {
+    "sweetalert2": "^9.10.12"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/virgantara/yii2-ebilling.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/virgantara/yii2-ebilling/issues"
+  },
+  "homepage": "https://gitlab.com/virgantara/yii2-ebilling#readme"
+}

@@ -18,7 +18,7 @@ class TahunSearch extends Tahun
     {
         return [
             [['id'], 'integer'],
-            [['nama', 'hijriyah', 'created_at', 'updated_at'], 'safe'],
+            [['nama', 'hijriyah', 'created_at', 'updated_at','buka'], 'safe'],
         ];
     }
 

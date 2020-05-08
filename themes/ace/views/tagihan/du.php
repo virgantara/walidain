@@ -18,114 +18,102 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 ?>
-<div class="sales-stok-gudang-index">
-
+<div class="row">
+    <div class="col-xs-6">
     <h1><?= Html::encode($this->title) ?></h1>
   
     <?php $form = ActiveForm::begin([
         // 'method' => 'get',
         // 'action' => ['laporan/pembayaran'],
         'options' => [
+            'id' => 'form-tagihan',
             'class' => 'form-horizontal'
         ]
     ]); ?>
     <div id="msg" style="display: none;"></div>
-      <?php if (Yii::$app->session->hasFlash('success')): ?>
-    <div class="alert alert-success alert-dismissable">
-         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-         <i class="icon fa fa-check"></i><?= Yii::$app->session->getFlash('success') ?>
-         
+    <?php  
+     foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
+         echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
+     } ?>
+     <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Tahun Aktif Tagihan</label>
+        <div class="col-sm-9">
+          <?= Html::textInput('tahun',$model->tahun, ['id'=>'tahun_id','class'=>'form-control','readonly'=>'readonly']) ?>
+        </div>
     </div>
-<?php endif; ?>
- <?php if (Yii::$app->session->hasFlash('danger')): ?>
-    <div class="alert alert-danger alert-dismissable">
-         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-         <i class="icon fa fa-check"></i><?= Yii::$app->session->getFlash('danger') ?>
-         
-    </div>
-<?php endif; ?>
     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kampus</label>
-        <div class="col-lg-2 col-sm-10">
-          <select id="kampus" name="kampus">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Kampus</label>
+        <div class="col-sm-9">
+          <select id="kampus" name="kampus" class="form-control">
               
           </select>
         </div>
     </div>
      <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Prodi</label>
-        <div class="col-lg-2 col-sm-10">
-          <select id="prodi" name="prodi">
-              
-          </select>
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Prodi</label>
+        <div class="col-sm-9">
+           <?= Html::dropDownList('prodi','',[],['id'=>'prodi','class'=>'form-control','prompt'=>'- Pilih Prodi -']);?>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Semester Mahasiswa Sekarang</label>
-        <div class="col-lg-2 col-sm-10">
-          <?= Html::input('number','semester_mhs','', ['id'=>'semester_mhs']) ?>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Tahun</label>
-        <div class="col-lg-2 col-sm-10">
-          <?= Html::dropDownList('tahun','',$tahun, ['prompt'=>'..Pilih Tahun..','id'=>'tahun_id']) ?>
-        </div>
-    </div>
-     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Komponen</label>
-        <div class="col-lg-2 col-sm-10">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Semester Mahasiswa Sekarang</label>
+        <div class="col-sm-9">
             <?= DepDrop::widget([
-                'name' => 'komponen',
-                'options' => ['id'=>'komponen_id'],
+                'name' => 'semester_mhs',
+                'options' => ['id'=>'semester_mhs','class'=>'form-control'],
                 // 'pluginEvents'=> [
                 //     "depdrop.afterChange"=>"function(event, id, value) { 
                 //         console.log('value: ' + value + ' id: ' + id); 
                 //     }"
                 // ],
                 'pluginOptions'=>[
-                    'depends'=>['tahun_id'],
-                    'placeholder' => 'Pilih Komponen...',
-                    'url' => Url::to(['/tagihan/komponen-tahun'])
+                    'depends'=>['prodi'],
+                    'initialize' => true,
+                    'placeholder' => 'Pilih Semester...',
+                    'url' => Url::to(['/customer/subsemester'])
                 ]   
             ]) ?>
+
+        </div>
+    </div>
+    
+     <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Komponen</label>
+        <div class="col-sm-9">
+            <?= Html::dropDownList('komponen','',$komponen,['id'=>'komponen_id','class'=>'form-control','prompt'=>'- Pilih Komponen -']);?>
+                
         </div>
     </div>
     
     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
-        <div class="col-lg-2 col-sm-10">
-          <?= Html::input('text','nilai','',['id'=>'nilai_tagihan']) ?>
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
+        <div class="col-sm-9">
+          <?= Html::input('text','nilai','',['id'=>'nilai_tagihan','class'=>'form-control']) ?>
         </div>
     </div>
      <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
-        <div class="col-lg-2 col-sm-10">
-          <?= Html::input('text','nilai_minimal','',['id'=>'nilai_minimal']) ?>
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
+        <div class="col-sm-9">
+          <?= Html::input('text','nilai_minimal','',['id'=>'nilai_minimal','class'=>'form-control']) ?>
         </div>
     </div>
     <div class="col-sm-2">
         
     </div>
-<div class="col-sm-3">
+    <div class="col-sm-3">
 
-    <div class="form-group">
-        <?= Html::submitButton(' <i class="ace-icon fa fa-check bigger-110"></i>Generate', ['class' => 'btn btn-info','id'=>'generate','value'=>1]) ?>    
-        
-        <div class="lds-facebook" id="loading" style="height: 32px;display: none"><div></div><div></div><div></div></div>
+        <div class="form-group">
+            <?= Html::submitButton(' <i class="ace-icon fa fa-check bigger-110"></i>Generate', ['class' => 'btn btn-info','id'=>'generate','value'=>1]) ?>    
+            
+            <div class="lds-facebook" id="loading" style="height: 32px;display: none"><div></div><div></div><div></div></div>
+        </div>
+
     </div>
-
-</div>
      
 
 
     <?php ActiveForm::end(); ?>
- <div class="table-responsive">
-<table id="tabel_tagihan" class="table table-bordered table-striped">
-    
-    
-</table>
-   </div>
+ 
 </div>
 </div>
 <?php
@@ -207,7 +195,7 @@ function getListProdi(){
             
             $('#loading').hide();  
             $('#prodi').empty();
-            var row = '';
+            var row = '<option value=\"\">- Pilih Prodi -</option>';
                    
             $.each(data.values,function(i, obj){
                 row += '<option value=\"'+obj.kode_prodi+'\">'+obj.nama_prodi+'</option>';
@@ -221,6 +209,48 @@ function getListProdi(){
 
     });
 }
+
+$(document).on('click','#generate',function(e){
+    e.preventDefault();
+    var obj = new Object;
+    obj.prodi = $('#prodi').val();
+    obj.semester = $('#semester_mhs').val();
+    obj.kampus = $('#kampus').val();
+    $.ajax({
+        type : 'POST',
+        data : {
+            dataPost : obj
+        },
+
+        url : '".Url::to(['/customer/get-jumlah-mahasiswa-per-semester'])."',
+        beforeSend : function(){
+        },
+        error : function(err){
+            console.log(err);
+        },
+        success : function(data){
+
+            var data = $.parseJSON(data);
+            
+            Swal.fire({
+              title: 'Konfirmasi Pembuatan Tagihan!',
+              text: 'Jumlah Mahasiswa yang akan ditagih ada '+data.jumlah+' orang. Setujui Pembuatan Tagihan ini?',
+              icon: 'info',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ya, Setujui!'
+            }).then((result) => {
+              if (result.value) {
+                $('#form-tagihan').submit();
+              }
+            });
+        }
+
+    });
+    
+    
+});
 
 $(document).ready(function(){
     

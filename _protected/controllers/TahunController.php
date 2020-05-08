@@ -103,7 +103,19 @@ class TahunController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+
+            if($model->buka == 'Y')
+            {
+                $tmp = Tahun::find()->all();
+
+                foreach($tmp as $t)
+                {
+                    $t->buka = 'N';
+                    $t->save(false,['buka']);
+                }
+            }
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

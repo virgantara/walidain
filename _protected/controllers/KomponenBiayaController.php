@@ -109,7 +109,7 @@ class KomponenBiayaController extends Controller
         ];
 
 
-        $tahun = ArrayHelper::map(Tahun::find()->orderBy(['id'=>SORT_DESC])->all(),'id','nama');
+        $tahun = ArrayHelper::map(Tahun::find()->where(['buka' => 'Y'])->orderBy(['id'=>SORT_DESC])->all(),'id','nama');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);

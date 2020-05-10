@@ -10,12 +10,12 @@ use yii\helpers\ArrayHelper;
 /* @var $searchModel app\models\TagihanSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Riwayat Tagihan';
+$this->title = 'Riwayat Tagihan Mahasiswa';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tagihan-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1 class="text-center"><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     

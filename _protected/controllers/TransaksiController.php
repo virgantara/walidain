@@ -8,7 +8,7 @@ use app\models\TransaksiSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\filters\AccessControl;
 /**
  * TransaksiController implements the CRUD actions for Transaksi model.
  */
@@ -20,10 +20,28 @@ class TransaksiController extends AppController
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'denyCallback' => function ($rule, $action) {
+                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page');
+                },
+                'only' => ['create','update','delete','index'],
+                'rules' => [
+                    
+                    [
+                        'actions' => [
+                            'create','update','delete','index'
+                        ],
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                   
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['post'],
                 ],
             ],
         ];

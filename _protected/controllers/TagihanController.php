@@ -7,7 +7,7 @@ use app\models\Tagihan;
 use app\models\TagihanSearch;
 use app\models\Tahun;
 use app\models\KomponenBiaya;
-
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -26,13 +26,48 @@ class TagihanController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'denyCallback' => function ($rule, $action) {
+                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page');
+                },
+                'only' => ['create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat'],
+                'rules' => [
+                    
+                    [
+                        'actions' => [
+                            'create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat'
+                        ],
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                   
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['post'],
                 ],
             ],
         ];
+    }
+
+    public function actionRiwayat()
+    {
+        $searchModel = new TagihanSearch();
+
+        $listTahun = Tahun::find()->orderBy(['id'=>SORT_DESC])->all();
+
+
+        
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('riwayat', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'listTahun' => $listTahun
+        ]);
     }
 
     public function actionDu()
@@ -356,12 +391,13 @@ class TagihanController extends Controller
 
         $tahun = Tahun::getTahunAktif();
         $searchModel->tahun = $tahun->id;
-        
+        $listTahun = Tahun::find()->orderBy(['id'=>SORT_DESC])->all();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'listTahun' => $listTahun
         ]);
     }
 

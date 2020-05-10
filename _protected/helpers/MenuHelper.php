@@ -23,12 +23,6 @@ class MenuHelper
 
 
 	    // we do not need to display About and Contact pages to employ
-	    $is_non_gudang = [
-	    	Yii::$app->user->can('operatorCabang'),
-	    	Yii::$app->user->can('operatorUnit'),
-	    	Yii::$app->user->can('gudang')
-	    ];
-	    
 
 
 	    if (Yii::$app->user->can('admin'))
@@ -56,6 +50,11 @@ class MenuHelper
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i><i class="fa fa-search"></i>&nbsp;Cari Tagihan',  
 	                'url' => ['/tagihan/index'],	        
+	            ],
+	            ['label' => '<hr style="padding:0px;margin:0px">'],
+	            [
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>&nbsp;Riwayat Tagihan',  
+	                'url' => ['/tagihan/riwayat'],	        
 	            ],
 	        ]];
 
@@ -92,16 +91,10 @@ class MenuHelper
 	        ]];
 	    }
 
-	     $acl = [
-			Yii::$app->user->can('gudang'),
-			Yii::$app->user->can('distributor'),
-			Yii::$app->user->can('operatorCabang'),
-			Yii::$app->user->can('operatorUnit')
-		];
-
+	  
 	   
 	    // display Users to admin+ roles
-	    if (Yii::$app->user->can('admin') || Yii::$app->user->can('admSalesCab') || Yii::$app->user->can('adminSpbu') || Yii::$app->user->can('gudang')){
+	    if (Yii::$app->user->can('admin')){
 
 	        $menuItems[] = ['label' =>'<i class="menu-icon fa fa-book"></i><span class="menu-text"> Master </span><i class="caret"></i>', 'url' => '#',
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
@@ -147,16 +140,17 @@ class MenuHelper
 	           	[
 	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Tahun <b class="arrow fa fa-angle-down"></b>',  
 	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
-	                'visible' => Yii::$app->user->can('theCreator'),
+	                'visible' => Yii::$app->user->can('admin'),
 	                'url' => ['#'],
 	                 'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	                'items' => [
 
-	                     ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['tahun/index']],
-	                     [
+	                    ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['tahun/index']],
+	                    [
 	                        'label' => ( '<i class="menu-icon fa fa-caret-right"></i>Tambah'),
 	                      
-	                        'url' => ['tahun/create']]
+	                        'url' => ['tahun/create']
+	                    ]
 	                ],
 	            ],
 	            [

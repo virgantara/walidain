@@ -10,7 +10,7 @@ use yii\helpers\ArrayHelper;
 /* @var $searchModel app\models\TagihanSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Tagihan';
+$this->title = 'Riwayat Tagihan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tagihan-index">
@@ -18,9 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a('Create Tagihan', ['tagihan/instant'], ['class' => 'btn btn-success']) ?>
-    </p>
+    
     <div class="table-responsive">
           <?php
     $gridColumns = [
@@ -131,6 +129,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
+                'template' => '{view}',
                 'visibleButtons' => [
                     
                     'delete' => function ($model) {

@@ -61,7 +61,7 @@ class TagihanController extends Controller
 
 
         
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchRiwayat(Yii::$app->request->queryParams);
 
         return $this->render('riwayat', [
             'searchModel' => $searchModel,
@@ -388,9 +388,6 @@ class TagihanController extends Controller
     public function actionIndex()
     {
         $searchModel = new TagihanSearch();
-
-        $tahun = Tahun::getTahunAktif();
-        $searchModel->tahun = $tahun->id;
         $listTahun = Tahun::find()->orderBy(['id'=>SORT_DESC])->all();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

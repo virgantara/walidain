@@ -34,16 +34,16 @@ class MenuHelper
 	        'items'=>[	           
 	            
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Daftar Ulang & Bulanan',  
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Buat DU & SPP',  
 	                'url' => ['/tagihan/du'],	           
 	            ],
-	            ['label' => '<hr style="padding:0px;margin:0px">'],
+	            // ['label' => '<hr style="padding:0px;margin:0px">'],
 	            // [
 	            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulanan',  
 	            //     'url' => ['/tagihan/bulanan'],	           
 	            // ],
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Instant Tagihan',  
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Buat Instant Tagihan',  
 	                'url' => ['/tagihan/instant'],	        
 	            ],
 	            ['label' => '<hr style="padding:0px;margin:0px">'],

@@ -93,6 +93,9 @@ class TagihanSearch extends Tagihan
             'nim0.kampus0 as kps'
         ]);
 
+        $tahun = Tahun::getTahunAktif();
+        $this->tahun = $tahun->id;
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -143,7 +146,80 @@ class TagihanSearch extends Tagihan
         ]);
 
 
-        $query->andWhere([self::tableName().'.tahun' => $this->tahun]);
+        $query->andWhere([self::tableName().'.tahun' => $tahun->id]);
+        $query->andFilterWhere(['like', 'nim', $this->nim])
+            ->andFilterWhere(['like', 'k.nama', $this->namaKomponen])
+            ->andFilterWhere(['like', 'c.nama_mahasiswa', $this->namaCustomer])
+            ->andFilterWhere(['like', 'p.nama_prodi', $this->namaProdi])
+            
+            ->andFilterWhere(['like', 't.nama', $this->namaTahun]);
+
+        return $dataProvider;
+    }
+
+    public function searchRiwayat($params)
+    {
+        $query = Tagihan::find();
+        $query->joinWith([
+            'komponen as k',
+            'nim0 as c',
+            'tahun0 as t',
+            'nim0.kodeProdi as p',
+            'nim0.kampus0 as kps'
+        ]);
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort'=> ['defaultOrder' => ['updated_at'=>SORT_DESC]]
+        ]);
+
+        $dataProvider->sort->attributes['namaKomponen'] = [
+            'asc' => ['k.nama'=>SORT_ASC],
+            'desc' => ['k.nama'=>SORT_DESC]
+        ];
+
+        $dataProvider->sort->attributes['namaCustomer'] = [
+            'asc' => ['c.nama_mahasiswa'=>SORT_ASC],
+            'desc' => ['c.nama_mahasiswa'=>SORT_DESC]
+        ];
+
+        $dataProvider->sort->attributes['namaProdi'] = [
+            'asc' => ['p.nama_prodi'=>SORT_ASC],
+            'desc' => ['p.nama_prodi'=>SORT_DESC]
+        ];
+
+        $dataProvider->sort->attributes['namaKampus'] = [
+            'asc' => ['kps.nama_kampus'=>SORT_ASC],
+            'desc' => ['kps.nama_kampus'=>SORT_DESC]
+        ];
+
+        $dataProvider->sort->attributes['namaTahun'] = [
+            'asc' => ['t.nama'=>SORT_ASC],
+            'desc' => ['t.nama'=>SORT_DESC]
+        ];
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        if(!empty($this->namaKampus))
+            $query->where(['kps.nama_kampus'=> $this->namaKampus]);
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            self::tableName().'.semester' => $this->semester,    
+            self::tableName().'.urutan' => $this->urutan,
+        ]);
+
+        if(!empty($this->tahun))
+            $query->andWhere([self::tableName().'.tahun' => $this->tahun]);
+        
         $query->andFilterWhere(['like', 'nim', $this->nim])
             ->andFilterWhere(['like', 'k.nama', $this->namaKomponen])
             ->andFilterWhere(['like', 'c.nama_mahasiswa', $this->namaCustomer])

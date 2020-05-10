@@ -6,6 +6,8 @@ use yii\grid\GridView;
 use kartik\depdrop\DepDrop;
 use yii\jui\AutoComplete;
 use yii\web\JsExpression;
+
+use kartik\number\NumberControl;
 // use app\models\TagihanSearch;
 
 // use keygenqt\autocompleteAjax\AutocompleteAjax;
@@ -49,13 +51,32 @@ $this->params['breadcrumbs'][] = $this->title;
      <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
         <div class="col-sm-9">
-          <?= Html::input('text','nilai','',['id'=>'nilai_tagihan']) ?>
+
+          <?= NumberControl::widget([
+            'name' => 'nilai',
+            'value' => '',
+            'maskedInputOptions' => [
+                'prefix' => 'Rp ',
+                'groupSeparator' => '.',
+                'radixPoint' => ','
+            ]
+            ,'displayOptions'=>['id'=>'nilai_tagihan','class'=>'','name'=>'nilai']]) 
+            ?>
         </div>
     </div>
      <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
         <div class="col-sm-9">
-          <?= Html::input('text','nilai_minimal','',['id'=>'nilai_minimal']) ?>
+            <?= NumberControl::widget([
+            'name' => 'nilai_minimal',
+            'value' => '',
+            'maskedInputOptions' => [
+                'prefix' => 'Rp ',
+                'groupSeparator' => '.',
+                'radixPoint' => ','
+            ]
+            ,'displayOptions'=>['id'=>'nilai_minimal','class'=>'','name'=>'nilai_minimal']]) 
+            ?>
         </div>
     </div>
     <div class="form-group">

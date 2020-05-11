@@ -126,6 +126,14 @@ class CustomerController extends Controller
         ]);
     }
 
+    public function actionView($id)
+    {
+        $model = $this->findModel($id);
+        return $this->render('view', [
+            'model' => $model,
+        ]);
+    }
+
     /**
      * Creates a new Customer model.
      * If creation is successful, the browser will be redirected to the 'view' page.

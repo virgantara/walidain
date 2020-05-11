@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\SimakMastermahasiswa;
@@ -43,7 +44,7 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
     public function search($params)
     {
         $query = SimakMastermahasiswa::find();
-        $query->joinWith(['kodeProdi as p','kampus0 as k']);
+        $query->joinWith(['kampus0 as k']);
 
         // add conditions that should always apply here
 
@@ -88,9 +89,22 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
             'updated_at' => $this->updated_at,
         ]);
 
+        if(Yii::$app->user->identity->access_role == 'admin')
+        {
+            $query->andFilterWhere(['or',
+                ['kampus'=>Yii::$app->user->identity->kampus],
+                ['kampus'=>Yii::$app->user->identity->kampus2]
+                
+            ]);
+        }
+
+        if(!empty($this->kode_prodi))
+        {
+            $query->andWhere(['kode_prodi'=>$this->kode_prodi]);
+        }
+
         $query->andFilterWhere(['like', 'kode_pt', $this->kode_pt])
             ->andFilterWhere(['like', 'kode_fakultas', $this->kode_fakultas])
-            ->andFilterWhere(['like', 'kode_prodi', $this->kode_prodi])
             ->andFilterWhere(['like', 'kode_jenjang_studi', $this->kode_jenjang_studi])
             ->andFilterWhere(['like', 'nim_mhs', $this->nim_mhs])
             ->andFilterWhere(['like', 'nama_mahasiswa', $this->nama_mahasiswa])

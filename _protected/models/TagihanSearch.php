@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Tagihan;
@@ -147,6 +148,15 @@ class TagihanSearch extends Tagihan
 
 
         $query->andWhere([self::tableName().'.tahun' => $tahun->id]);
+
+        if(Yii::$app->user->identity->access_role == 'admin')
+        {
+            $query->andFilterWhere(['or',
+                ['c.kampus'=>Yii::$app->user->identity->kampus],
+                ['c.kampus'=>Yii::$app->user->identity->kampus2]
+                
+            ]);
+        }
         $query->andFilterWhere(['like', 'nim', $this->nim])
             ->andFilterWhere(['like', 'k.nama', $this->namaKomponen])
             ->andFilterWhere(['like', 'c.nama_mahasiswa', $this->namaCustomer])

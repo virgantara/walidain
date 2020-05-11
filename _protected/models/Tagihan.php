@@ -64,7 +64,7 @@ class Tagihan extends \yii\db\ActiveRecord
             'tahun' => 'Tahun',
             'nim' => 'Nim',
             'komponen_id' => 'Komponen ID',
-            'nilai' => 'Nilai',
+            'nilai' => 'Nilai Tagihan',
             'nilai_minimal' => 'Nilai Minimal',
             'terbayar' => 'Terbayar',
             'edit' => 'Edit',

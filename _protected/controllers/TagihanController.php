@@ -77,9 +77,9 @@ class TagihanController extends Controller
         $model->tahun = $tahun->id;
         $komponen = ArrayHelper::map(KomponenBiaya::find()->where(['tahun'=>$tahun->id])->all(),'id','nama');
 
-        // print_r($_POST);exit;
-        if(!empty($_POST['nilai_tagihan']))
+        if($model->load(Yii::$app->request->post()))
         {
+            
             $query = SimakMastermahasiswa::find()->where([
                 'kode_prodi' => $_POST['prodi'],
                 'kampus' => $_POST['kampus'],
@@ -132,8 +132,8 @@ class TagihanController extends Controller
                     $t = new Tagihan;
                     $t->tahun = $_POST['tahun'];
                     $t->komponen_id = $_POST['komponen'];
-                    $t->nilai = $_POST['nilai_tagihan'];
-                    $t->nilai_minimal = $_POST['nilai_minimal'];
+                    $t->nilai = $model->nilai;
+                    $t->nilai_minimal = $model->nilai_minimal;
                     $t->urutan = $k->prioritas;
                     $t->nim = $c->nim_mhs;
                     $t->semester = $c->semester;
@@ -143,7 +143,7 @@ class TagihanController extends Controller
                         // print_r($t->attributes);exit;
                         $errors .= \app\helpers\MyHelper::logError($t);
                         
-                        throw new \Exception($errors);
+                        throw new \Exception;
                         
                         
                     }

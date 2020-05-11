@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
 /* @var $searchModel app\models\SalesStokGudangSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Generate Tagihan Instant';
+$this->title = 'Generate Tagihan Instant '.$tahun->nama;
 $this->params['breadcrumbs'][] = $this->title;
 
 
@@ -26,60 +26,15 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
   
     <?php $form = ActiveForm::begin([
-        'method' => 'get',
-        'action' => ['laporan/pembayaran'],
+        // 'method' => 'get',
+        // 'action' => ['laporan/pembayaran'],
         'options' => [
             'class' => 'form-horizontal'
         ]
     ]); ?>
     <div id="msg" style="display: none;"></div>
     
-    
-    <div class="form-group">
-        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Tahun Aktif Tagihan</label>
-        <div class="col-sm-9">
-          <?= Html::textInput('tahun',$model->tahun, ['id'=>'tahun_id','class'=>'form-control','readonly'=>'readonly']) ?>
-        </div>
-    </div>
      <div class="form-group">
-        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Komponen</label>
-        <div class="col-sm-9">
-            <?= Html::dropDownList('komponen','',$komponen,['id'=>'komponen_id','class'=>'form-control','prompt'=>'- Pilih Komponen -']);?>
-                
-        </div>
-    </div>
-     <div class="form-group">
-        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
-        <div class="col-sm-9">
-
-          <?= NumberControl::widget([
-            'name' => 'nilai',
-            'value' => '',
-            'maskedInputOptions' => [
-                'prefix' => 'Rp ',
-                'groupSeparator' => '.',
-                'radixPoint' => ','
-            ]
-            ,'displayOptions'=>['id'=>'nilai_tagihan','class'=>'','name'=>'nilai']]) 
-            ?>
-        </div>
-    </div>
-     <div class="form-group">
-        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
-        <div class="col-sm-9">
-            <?= NumberControl::widget([
-            'name' => 'nilai_minimal',
-            'value' => '',
-            'maskedInputOptions' => [
-                'prefix' => 'Rp ',
-                'groupSeparator' => '.',
-                'radixPoint' => ','
-            ]
-            ,'displayOptions'=>['id'=>'nilai_minimal','class'=>'','name'=>'nilai_minimal']]) 
-            ?>
-        </div>
-    </div>
-    <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> NIM</label>
         <div class="col-sm-9">
              <?php 
@@ -114,6 +69,29 @@ $this->params['breadcrumbs'][] = $this->title;
       <?= Html::input('hidden','nim','', ['id'=>'nim']) ?>
         </div>
     </div>
+
+          <?= Html::hiddenInput('tahun',$model->tahun, ['id'=>'tahun_id','class'=>'form-control','readonly'=>'readonly']) ?>
+     
+     <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Komponen</label>
+        <div class="col-sm-9">
+            <?= Html::dropDownList('komponen','',$komponen,['id'=>'komponen_id','class'=>'form-control','prompt'=>'- Pilih Komponen -']);?>
+                
+        </div>
+    </div>
+     <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
+        <div class="col-sm-9">
+ <?= $form->field($model, 'nilai',['options'=>['tag'=>false]])->textInput(['class' => 'form-control','id'=>'nilai_tagihan','readonly'=>'readonly'])->label(false) ?>
+        </div>
+    </div>
+     <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
+        <div class="col-sm-9">
+            <?= $form->field($model, 'nilai_minimal',['options'=>['tag'=>false]])->textInput(['class' => 'form-control','id'=>'nilai_minimal','readonly'=>'readonly'])->label(false) ?>
+        </div>
+    </div>
+   
     
     <div class="col-sm-3">
         
@@ -149,31 +127,42 @@ function generate(){
     obj.komponen_id = $('#komponen_id').val();
     obj.semester_biaya = $('#semester_biaya').val();
     obj.nim = $('#nim').val();
+    Swal.fire({
+      title: 'Konfirmasi Pembuatan Tagihan!',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, Setujui!'
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+            type : 'POST',
+            data : {
+                Tagihan : obj
+            },
+            url : '/tagihan/generate-instant',
+            beforeSend : function(){
+                $('#msg').hide();
+                $('#loading').show();
+            },
+            error : function(err){
+                console.log(err);
+                $('#loading').hide();
+            },
+            success : function(data){
+                
+                var data = $.parseJSON(data);
+                $('#msg').show();
+                $('#msg').html('<div class=\"alert alert-success\">Data sudah digenerate</div>');
+                $('#loading').hide();  
+                
+            }
 
-    $.ajax({
-        type : 'POST',
-        data : {
-            Tagihan : obj
-        },
-        url : '/tagihan/generate-instant',
-        beforeSend : function(){
-            $('#msg').hide();
-            $('#loading').show();
-        },
-        error : function(err){
-            console.log(err);
-            $('#loading').hide();
-        },
-        success : function(data){
-
-            var data = $.parseJSON(data);
-            $('#msg').show();
-            $('#msg').html('<div class=\"alert alert-success\">Data sudah digenerate</div>');
-            $('#loading').hide();  
-            
-        }
-
+        });
+      }
     });
+
 }
 
 

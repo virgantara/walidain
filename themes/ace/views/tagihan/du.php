@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 /* @var $searchModel app\models\SalesStokGudangSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Generate Bulk Tagihan Bulanan';
+$this->title = 'Generate Bulk Tagihan Per Semester ';
 $this->params['breadcrumbs'][] = $this->title;
 
 
@@ -22,6 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <div class="col-xs-6">
     <h1><?= Html::encode($this->title) ?></h1>
+    <h2><?=$tahun->nama;?></h2>
   
     <?php $form = ActiveForm::begin([
         // 'method' => 'get',
@@ -30,18 +31,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'id' => 'form-tagihan',
             'class' => 'form-horizontal'
         ]
-    ]); ?>
+    ]); 
+    echo $form->errorSummary($model,['header'=>'<div class="alert alert-danger">','footer'=>'</div>']);
+    ?>
     <div id="msg" style="display: none;"></div>
     <?php  
      foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
          echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
-     } ?>
-     <div class="form-group">
-        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Tahun Aktif Tagihan</label>
-        <div class="col-sm-9">
-          <?= Html::textInput('tahun',$model->tahun, ['id'=>'tahun_id','class'=>'form-control','readonly'=>'readonly']) ?>
-        </div>
-    </div>
+     } ?>  <?= Html::hiddenInput('tahun',$model->tahun, ['id'=>'tahun_id','class'=>'form-control','readonly'=>'readonly']) ?>
+        
     <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Kampus</label>
         <div class="col-sm-9">
@@ -89,14 +87,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
         <div class="col-sm-9">
-          <input type="text" name="nilai_tagihan" id="nilai_tagihan"/>
+          <?= $form->field($model, 'nilai',['options'=>['tag'=>false]])->textInput(['class' => 'form-control','id'=>'nilai_tagihan','readonly'=>'readonly'])->label(false) ?>
         </div>
     </div>
      <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
         <div class="col-sm-9">
-            <input type="text" name="nilai_minimal" id="nilai_minimal"/>
-         
+           <?= $form->field($model, 'nilai_minimal',['options'=>['tag'=>false]])->textInput(['class' => 'form-control','id'=>'nilai_minimal','readonly'=>'readonly'])->label(false) ?>
         </div>
     </div>
     <div class="col-sm-2">

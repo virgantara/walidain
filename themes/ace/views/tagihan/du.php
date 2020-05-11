@@ -89,31 +89,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
         <div class="col-sm-9">
-          <?= NumberControl::widget([
-            'name' => 'nilai',
-            'value' => '',
-            'maskedInputOptions' => [
-                'prefix' => 'Rp ',
-                'groupSeparator' => '.',
-                'radixPoint' => ','
-            ]
-            ,'displayOptions'=>['id'=>'nilai_tagihan','class'=>'','name'=>'nilai']]) 
-            ?>
+          <input type="text" name="nilai_tagihan" id="nilai_tagihan"/>
         </div>
     </div>
      <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Minimal</label>
         <div class="col-sm-9">
-            <?= NumberControl::widget([
-            'name' => 'nilai_minimal',
-            'value' => '',
-            'maskedInputOptions' => [
-                'prefix' => 'Rp ',
-                'groupSeparator' => '.',
-                'radixPoint' => ','
-            ]
-            ,'displayOptions'=>['id'=>'nilai_minimal','class'=>'','name'=>'nilai_minimal']]) 
-            ?>
+            <input type="text" name="nilai_minimal" id="nilai_minimal"/>
          
         </div>
     </div>

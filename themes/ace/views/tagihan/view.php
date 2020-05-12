@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'status_bayar',
 
                 'value' => function($data){
-                    switch($data->status_bayar)
+                    switch($data->statusPembayaran)
                     {
                         case 1 : 
                             return 'LUNAS';

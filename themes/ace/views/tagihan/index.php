@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'header'=>'',
         'headerOptions'=>['class'=>'kartik-sheet-style']
     ],
-             'nim',
+            'nim',
             'namaCustomer',
             'namaProdi',
             [
@@ -60,8 +60,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     
                 },
             ],
-            'namaKomponen',
-            'semester',
+            [
+                'attribute' => 'komponen_id',
+                'label' => 'Komponen',
+                'format' => 'raw',
+                'filter'=>ArrayHelper::map($listKomponen,'id','nama'),
+                'value'=>function($model,$url){
+
+                    
+                    return $model->komponen->nama;
+                    
+                },
+            ],
+            'namaSemester',
             //'komponen_id',
             'nilai',
             'nilai_minimal',
@@ -101,7 +112,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'status_bayar',
                 'label' => 'Status',
                 'format' => 'raw',
-                'filter'=>["1"=>"LUNAS","2"=>"CICILAN","0"=>"BELUM LUNAS"],
+                'filter'=>["1"=>"LUNAS","2"=>"CICILAN","3"=>"BELUM LUNAS"],
                 'value'=>function($model,$url){
 
                     switch($model->statusPembayaran)
@@ -114,9 +125,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             $st = 'warning';
                             $label = 'CICILAN'; 
                         break;
-                        default:
+                        case 3 :
                             $st = 'danger';
                             $label = 'BELUM LUNAS';
+                        break;
+                        default:
+                            $st = '';
+                            $label = '';
                         break;
                     }
                     

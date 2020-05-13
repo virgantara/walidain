@@ -62,7 +62,8 @@ class Tagihan extends \yii\db\ActiveRecord
             'urutan' => 'Urutan',
             'semester' => 'Semester',
             'tahun' => 'Tahun',
-            'nim' => 'Nim',
+            'nim' => 'NIM',
+            'namaCustomer' => 'Nama Mahasiswa',
             'komponen_id' => 'Komponen ID',
             'nilai' => 'Nilai Tagihan',
             'nilai_minimal' => 'Nilai Minimal',
@@ -71,6 +72,7 @@ class Tagihan extends \yii\db\ActiveRecord
             'status_bayar' => 'Status Bayar',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'namaSemester' => 'Semester'
         ];
     }
 
@@ -119,6 +121,11 @@ class Tagihan extends \yii\db\ActiveRecord
         return $this->nim0->kodeProdi->nama_prodi;
     }
 
+    public function getNamaSemester()
+    {
+        return $this->nim0->semester;
+    }
+
     public function getNamaKampus()
     {
         $query = (new \yii\db\Query())->from('simak_kampus');
@@ -131,17 +138,13 @@ class Tagihan extends \yii\db\ActiveRecord
     public function getStatusPembayaran()
     {
         if($this->terbayar >= $this->nilai)
-        {
             return 1;
-        }
-
-        else if($this->terbayar >= $this->nilai_minimal && $this->terbayar > 0)
-        {
+        else if($this->terbayar > 0 && $this->terbayar < $this->nilai)
             return 2;
-        }
-
-        else{
+        else if($this->terbayar == 0)
+            return 3;
+        else
             return 0;
-        }
+        
     }
 }

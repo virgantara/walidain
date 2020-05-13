@@ -20,6 +20,7 @@ class TagihanSearch extends Tagihan
     public $namaProdi;
     public $namaKampus;
     public $namaTahun;
+    public $namaSemester;
     public $excludeWisuda;
 
 
@@ -30,7 +31,7 @@ class TagihanSearch extends Tagihan
     {
         return [
             [['id', 'urutan', 'semester', 'tahun', 'komponen_id', 'edit', 'status_bayar'], 'integer'],
-            [['nim', 'created_at', 'updated_at','namaKomponen','namaCustomer','namaProdi','namaKampus','namaTahun','nilai_minimal'], 'safe'],
+            [['nim', 'created_at', 'updated_at','namaKomponen','namaCustomer','namaProdi','namaKampus','namaTahun','nilai_minimal','namaSemester'], 'safe'],
             [['nilai', 'terbayar'], 'number'],
         ];
     }
@@ -129,6 +130,11 @@ class TagihanSearch extends Tagihan
             'desc' => ['t.nama'=>SORT_DESC]
         ];
 
+        $dataProvider->sort->attributes['namaSemester'] = [
+            'asc' => ['c.semester'=>SORT_ASC],
+            'desc' => ['c.semester'=>SORT_DESC]
+        ];
+
         $this->load($params);
 
         if (!$this->validate()) {
@@ -157,8 +163,34 @@ class TagihanSearch extends Tagihan
                 
             ]);
         }
+
+        if(!empty($this->komponen_id))
+        {
+            $query->andWhere(['komponen_id'=>$this->komponen_id]);
+        }
+
+        if(!empty($this->namaSemester))
+        {
+            $query->andWhere(['c.semester'=>$this->namaSemester]);
+        }
+
+        if(!empty($this->status_bayar))
+        {
+            switch ($this->status_bayar) {
+                case 1:
+                    $query->andWhere('terbayar >= nilai');
+                    break;
+                case 2:
+                    $query->andWhere('terbayar > 0 AND terbayar < nilai');
+                    break;
+                case 3:
+                    $query->andWhere('terbayar = 0');
+                    break;
+                
+            }
+        }
+
         $query->andFilterWhere(['like', 'nim', $this->nim])
-            ->andFilterWhere(['like', 'k.nama', $this->namaKomponen])
             ->andFilterWhere(['like', 'c.nama_mahasiswa', $this->namaCustomer])
             ->andFilterWhere(['like', 'p.nama_prodi', $this->namaProdi])
             

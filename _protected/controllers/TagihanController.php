@@ -391,11 +391,15 @@ class TagihanController extends Controller
         $listTahun = Tahun::find()->orderBy(['id'=>SORT_DESC])->all();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $tahun = Tahun::getTahunAktif();
+
+        $listKomponen = KomponenBiaya::find()->where(['tahun'=>$tahun->id])->all();
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'listTahun' => $listTahun,
-            'tahun' => $tahun
+            'tahun' => $tahun,
+            'listKomponen' => $listKomponen
         ]);
     }
 

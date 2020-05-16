@@ -38,7 +38,7 @@ class MenuHelper
 	                'url' => ['/tagihan/du'],	           
 	            ],
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Tagihan untu Mhs Non Aktif',  
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Tagihan untuk Mhs Non Aktif',  
 	                'url' => ['/tagihan/du-nonaktif'],	           
 	            ],
 	            // ['label' => '<hr style="padding:0px;margin:0px">'],

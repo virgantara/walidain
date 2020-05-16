@@ -9,7 +9,11 @@ use Yii;
 class MyHelper
 {
 
-	
+	public static function appendZeros($str, $charlength=6)
+	{
+
+		return str_pad($str, $charlength, '0', STR_PAD_LEFT);
+	}
 
 	public static function parseVACode($header, $nim)
 	{
@@ -41,7 +45,7 @@ class MyHelper
 
     }
 
-    function getRandomString($minlength=12, $maxlength=12, $useupper=true, $usespecial=false, $usenumbers=true)
+    public static function getRandomString($minlength=12, $maxlength=12, $useupper=true, $usespecial=false, $usenumbers=true)
 	{
 
 	    $charset = "abcdefghijklmnopqrstuvwxyz";

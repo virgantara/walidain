@@ -8,6 +8,7 @@ use app\models\CustomerSearch;
 use app\models\SimakMastermahasiswa;
 use app\models\SimakMastermahasiswaSearch;
 
+use yii\filters\AccessControl;
 use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -26,13 +27,117 @@ class CustomerController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'denyCallback' => function ($rule, $action) {
+                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page');
+                },
+                'only' => ['view','index','generate-va'],
+                'rules' => [
+                    [
+                        'actions' => [
+                            'index','view'
+                        ],
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                    [
+                        'actions' => [
+                            'index','view','generate-va'
+                        ],
+                        'allow' => true,
+                        'roles' => ['theCreator'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['post'],
                 ],
             ],
         ];
+    }
+
+    public function actionGenerateVa()
+    {
+
+        $model = new SimakMastermahasiswa;
+        $count = 0;
+        if($model->load(Yii::$app->request->get()))
+        {
+            $prodi = $model->kode_prodi;
+            $kampus = $model->kampus;
+            $status_aktivitas = $model->status_aktivitas;
+
+            $list = SimakMastermahasiswa::find()->where([
+                'kode_prodi' => $prodi,
+                'status_aktivitas'=>$status_aktivitas,
+                'kampus' => $kampus
+            ])->all();
+
+            $prefix = '751050';
+
+            $transaction = \Yii::$app->db->beginTransaction();
+            $errors = '';
+
+            // print_r($listCustomer);exit;
+            try 
+            {
+                foreach($list as $m)
+                {
+                    if(empty($m->va_code) || $m->va_code == '-')
+                    {
+                        $nim = str_replace('.', '', $m->nim_mhs);
+                        if(strlen($nim) < 8)
+                        {
+                            $suffix = $nim;
+                        }
+
+                        else
+                        {
+                            $suffix = str_replace(substr($nim, 2, 4),'',$nim);
+                        }
+                        
+                        $code = $prefix.\app\helpers\MyHelper::appendZeros($suffix, 10);
+
+                        $m->va_code = $code;
+                        if($m->save(false,['va_code']))
+                        {
+                            $count++;
+                        }
+
+                        else
+                        {
+                            $errors .= \app\helpers\MyHelper::logError($m);
+                            throw new Exception;
+                            
+                        }
+                    }
+                }  
+                Yii::$app->session->setFlash('success', $count." virtual account sudah dibuat");
+                $transaction->commit();
+
+                return $this->redirect(['generate-va']);
+            } catch (\Exception $e) {
+                $errors .= $e->getMessage();
+                Yii::$app->session->setFlash('danger', $errors);
+                $transaction->rollBack();
+                
+            } catch (\Throwable $e) {
+                $errors .= $e->getMessage();
+                Yii::$app->session->setFlash('danger', $errors);
+                $transaction->rollBack();
+                
+                
+            }
+            die(); 
+        }
+
+        return $this->render('generateVa',[
+            'model' => $model,
+
+        ]);   
     }
 
     public function actionGetJumlahMahasiswaPerSemester()

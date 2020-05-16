@@ -160,9 +160,9 @@ class MenuHelper
 	                
 	            ],
 	            [
-	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Sinkronisasi',  
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>VA Generator',  
 	                'visible' => Yii::$app->user->can('theCreator'),
-	                'url' => ['customer/sinkronisasi'],
+	                'url' => ['customer/generate-va'],
 	                
 	            ],
 	            

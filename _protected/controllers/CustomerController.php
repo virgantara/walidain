@@ -140,6 +140,30 @@ class CustomerController extends Controller
         ]);   
     }
 
+    public function actionGetJumlahMahasiswaPerAngkatan()
+    {
+        $dataPost = $_POST['dataPost'];
+        $prodi = $dataPost['prodi'];
+        $tahun_masuk = $dataPost['tahun_masuk'];
+        $kampus = $dataPost['kampus'];
+        $status_aktivitas = $dataPost['status_aktivitas'];
+
+        $jml = SimakMastermahasiswa::find()->where([
+            'kode_prodi' => $prodi,
+            'status_aktivitas'=>$status_aktivitas,
+            'tahun_masuk' => $tahun_masuk,
+            'kampus' => $kampus
+        ])->count();        
+
+        $out = [
+            'prodi' => $prodi,
+            'jumlah' => $jml
+        ];
+
+        echo \yii\helpers\Json::encode($out);
+        die();
+    }
+
     public function actionGetJumlahMahasiswaPerSemester()
     {
         $dataPost = $_POST['dataPost'];
@@ -179,6 +203,40 @@ class CustomerController extends Controller
                     ])
                     ->groupBy(['semester'])
                     ->orderBy(['semester'=>SORT_ASC])
+                    ->all();
+
+                // the getSubCatList function will query the database based on the
+                // cat_id and return an array like below:
+                // [
+                //    ['id'=>'<sub-cat-id-1>', 'name'=>'<sub-cat-name1>'],
+                //    ['id'=>'<sub-cat_id_2>', 'name'=>'<sub-cat-name2>']
+                // ]
+                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                return;
+            }
+        }
+        // select semester from simak_mastermahasiswa where kode_prodi = 1 and status_aktivitas = 'A' group by semester order by semester
+    }
+
+    public function actionSubangkatan()
+    {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $prodi = $parents[0];
+                $sa = $parents[1];
+                $kampus = $parents[2];
+                $out = (new \yii\db\Query())
+                    ->select(['tahun_masuk as id', 'tahun_masuk as name'])
+                    ->from('simak_mastermahasiswa')
+                    ->where([
+                      'kode_prodi' => $prodi,
+                      'status_aktivitas' => $sa,
+                      'kampus' => $kampus
+                    ])
+                    ->groupBy(['tahun_masuk'])
+                    ->orderBy(['tahun_masuk'=>SORT_ASC])
                     ->all();
 
                 // the getSubCatList function will query the database based on the

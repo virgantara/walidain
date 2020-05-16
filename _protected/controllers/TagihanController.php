@@ -36,7 +36,7 @@ class TagihanController extends Controller
                     
                     [
                         'actions' => [
-                            'create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat'
+                            'create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat','du-nonaktif'
                         ],
                         'allow' => true,
                         'roles' => ['admin'],
@@ -51,6 +51,110 @@ class TagihanController extends Controller
                 ],
             ],
         ];
+    }
+
+    public function actionDuNonaktif()
+    {
+        $model = new Tagihan;
+        $tahun = Tahun::getTahunAktif();
+        $model->tahun = $tahun->id;
+        $komponen = ArrayHelper::map(KomponenBiaya::find()->where(['tahun'=>$tahun->id])->all(),'id','nama');
+
+        if($model->load(Yii::$app->request->post()))
+        {
+            
+            $query = SimakMastermahasiswa::find()->where([
+                'kode_prodi' => $_POST['prodi'],
+                'kampus' => $_POST['kampus'],
+                'tahun_masuk' => $_POST['tahun_masuk'],
+                'status_aktivitas' => $_POST['status_aktivitas']
+            ]);
+
+            $listCustomer = $query->all();
+            $k = KomponenBiaya::findOne($_POST['komponen']);
+            $transaction = \Yii::$app->db->beginTransaction();
+            $errors = '';
+
+            // print_r($listCustomer);exit;
+            try 
+            {
+
+                if(empty($_POST['prodi']))
+                {
+                    $errors .= 'Prodi harus diisi';
+                        
+                    throw new \Exception;
+                }
+
+                if(empty($_POST['kampus']))
+                {
+                    $errors .= 'Kampus harus diisi';
+                        
+                    throw new \Exception;
+                }
+
+                if(empty($_POST['status_aktivitas']))
+                {
+                    $errors .= 'Status Aktif mahasiswa harus diisi';
+                        
+                    throw new \Exception;
+                }
+
+                foreach($listCustomer as $c)
+                {
+
+                    $t = Tagihan::find()->where([
+                        'komponen_id' => $_POST['komponen'],
+                        'nim' => $c->nim_mhs,
+                        'tahun' => $_POST['tahun'],
+
+                    ])->one();
+
+                    if(!empty($t)) continue;
+                    
+                    $t = new Tagihan;
+                    $t->tahun = $_POST['tahun'];
+                    $t->komponen_id = $_POST['komponen'];
+                    $t->nilai = $model->nilai;
+                    $t->nilai_minimal = $model->nilai_minimal;
+                    $t->urutan = $k->prioritas;
+                    $t->nim = $c->nim_mhs;
+                    $t->semester = $c->semester;
+
+                    if(!$t->save())
+                    {
+                        // print_r($t->attributes);exit;
+                        $errors .= \app\helpers\MyHelper::logError($t);
+                        
+                        throw new \Exception;
+                        
+                        
+                    }
+
+                }
+
+                Yii::$app->session->setFlash('success', " Data telah tersimpan");
+
+                $transaction->commit();
+            } catch (\Exception $e) {
+                $errors .= $e->getMessage();
+                Yii::$app->session->setFlash('danger', $errors);
+                $transaction->rollBack();
+                
+            } catch (\Throwable $e) {
+                $errors .= $e->getMessage();
+                Yii::$app->session->setFlash('danger', $errors);
+                $transaction->rollBack();
+                
+                
+            }
+        }
+
+        return $this->render('du_nonaktif',[
+            'model' => $model,
+            'tahun' => $tahun,
+            'komponen' => $komponen
+        ]);
     }
 
     public function actionRiwayat()

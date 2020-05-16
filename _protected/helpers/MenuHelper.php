@@ -37,6 +37,10 @@ class MenuHelper
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Buat DU & SPP',  
 	                'url' => ['/tagihan/du'],	           
 	            ],
+	            [
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Tagihan untu Mhs Non Aktif',  
+	                'url' => ['/tagihan/du-nonaktif'],	           
+	            ],
 	            // ['label' => '<hr style="padding:0px;margin:0px">'],
 	            // [
 	            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulanan',  

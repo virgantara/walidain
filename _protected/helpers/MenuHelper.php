@@ -27,39 +27,58 @@ class MenuHelper
 
 	    if (Yii::$app->user->can('admin'))
 	    {
-	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Tagihan </span><i class="caret"></i>', 'url' => '#',
+
+
+
+	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-money"></i><span class="menu-text"> Tagihan </span><i class="caret"></i>', 'url' => '#',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	         'visible' => Yii::$app->user->can('admin'),
 	        'items'=>[	           
 	            
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Buat DU & SPP',  
-	                'url' => ['/tagihan/du'],	           
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Buat Tagihan <b class="arrow fa fa-angle-down"></b>',  
+	                'url' => '#',
+	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
+	         		'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',	
+	         		'items' => [
+	         			[
+			            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Per Semester',  
+			                'url' => ['/tagihan/du'],	           
+			            ],
+	         			[
+			            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Per Angkatan',  
+			                'url' => ['/tagihan/du-nonaktif'],	           
+			            ],
+			            [
+			            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Instant',  
+			                'url' => ['/tagihan/instant'],	        
+			            ],
+	         		]           
 	            ],
-	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Tagihan untuk Mhs Non Aktif',  
-	                'url' => ['/tagihan/du-nonaktif'],	           
-	            ],
-	            // ['label' => '<hr style="padding:0px;margin:0px">'],
-	            // [
-	            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulanan',  
-	            //     'url' => ['/tagihan/bulanan'],	           
-	            // ],
-	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Buat Instant Tagihan',  
-	                'url' => ['/tagihan/instant'],	        
-	            ],
+	            
+	            
+	            
 	            ['label' => '<hr style="padding:0px;margin:0px">'],
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i><i class="fa fa-search"></i>&nbsp;Cari Tagihan',  
-	                'url' => ['/tagihan/index'],	        
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Daftar Tagihan <b class="arrow fa fa-angle-down"></b>',  
+	                'url' => '#',
+	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
+	         		'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',	
+	         		'items' => [
+	         			[
+			            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Tahun Berjalan',  
+			                'url' => ['/tagihan/index'],	        
+			            ],
+			            [
+			            	'label' => '<i class="menu-icon fa fa-caret-right"></i>&nbsp;Riwayat',  
+			                'url' => ['/tagihan/riwayat'],	        
+			            ],
+	         		]           
 	            ],
-	            ['label' => '<hr style="padding:0px;margin:0px">'],
-	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>&nbsp;Riwayat Tagihan',  
-	                'url' => ['/tagihan/riwayat'],	        
-	            ],
+	            
+	          
+	            
 	        ]];
 
 	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Transaksi </span>', 'url' => ['/transaksi'],

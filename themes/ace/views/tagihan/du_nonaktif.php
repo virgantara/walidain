@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 /* @var $searchModel app\models\SalesStokGudangSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Generate Bulk Tagihan Per Semester ';
+$this->title = 'Generate Bulk Tagihan Per Angkatan / Tahun Masuk ';
 $this->params['breadcrumbs'][] = $this->title;
 
 
@@ -54,12 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
            <?= Html::dropDownList('prodi','',[],['id'=>'prodi','class'=>'form-control','prompt'=>'- Pilih Prodi -']);?>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Status Mahasiswa</label>
-        <div class="col-sm-9">
-         <?= Html::dropDownList('status_aktivitas','',['A'=>'Aktif','N'=>'Non Aktif'],['prompt'=>'- Pilih Status -','class'=>'form-control','id'=>'status_aktivitas']);?>
-        </div>
-    </div>
+   
     <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Tahun Masuk</label>
         <div class="col-sm-9">
@@ -72,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 //     }"
                 // ],
                 'pluginOptions'=>[
-                    'depends'=>['prodi','status_aktivitas','kampus'],
+                    'depends'=>['prodi','kampus'],
                     'initialize' => true,
                     'placeholder' => 'Pilih Tahun Masuk...',
                     'url' => Url::to(['/customer/subangkatan'])
@@ -218,9 +213,9 @@ $(document).on('click','#generate',function(e){
     e.preventDefault();
     var obj = new Object;
     obj.prodi = $('#prodi').val();
-    obj.status_aktivitas = $('#status_aktivitas').val();
     obj.kampus = $('#kampus').val();
     obj.tahun_masuk = $('#tahun_masuk').val();
+    obj.komponen_id = $('#komponen_id').val();
     $.ajax({
         type : 'POST',
         data : {

@@ -5,6 +5,8 @@ namespace app\controllers;
 use Yii;
 use app\models\Customer;
 use app\models\CustomerSearch;
+use app\models\Tagihan;
+use app\models\Tahun;
 use app\models\SimakMastermahasiswa;
 use app\models\SimakMastermahasiswaSearch;
 
@@ -146,18 +148,48 @@ class CustomerController extends Controller
         $prodi = $dataPost['prodi'];
         $tahun_masuk = $dataPost['tahun_masuk'];
         $kampus = $dataPost['kampus'];
-        $status_aktivitas = $dataPost['status_aktivitas'];
+        $komponen_id = $dataPost['komponen_id'];
+        $sa = ['A','N'];
+        $tahun = Tahun::getTahunAktif();
 
-        $jml = SimakMastermahasiswa::find()->where([
+        $listMhs = SimakMastermahasiswa::find()->where([
             'kode_prodi' => $prodi,
-            'status_aktivitas'=>$status_aktivitas,
             'tahun_masuk' => $tahun_masuk,
             'kampus' => $kampus
-        ])->count();        
+        ])
+        ->andWhere(['in','status_aktivitas',$sa])
+        // ->andWhere(['not in','nim_mhs',$sa])
+        ->all();        
+
+        $counter = 0;
+        foreach($listMhs as $m)
+        {
+            $t = Tagihan::find()->where([
+                'komponen_id'=>$komponen_id,
+                'tahun' => $tahun->id,
+                'nim' =>$m->nim_mhs       
+            ])->one();
+
+            if(empty($t))
+                $counter++;
+        }
+
+        // $out = (new \yii\db\Query())
+        //     ->select(['semester as id', 'semester as name'])
+        //     ->from('simak_mastermahasiswa')
+
+        //     ->where([
+        //       'kode_prodi' => $prodi,
+        //       'tahun_masuk' => $tahun_masuk
+        //     ])
+        //     ->andWhere(['in','status_aktivitas',$sa])
+        //     ->groupBy(['semester'])
+        //     ->orderBy(['semester'=>SORT_ASC])
+        //     ->all();
 
         $out = [
             'prodi' => $prodi,
-            'jumlah' => $jml
+            'jumlah' => $counter
         ];
 
         echo \yii\helpers\Json::encode($out);
@@ -225,16 +257,18 @@ class CustomerController extends Controller
             $parents = $_POST['depdrop_parents'];
             if ($parents != null) {
                 $prodi = $parents[0];
-                $sa = $parents[1];
-                $kampus = $parents[2];
+                $kampus = $parents[1];
+                // $kampus = $parents[2];
+                $sa = ['A','N'];
                 $out = (new \yii\db\Query())
                     ->select(['tahun_masuk as id', 'tahun_masuk as name'])
                     ->from('simak_mastermahasiswa')
                     ->where([
                       'kode_prodi' => $prodi,
-                      'status_aktivitas' => $sa,
+                      
                       'kampus' => $kampus
                     ])
+                    ->andWhere(['in','status_aktivitas',$sa])
                     ->groupBy(['tahun_masuk'])
                     ->orderBy(['tahun_masuk'=>SORT_ASC])
                     ->all();

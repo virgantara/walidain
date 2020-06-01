@@ -242,6 +242,11 @@ class TagihanSearch extends Tagihan
             'desc' => ['t.nama'=>SORT_DESC]
         ];
 
+        $dataProvider->sort->attributes['namaSemester'] = [
+            'asc' => ['c.semester'=>SORT_ASC],
+            'desc' => ['c.semester'=>SORT_DESC]
+        ];
+
         $this->load($params);
 
         if (!$this->validate()) {
@@ -259,8 +264,27 @@ class TagihanSearch extends Tagihan
             self::tableName().'.urutan' => $this->urutan,
         ]);
 
-        if(!empty($this->tahun))
-            $query->andWhere([self::tableName().'.tahun' => $this->tahun]);
+
+        $query->andWhere([self::tableName().'.tahun' => $this->tahun]);
+
+        if(Yii::$app->user->identity->access_role == 'admin')
+        {
+            $query->andFilterWhere(['or',
+                ['c.kampus'=>Yii::$app->user->identity->kampus],
+                ['c.kampus'=>Yii::$app->user->identity->kampus2]
+                
+            ]);
+        }
+
+        if(!empty($this->komponen_id))
+        {
+            $query->andWhere(['komponen_id'=>$this->komponen_id]);
+        }
+
+        if(!empty($this->namaSemester))
+        {
+            $query->andWhere(['c.semester'=>$this->namaSemester]);
+        }
 
         if(!empty($this->status_bayar))
         {
@@ -277,9 +301,8 @@ class TagihanSearch extends Tagihan
                 
             }
         }
-        
+
         $query->andFilterWhere(['like', 'nim', $this->nim])
-            ->andFilterWhere(['like', 'k.nama', $this->namaKomponen])
             ->andFilterWhere(['like', 'c.nama_mahasiswa', $this->namaCustomer])
             ->andFilterWhere(['like', 'p.nama_prodi', $this->namaProdi])
             

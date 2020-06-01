@@ -261,6 +261,22 @@ class TagihanSearch extends Tagihan
 
         if(!empty($this->tahun))
             $query->andWhere([self::tableName().'.tahun' => $this->tahun]);
+
+        if(!empty($this->status_bayar))
+        {
+            switch ($this->status_bayar) {
+                case 1:
+                    $query->andWhere('terbayar >= nilai');
+                    break;
+                case 2:
+                    $query->andWhere('terbayar > 0 AND terbayar < nilai');
+                    break;
+                case 3:
+                    $query->andWhere('terbayar = 0');
+                    break;
+                
+            }
+        }
         
         $query->andFilterWhere(['like', 'nim', $this->nim])
             ->andFilterWhere(['like', 'k.nama', $this->namaKomponen])

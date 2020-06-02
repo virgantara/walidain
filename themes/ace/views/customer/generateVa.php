@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
      <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Status Mahasiswa</label>
         <div class="col-lg-2 col-sm-10">
-         <?= $form->field($model,'status_aktivitas',['options'=>['tag'=>false]])->dropDownList(['A'=>'Aktif','N'=>'Non Aktif'],['prompt'=>'- Pilih Status -'])->label(false);?>
+         <?= $form->field($model,'status_aktivitas',['options'=>['tag'=>false]])->dropDownList(['A'=>'Aktif','N'=>'Non Aktif','C'=>'Cuti'],['prompt'=>'- Pilih Status -'])->label(false);?>
         </div>
     </div>
    

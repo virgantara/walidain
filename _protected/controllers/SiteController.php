@@ -91,7 +91,7 @@ class SiteController extends Controller
             ->all();
 
 
-
+        $connection = \Yii::$app->db;
         foreach($rows as $r)
         {
             $nim = $r['nim'];

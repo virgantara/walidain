@@ -80,14 +80,17 @@ class SiteController extends Controller
 
     public function actionTest()
     {
+        $tahun = 20201;
         $rows = (new \yii\db\Query())
             ->select(['nim'])
             ->from('bill_tagihan t')
             ->join('join','simak_mastermahasiswa m','m.nim_mhs = t.nim')
-            ->where(['t.tahun' => 20201,'m.status_aktivitas'=>'A'])
+            ->where(['t.tahun' => $tahun,'m.status_aktivitas'=>'A'])
             ->andWhere('terbayar < nilai_minimal')
             ->andWhere(['>','terbayar',0])
             ->all();
+
+
 
         foreach($rows as $r)
         {
@@ -95,6 +98,12 @@ class SiteController extends Controller
             $m = \app\models\SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
             $m->status_aktivitas = 'N';
             $m->save(false,['status_aktivitas']);
+
+            $model = $connection->createCommand('DELETE FROM simak_datakrs WHERE mahasiswa=:p1 AND tahun_akademik = :p2');
+            $model->bindParam(':p1', $nim);
+            $model->bindParam(':p2', $tahun);
+            
+            $model->execute();
         }
         exit;
     }

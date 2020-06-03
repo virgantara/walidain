@@ -220,14 +220,14 @@ class RestController extends ActiveController
 			}
 
 			$transaction->commit();
-			$results[] = [
+			$results = [
             	'code' => 200,
             	'message' => 'Autodebet berhasil. Total : '.$count
             ];
 		} catch (\Exception $e) {
             $errors .= $e->getMessage();
             
-            $results[] = [
+            $results = [
             	'code' => 501,
             	'message' => $errors
             ];
@@ -236,7 +236,7 @@ class RestController extends ActiveController
         } catch (\Throwable $e) {
             $errors .= $e->getMessage();
             
-            $results[] = [
+            $results = [
             	'code' => 502,
             	'message' => $errors
             ];

@@ -78,6 +78,27 @@ class SiteController extends Controller
 // STATIC PAGES
 //------------------------------------------------------------------------------------------------//
 
+    public function actionTest()
+    {
+        $rows = (new \yii\db\Query())
+            ->select(['nim'])
+            ->from('bill_tagihan t')
+            ->join('join','simak_mastermahasiswa m','m.nim_mhs = t.nim')
+            ->where(['t.tahun' => 20201,'m.status_aktivitas'=>'A'])
+            ->andWhere('terbayar < nilai_minimal')
+            ->andWhere(['>','terbayar',0])
+            ->all();
+
+        foreach($rows as $r)
+        {
+            $nim = $r['nim'];
+            $m = \app\models\SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
+            $m->status_aktivitas = 'N';
+            $m->save(false,['status_aktivitas']);
+        }
+        exit;
+    }
+
     /**
      * Displays the index (home) page.
      * Use it in case your home page contains static content.

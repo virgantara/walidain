@@ -9,6 +9,27 @@ use Yii;
 class MyHelper
 {
 
+	public static function getKampusList()
+    {
+        $results = [];
+        $list = \app\models\SimakKampus::find()->all();
+        foreach ($list as $item_name) {
+            $results[$item_name->kode_kampus] = $item_name->nama_kampus;
+        }
+
+        return $results;
+    }
+
+     public static function getStatusAktivitas()
+    {
+        $roles = [
+        	'A' => 'AKTIF','C' => 'CUTI', 'D' => 'DO','K' => 'KELUAR' ,'L' => 'LULUS','N' => 'NON-AKTIF', 'G'=>'DOUBLE DEGREE'
+        ];
+        
+
+        return $roles;
+    }
+
 	public static function appendZeros($str, $charlength=6)
 	{
 

@@ -29,12 +29,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'headerOptions'=>['class'=>'kartik-sheet-style']
     ],
         'nim_mhs',
-        'va_code',
-        'nama_mahasiswa',
         
-        // 'kampus',
-        'semester',
-        'namaKampus',
+        'nama_mahasiswa',
+        [
+                'attribute'=>'kampus',
+                'filter' => \app\helpers\MyHelper::getKampusList(),
+                'value' => function ($data) {
+                    return $data->kampus0->nama_kampus;
+                },
+                'contentOptions'=>function($model, $key, $index, $column) {
+                    return ['class'=>\app\helpers\CssHelper::roleCss($model->kampus)];
+                }
+            ],
         
         //'kode_prodi',
         [
@@ -49,8 +55,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 
             },
         ],
-        'status_aktivitas',
-        // 'saldo',
+        // 'kampus',
+        'semester',
+        'va_code',
+        [
+            'attribute'=>'status_aktivitas',
+            'filter' => \app\helpers\MyHelper::getStatusAktivitas(),
+            'value' => function ($data) {
+                $tmp = \app\helpers\MyHelper::getStatusAktivitas();
+                return $tmp[$data->status_aktivitas];
+            },
+            'contentOptions'=>function($model, $key, $index, $column) {
+                return ['class'=>\app\helpers\CssHelper::roleCss($model->status_aktivitas)];
+            }
+        ],
         [
             'class' => 'yii\grid\ActionColumn',
             'template' => '{view}'

@@ -87,4 +87,14 @@ class Transaksi extends \yii\db\ActiveRecord
     {
         return $this->cUST->nama_mahasiswa;
     }
+
+    public static function getSaldo($nim_mhs)
+    {
+        $query = (new \yii\db\Query())->from('bill_transaksi');
+        $query->where(['custid'=>$nim_mhs]);
+        $sumDebet = $query->sum('DEBET');
+        $sumKredit = $query->sum('KREDIT');
+        $saldo = $sumKredit - $sumDebet;
+        return $saldo;
+    }
 }

@@ -129,4 +129,11 @@ class SimakTahunakademik extends \yii\db\ActiveRecord
     {
         return $this->hasMany(SimakTahfidzPeriode::className(), ['tahun_id' => 'tahun_id']);
     }
+
+    public static function getTahunAktif()
+    {
+        $model = SimakTahunakademik::find()->where(['buka' => 'Y'])->one();
+
+        return !empty($model) ? $model : null;
+    }
 }

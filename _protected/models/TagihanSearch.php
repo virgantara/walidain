@@ -264,8 +264,8 @@ class TagihanSearch extends Tagihan
             self::tableName().'.urutan' => $this->urutan,
         ]);
 
-
-        $query->andWhere([self::tableName().'.tahun' => $this->tahun]);
+        if(!empty($this->tahun))
+            $query->andWhere([self::tableName().'.tahun' => $this->tahun]);
 
         if(Yii::$app->user->identity->access_role == 'admin')
         {

@@ -45,7 +45,7 @@ class SimakKonfirmasipembayaran extends \yii\db\ActiveRecord
             [['nim'], 'string', 'max' => 25],
             [['pembayaran'], 'string', 'max' => 30],
             [['semester'], 'string', 'max' => 5],
-            [['jumlah', 'bank'], 'string', 'max' => 20],
+            [['bank'], 'string', 'max' => 20],
         ];
     }
 

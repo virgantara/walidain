@@ -52,7 +52,7 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
             'query' => $query,
         ]);
 
-        $query->where(['status_aktivitas'=>'A']);
+        // $query->where(['status_aktivitas'=>'A']);
 
         $this->load($params);
 

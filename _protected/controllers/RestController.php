@@ -101,9 +101,9 @@ class RestController extends ActiveController
 							
 
 
-			                $tahun = SimakTahunakademik::getTahunAktif();
-			                $selisih = $tahun->tahun - $mhs->tahun_masuk + 1;
-			                $semester = $tahun->tahun_id % 2 == 0 ? $selisih * 2 : $selisih * 2 - 1;
+			                $tahun_siakad = SimakTahunakademik::getTahunAktif();
+			                $selisih = $tahun_siakad->tahun - $mhs->tahun_masuk + 1;
+			                $semester = $tahun_siakad->tahun_id % 2 == 0 ? $selisih * 2 : $selisih * 2 - 1;
 			                $mhs->semester = $semester;
 			                $mhs->status_aktivitas = 'A';
 			                if(!$mhs->save(false,['semester','status_aktivitas']))
@@ -122,7 +122,7 @@ class RestController extends ActiveController
 							$konfirmasi->status = 1;
 							$konfirmasi->semester = (string)$semester;
 							$konfirmasi->date_created = date('Y:m:d H:i:s');
-							$konfirmasi->tahun_id = $tahun->id;
+							$konfirmasi->tahun_id = $tahun_siakad->tahun_id;
 
 							if(!$konfirmasi->save())
 							{
@@ -174,9 +174,9 @@ class RestController extends ActiveController
 						{
 							
 
-							$tahun = SimakTahunakademik::getTahunAktif();
-			                $selisih = $tahun->tahun - $mhs->tahun_masuk + 1;
-			                $semester = $tahun->tahun_id % 2 == 0 ? $selisih * 2 : $selisih * 2 - 1;
+							$tahun_siakad = SimakTahunakademik::getTahunAktif();
+			                $selisih = $tahun_siakad->tahun - $mhs->tahun_masuk + 1;
+			                $semester = $tahun_siakad->tahun_id % 2 == 0 ? $selisih * 2 : $selisih * 2 - 1;
 			                $mhs->semester = $semester;
 			                $mhs->status_aktivitas = 'A';
 			                if(!$mhs->save(false,['semester','status_aktivitas']))
@@ -195,7 +195,7 @@ class RestController extends ActiveController
 							$konfirmasi->status = 1;
 							$konfirmasi->semester = (string)$semester;
 							$konfirmasi->date_created = date('Y:m:d H:i:s');
-							$konfirmasi->tahun_id = $tahun->id;
+							$konfirmasi->tahun_id = $tahun_siakad->tahun_id;
 
 							if(!$konfirmasi->save())
 							{

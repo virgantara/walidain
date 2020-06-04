@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'METODE',
                 'label' => 'Metode',
                 'format' => 'raw',
-                'filter'=>["TOPUP"=>"TOPUP","PAYMENT"=>"PAYMENT"],
+                'filter'=>["TOPUP"=>"TOPUP","PAYMENT"=>"PAYMENT","REVERSAL"=>"REVERSAL"],
                 'value'=>function($model,$url){
 
                     

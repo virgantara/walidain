@@ -54,7 +54,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'updated_at',
 
             [
+                'template' => ' {oppose} {view} {update} {delete}',
                 'class' => 'yii\grid\ActionColumn',
+                'buttons' => [
+                    'oppose'=>function ($url) {
+                        return Html::a('', $url, ['class' => 'glyphicon glyphicon-copy']);
+                    },
+                ],
+                'urlCreator' => function ($action, $model, $key, $index) {
+                    if ($action === 'oppose') {
+                        return Url::toRoute(['transaksi/oppose', 'id' => $model->urut]);
+                    } else {
+                        return Url::toRoute([$action, 'id' => $model->urut]);
+                    }
+                },
                 'visibleButtons' => [
                     'view' => function ($model) {
                         return \Yii::$app->user->can('theCreator');
@@ -63,6 +76,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         return \Yii::$app->user->can('theCreator');
                     },
                     'delete' => function ($model) {
+                        return \Yii::$app->user->can('theCreator');
+                    },
+                    'oppose' => function ($model) {
                         return \Yii::$app->user->can('theCreator');
                     },
                 ],

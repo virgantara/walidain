@@ -25,12 +25,12 @@ class TransaksiController extends AppController
                 'denyCallback' => function ($rule, $action) {
                     throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page');
                 },
-                'only' => ['create','update','delete','index'],
+                'only' => ['create','update','delete','index','oppose'],
                 'rules' => [
                     
                     [
                         'actions' => [
-                            'create','update','delete','index'
+                            'create','update','delete','index','oppose'
                         ],
                         'allow' => true,
                         'roles' => ['admin'],
@@ -45,6 +45,25 @@ class TransaksiController extends AppController
                 ],
             ],
         ];
+    }
+
+    public function actionOppose($id)
+    {
+        $old = $this->findModel($id);
+        $model = new Transaksi;
+
+        $model->created_at = date('Y-m-d H:i:s');
+        $model->updated_at = date('Y-m-d H:i:s');
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->urut]);
+        }
+
+        $model->attributes = $old->attributes;
+        return $this->render('oppose', [
+            'model' => $model,
+            'old' => $old
+        ]);
     }
 
     

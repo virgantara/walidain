@@ -14,6 +14,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\httpclient\Client;
 use app\models\SimakMastermahasiswa;
+use app\models\SimakKonfirmasipembayaran;
 
 /**
  * TagihanController implements the CRUD actions for Tagihan model.
@@ -545,7 +546,30 @@ class TagihanController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save();
+
+
+            if($model->komponen->kategori->kode == '01')
+            {
+                $konfirmasis = SimakKonfirmasipembayaran::find()->where([
+                    'nim' => $model->nim,
+                    'pembayaran' => '01',
+                    'tahun_id' => $model->tahun
+                ])->all();
+
+                foreach($konfirmasis as $konfirmasi)
+                {
+                    $konfirmasi->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
+                   
+                    $konfirmasi->save();
+                }
+
+            }
+            
+            
+            
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

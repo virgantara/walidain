@@ -549,9 +549,7 @@ class TagihanController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->save();
 
-            $mhs = $model->nim0;
-            $mhs->status_aktivitas = 'N';
-            $mhs->save(false,['status_aktivitas']);
+            
 
             
 
@@ -568,6 +566,18 @@ class TagihanController extends Controller
                     $konfirmasi->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
                    
                     $konfirmasi->save();
+
+                    if($konfirmasi->status == 1){
+                        $mhs = $model->nim0;
+                        $mhs->status_aktivitas = 'A';
+                        $mhs->save(false,['status_aktivitas']);
+                    }
+
+                    else{
+                        $mhs = $model->nim0;
+                        $mhs->status_aktivitas = 'N';
+                        $mhs->save(false,['status_aktivitas']);
+                    }
                 }
 
             }

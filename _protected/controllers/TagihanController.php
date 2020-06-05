@@ -549,6 +549,11 @@ class TagihanController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->save();
 
+            $mhs = $model->nim0;
+            $mhs->status_aktivitas = 'N';
+            $mhs->save(false,['status_aktivitas']);
+
+            
 
             if($model->komponen->kategori->kode == '01')
             {

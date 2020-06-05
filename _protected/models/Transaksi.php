@@ -50,6 +50,7 @@ class Transaksi extends \yii\db\ActiveRecord
             [['REFFBANK'], 'string', 'max' => 14],
             [['TRANSNO'], 'string', 'max' => 16],
             [['CUSTID'], 'exist', 'skipOnError' => true, 'targetClass' => SimakMastermahasiswa::className(), 'targetAttribute' => ['CUSTID' => 'nim_mhs']],
+            [['tagihan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tagihan::className(), 'targetAttribute' => ['tagihan_id' => 'id']],
         ];
     }
 
@@ -70,6 +71,7 @@ class Transaksi extends \yii\db\ActiveRecord
             'KREDIT' => 'Kredit',
             'REFFBANK' => 'Reffbank',
             'TRANSNO' => 'Transno',
+            'tagihan_id' => 'Untuk Pembayaran',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -81,6 +83,11 @@ class Transaksi extends \yii\db\ActiveRecord
     public function getCUST()
     {
         return $this->hasOne(SimakMastermahasiswa::className(), ['nim_mhs' => 'CUSTID']);
+    }
+
+    public function getTagihan()
+    {
+        return $this->hasOne(Tagihan::className(), ['id' => 'tagihan_id']);
     }
 
     public function getNamaCustomer()

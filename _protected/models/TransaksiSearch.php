@@ -25,7 +25,7 @@ class TransaksiSearch extends Transaksi
     {
         return [
             [['urut', 'DEBET', 'KREDIT'], 'integer'],
-            [['CUSTID', 'METODE', 'TRXDATE', 'NOREFF', 'FIDBANK', 'KDCHANNEL', 'REFFBANK', 'TRANSNO', 'created_at', 'updated_at','namaCustomer'], 'safe'],
+            [['CUSTID', 'METODE', 'TRXDATE', 'NOREFF', 'FIDBANK', 'KDCHANNEL', 'REFFBANK', 'TRANSNO', 'created_at', 'updated_at','namaCustomer','tagihan_id'], 'safe'],
         ];
     }
 

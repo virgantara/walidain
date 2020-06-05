@@ -25,6 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'va_code',
             'namaProdi',
             'namaKampus',
+            'status_aktivitas',
             'saldo'
 ,        ],
     ]) ?>

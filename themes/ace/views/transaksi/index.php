@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     
                 },
             ],
-        'CUSTID',
+            'CUSTID',
             'namaCustomer',
             'TRXDATE',
             'NOREFF',
@@ -50,6 +50,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'KREDIT',
             //'REFFBANK',
             //'TRANSNO',
+            [
+                'attribute' => 'tagihan_id',
+                'format' => 'raw',
+                'value'=>function($model,$url){
+
+                    
+                    return $model->tagihan->namaKomponen;
+                    
+                },
+            ],
             'created_at',
             'updated_at',
 

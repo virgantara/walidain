@@ -31,11 +31,7 @@ class RestController extends ActiveController
 		$transno = $input['transno'];
 		$tahun = Tahun::getTahunAktif();
 		$mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
-		$listTagihan = Tagihan::find()->where([
-			'urutan' => 1,
-			'tahun' => $tahun->id,
-			'nim' => $nim
-		])->all();
+		
 
 		$transaction = \Yii::$app->db->beginTransaction();
         $errors = '';
@@ -63,144 +59,87 @@ class RestController extends ActiveController
 
 			$count = 0;
 			
+			$listTagihan = Tagihan::find()->where([
+				'urutan' => 1,
+				'tahun' => $tahun->id,
+				'nim' => $nim
+			])->all();
+
 			foreach($listTagihan as $t)
-			{
+			{				
 
 				$saldo = Transaksi::getSaldo($nim);
-				
-				if($saldo >= $t->nilai_minimal && $saldo < $t->nilai)
+				$nilai_tagihan = $t->nilai - $t->terbayar;
+
+				if($saldo > 0)
 				{
-					$t->terbayar = $saldo;
+
+					$terbayar = $saldo >= $nilai_tagihan ? $nilai_tagihan : $saldo;
+					$t->terbayar = $t->terbayar + $terbayar;
+
+
 					if($t->save(false,['terbayar']))
 					{
-						$trx = new Transaksi;
-						$trx->CUSTID = $nim;
-						$trx->METODE = 'PAYMENT';
-						$trx->TRXDATE = $trxdate;
-						$trx->NOREFF = $refno;
-						$trx->FIDBANK = $fidbank;
-						$trx->KDCHANNEL = $channelid;
-						$trx->DEBET = $saldo;
-						$trx->KREDIT = 0;
-						$trx->REFFBANK = $reffbank;
-						$trx->TRANSNO = $transno;
-						if($trx->save())
+
+						if($terbayar > 0)
 						{
-							$count++;	
-						}
-
-						else
-						{
-							$errors = \app\helpers\MyHelper::logError($trx).' line 91';
-							throw new \Exception;
-							
-						}
-							
-						if($t->komponen->kategori->kode == '01')
-						{
-							
-
-
-			                $tahun_siakad = SimakTahunakademik::getTahunAktif();
-			                $selisih = $tahun_siakad->tahun - $mhs->tahun_masuk + 1;
-			                $semester = $tahun_siakad->tahun_id % 2 == 0 ? $selisih * 2 : $selisih * 2 - 1;
-			                $mhs->semester = $semester;
-			                $mhs->status_aktivitas = 'A';
-			                if(!$mhs->save(false,['semester','status_aktivitas']))
-			                {
-			                	$errors = \app\helpers\MyHelper::logError($mhs);
-								throw new \Exception;	
-			                }
-
-			                $konfirmasi = new SimakKonfirmasipembayaran;
-							$konfirmasi->nim = $nim;
-							$konfirmasi->pembayaran = '01';
-							$konfirmasi->jumlah = $saldo;
-							$konfirmasi->bank = $reffbank;
-							$konfirmasi->tanggal = $trxdate;
-							$konfirmasi->keterangan = $trxdate.'_autodebet';
-							$konfirmasi->status = 1;
-							$konfirmasi->semester = (string)$semester;
-							$konfirmasi->date_created = date('Y:m:d H:i:s');
-							$konfirmasi->tahun_id = $tahun_siakad->tahun_id;
-
-							if(!$konfirmasi->save())
+							$trx = new Transaksi;
+							$trx->CUSTID = $nim;
+							$trx->METODE = 'PAYMENT';
+							$trx->TRXDATE = $trxdate;
+							$trx->NOREFF = $refno;
+							$trx->FIDBANK = $fidbank;
+							$trx->KDCHANNEL = $channelid;
+							$trx->DEBET = $terbayar;
+							$trx->KREDIT = 0;
+							$trx->REFFBANK = $reffbank;
+							$trx->TRANSNO = $transno;
+							$trx->tagihan_id = $t->id;
+							if($trx->save())
 							{
-								$errors = \app\helpers\MyHelper::logError($konfirmasi);
-								throw new \Exception;
+								$count++;	
 							}
-						}
+
+							else
+							{
+								$errors = \app\helpers\MyHelper::logError($trx).' line 91';
+								throw new \Exception;
+								
+							}
+
 						
-					}
-
-					else
-					{
-						$errors = \app\helpers\MyHelper::logError($t);
-						throw new \Exception;
-					}
-				}
-
-				else if($saldo >= $t->nilai)
-				{
-					$t->terbayar = $t->nilai;
-					if($t->save(false,['terbayar']))
-					{
-						$trx = new Transaksi;
-						$trx->CUSTID = $nim;
-						$trx->METODE = 'PAYMENT';
-						$trx->TRXDATE = $trxdate;
-						$trx->NOREFF = $refno;
-						$trx->FIDBANK = $fidbank;
-						$trx->KDCHANNEL = $channelid;
-						$trx->DEBET = $t->nilai;
-						$trx->KREDIT = 0;
-						$trx->REFFBANK = $reffbank;
-						$trx->TRANSNO = $transno;
-						if($trx->save())
-						{
-							$count++;	
-						}
-
-						else
-						{
-							$errors = \app\helpers\MyHelper::logError($trx);
-							throw new \Exception;
-						}
-
-						// INSERT into  simak_konfirmasipembayaran(nim, pembayaran, semester, jumlah, tanggal, bank, keterangan, status, date_created, tahun_id)
-      //   VALUES (pNIM, CONCAT('0',pPRIORITAS), pSEMESTER, pJUMLAH, CURDATE(), '-',CONCAT(pTRXDATE,'|',pREFFNO),1, CURDATE(), pTAHUN);
-
-						if($t->komponen->kategori->kode == '01')
-						{
 							
-
-							$tahun_siakad = SimakTahunakademik::getTahunAktif();
-			                $selisih = $tahun_siakad->tahun - $mhs->tahun_masuk + 1;
-			                $semester = $tahun_siakad->tahun_id % 2 == 0 ? $selisih * 2 : $selisih * 2 - 1;
-			                $mhs->semester = $semester;
-			                $mhs->status_aktivitas = 'A';
-			                if(!$mhs->save(false,['semester','status_aktivitas']))
-			                {
-			                	$errors = \app\helpers\MyHelper::logError($mhs);
-								throw new \Exception;	
-			                }
-
-			                $konfirmasi = new SimakKonfirmasipembayaran;
-							$konfirmasi->nim = $nim;
-							$konfirmasi->pembayaran = '01';
-							$konfirmasi->jumlah = $t->nilai;
-							$konfirmasi->bank = $reffbank;
-							$konfirmasi->tanggal = $trxdate;
-							$konfirmasi->keterangan = $trxdate.'_autodebet';
-							$konfirmasi->status = 1;
-							$konfirmasi->semester = (string)$semester;
-							$konfirmasi->date_created = date('Y:m:d H:i:s');
-							$konfirmasi->tahun_id = $tahun_siakad->tahun_id;
-
-							if(!$konfirmasi->save())
+							if($t->komponen->kategori->kode == '01' && $t->terbayar >= $t->nilai_minimal)
 							{
-								$errors = \app\helpers\MyHelper::logError($konfirmasi);
-								throw new \Exception;
+
+				                $tahun_siakad = SimakTahunakademik::getTahunAktif();
+				                $selisih = $tahun_siakad->tahun - $mhs->tahun_masuk + 1;
+				                $semester = $tahun_siakad->tahun_id % 2 == 0 ? $selisih * 2 : $selisih * 2 - 1;
+				                $mhs->semester = $semester;
+				                $mhs->status_aktivitas = 'A';
+				                if(!$mhs->save(false,['semester','status_aktivitas']))
+				                {
+				                	$errors = \app\helpers\MyHelper::logError($mhs);
+									throw new \Exception;	
+				                }
+
+				                $konfirmasi = new SimakKonfirmasipembayaran;
+								$konfirmasi->nim = $nim;
+								$konfirmasi->pembayaran = '01';
+								$konfirmasi->jumlah = $saldo;
+								$konfirmasi->bank = $reffbank;
+								$konfirmasi->tanggal = $trxdate;
+								$konfirmasi->keterangan = $trxdate.'_autodebet';
+								$konfirmasi->status = 1;
+								$konfirmasi->semester = (string)$semester;
+								$konfirmasi->date_created = date('Y:m:d H:i:s');
+								$konfirmasi->tahun_id = $tahun_siakad->tahun_id;
+
+								if(!$konfirmasi->save())
+								{
+									$errors = \app\helpers\MyHelper::logError($konfirmasi);
+									throw new \Exception;
+								}
 							}
 						}
 					}
@@ -212,10 +151,7 @@ class RestController extends ActiveController
 					}
 				}
 
-				else
-				{
-					continue;
-				}
+				
 
 			}
 

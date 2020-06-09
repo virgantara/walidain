@@ -78,7 +78,7 @@ class CustomerController extends Controller
                 'kampus' => $kampus
             ])->all();
 
-            $kampus = \app\models\SimakKampus::find()->where(['kode_kampus'=>$kampus)->one();
+            $kampus = \app\models\SimakKampus::find()->where(['kode_kampus'=>$kampus])->one();
 
             // $prefix = '751050';
 

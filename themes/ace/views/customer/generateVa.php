@@ -116,10 +116,11 @@ function getListKampus(){
     });
 }
 
-function getListProdi(){
+function getListProdi(kampus){
     $.ajax({
         type : 'POST',
         url : '/api/list-prodi',
+        data : 'id='+kampus,
         beforeSend : function(){
             $('#loading').show();
         },
@@ -133,10 +134,10 @@ function getListProdi(){
             
             $('#loading').hide();  
             $('#prodi').empty();
-            var row = '<option value=\"\">- Pilih Prodi -</option>';
+            var row = '';
                    
-            $.each(data.values,function(i, obj){
-                row += '<option value=\"'+obj.kode_prodi+'\">'+obj.nama_prodi+'</option>';
+            $.each(data,function(i, obj){
+                row += '<option value=\"'+obj.kode+'\">'+obj.nama+'</option>';
                 
             });
 
@@ -150,7 +151,12 @@ function getListProdi(){
 
 $(document).ready(function(){
     getListKampus();
-    getListProdi();
+    getListProdi($('#kampus').val());
+
+    $('#kampus').change(function(){
+        getListProdi($(this).val());
+    });
+
     $('#search').click(function(){
         getTagihan();
     });

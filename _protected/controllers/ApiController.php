@@ -127,20 +127,33 @@ class ApiController extends Controller
 
     public function actionListProdi() {
 
-        $out = [];
 
+
+        $id = $_POST['id'];
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
         $client_token = Yii::$app->params['client_token'];
         $headers = ['x-access-token'=>$client_token];
-        $response = $client->get('/p/list',[],$headers)->send();
-        
+        $params = ['key'=>$id];
+        $response = $client->get('/k/p/list', $params,$headers)->send();
+
+        $results[] = [
+            'kode' => '',
+            'nama' => '- Pilih Prodi -' 
+        ];
+
         if ($response->isOk) {
-            $result = $response->data['values'];
-            $out['values'] = $result;
+            $tmp = $response->data['values'];
+
+            foreach($tmp as $item){
+                $results[] = [
+                    'kode' => $item['kode_prodi'],
+                    'nama' => $item['nama_prodi'],
+                ];
+            }
         }
         header('Content-Type: application/json');
-        echo \yii\helpers\Json::encode($out); 
+        echo \yii\helpers\Json::encode($results); 
     }
 
     public function actionListFakultas() {

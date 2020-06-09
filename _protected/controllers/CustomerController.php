@@ -88,34 +88,35 @@ class CustomerController extends Controller
             {
                 foreach($list as $m)
                 {
-                    if(empty($m->va_code) || $m->va_code == '-')
+                    
+                    $nim = str_replace('.', '', $m->nim_mhs);
+                    if(strlen($nim) < 8)
                     {
-                        $nim = str_replace('.', '', $m->nim_mhs);
-                        if(strlen($nim) < 8)
-                        {
-                            $suffix = $nim;
-                        }
-
-                        else
-                        {
-                            $suffix = str_replace(substr($nim, 2, 4),'',$nim);
-                        }
-                        
-                        $code = $prefix.\app\helpers\MyHelper::appendZeros($suffix, 10);
-
-                        $m->va_code = $code;
-                        if($m->save(false,['va_code']))
-                        {
-                            $count++;
-                        }
-
-                        else
-                        {
-                            $errors .= \app\helpers\MyHelper::logError($m);
-                            throw new Exception;
-                            
-                        }
+                        $suffix = $nim;
                     }
+
+                    else
+                    {
+                        $suffix = str_replace(substr($nim, 2, 4),'',$nim);
+                    }
+
+                    
+                    
+                    $code = $prefix.\app\helpers\MyHelper::appendZeros($suffix, 10);
+
+                    $m->va_code = $code;
+                    if($m->save(false,['va_code']))
+                    {
+                        $count++;
+                    }
+
+                    else
+                    {
+                        $errors .= \app\helpers\MyHelper::logError($m);
+                        throw new Exception;
+                        
+                    }
+                    
                 }  
                 Yii::$app->session->setFlash('success', $count." virtual account sudah dibuat");
                 $transaction->commit();

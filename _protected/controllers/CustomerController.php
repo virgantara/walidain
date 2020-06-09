@@ -78,7 +78,9 @@ class CustomerController extends Controller
                 'kampus' => $kampus
             ])->all();
 
-            $prefix = '751050';
+            $kampus = \app\models\SimakKampus::find()->where(['kode_kampus'=>$kampus)->one();
+
+            // $prefix = '751050';
 
             $transaction = \Yii::$app->db->beginTransaction();
             $errors = '';
@@ -101,7 +103,7 @@ class CustomerController extends Controller
                     }
 
                     
-                    
+                    $prefix = $kampus->prefix;
                     $code = $prefix.\app\helpers\MyHelper::appendZeros($suffix, 10);
 
                     $m->va_code = $code;

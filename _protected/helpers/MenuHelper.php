@@ -184,7 +184,7 @@ class MenuHelper
 	            ],
 	            [
 	                'label' => '<i class="menu-icon fa fa-caret-right"></i>VA Generator',  
-	                'visible' => Yii::$app->user->can('theCreator'),
+	                'visible' => Yii::$app->user->can('admin'),
 	                'url' => ['customer/generate-va'],
 	                
 	            ],

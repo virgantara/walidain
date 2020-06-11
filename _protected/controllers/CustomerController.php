@@ -38,7 +38,7 @@ class CustomerController extends Controller
                 'rules' => [
                     [
                         'actions' => [
-                            'index','view'
+                            'index','view','generate-va'
                         ],
                         'allow' => true,
                         'roles' => ['admin'],

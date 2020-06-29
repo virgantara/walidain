@@ -40,21 +40,22 @@ $this->params['breadcrumbs'][] = $this->title;
          echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
      } ?>  <?= Html::hiddenInput('tahun',$model->tahun, ['id'=>'tahun_id','class'=>'form-control','readonly'=>'readonly']) ?>
         
-    <div class="form-group">
+     <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Kampus</label>
         <div class="col-sm-9">
-          <select id="kampus" name="kampus" class="form-control">
+          <select id="kampus" name="kampus"  class="form-control">
               
           </select>
         </div>
     </div>
-     <div class="form-group">
+    <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Prodi</label>
         <div class="col-sm-9">
-           <?= Html::dropDownList('prodi','',[],['id'=>'prodi','class'=>'form-control','prompt'=>'- Pilih Prodi -']);?>
+          <select id="prodi" name="prodi" class="form-control">
+              
+          </select>
         </div>
     </div>
-   
     <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Tahun Masuk</label>
         <div class="col-sm-9">
@@ -162,7 +163,7 @@ function getListKampus(){
             
             $('#loading').hide();  
             $('#kampus').empty();
-            var row = '';
+             var row = '<option value=\"\">- Pilih Kampus -</option>';
                    
             $.each(data.values,function(i, obj){
                 row += '<option value=\"'+obj.kode_kampus+'\">'+obj.kode_kampus+' - '+obj.nama_kampus+'</option>';
@@ -177,10 +178,11 @@ function getListKampus(){
     });
 }
 
-function getListProdi(){
+function getListProdi(kampus){
     $.ajax({
         type : 'POST',
-        url : '".Url::to(['/api/list-prodi'])."',
+        url : '/api/list-prodi',
+        data : 'id='+kampus,
         beforeSend : function(){
             $('#loading').show();
         },
@@ -191,12 +193,12 @@ function getListProdi(){
         success : function(data){
 
             var data = $.parseJSON(data);
-            
             $('#loading').hide();  
             $('#prodi').empty();
             var row = '<option value=\"\">- Pilih Prodi -</option>';
                    
-            $.each(data.values,function(i, obj){
+            $.each(data,function(i, obj){
+
                 row += '<option value=\"'+obj.kode_prodi+'\">'+obj.nama_prodi+'</option>';
                 
             });
@@ -254,7 +256,9 @@ $(document).on('click','#generate',function(e){
 
 $(document).ready(function(){
     
-    getListProdi();
+   $('#kampus').change(function(){
+        getListProdi($(this).val());
+    });
     getListKampus();
     $('#komponen_id').change(function(){
         var id = $(this).val();

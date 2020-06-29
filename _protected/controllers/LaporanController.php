@@ -307,6 +307,7 @@ class LaporanController extends Controller
                     $sheet->setCellValue('G'.$ii, $d['terbayar']);
                     $sheet->setCellValue('H'.$ii, $d['sisa']);
                     $sheet->setCellValue('I'.$ii, $d['created_at']);
+                    $sheet->setCellValue('J'.$ii, $d['updated_at']);
                     $ii++;
                 }
 
@@ -320,6 +321,7 @@ class LaporanController extends Controller
                 $sheet->setCellValue('G'.$ii, $total_terbayar);
                 $sheet->setCellValue('H'.$ii, $total_sisa);
                 $sheet->setCellValue('I'.$ii, '');
+                $sheet->setCellValue('J'.$ii, '');
                 $sheet->setTitle('Laporan Tunggakan');
                 
                 // ob_end_clean();
@@ -390,6 +392,8 @@ class LaporanController extends Controller
             $ed = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_akhir'])).'235959';
              $kampus = $_GET['kampus'];
             $prodi = $_GET['prodi'];
+            $komponen = $_GET['komponen'];
+            $tahun = $_GET['tahun'];
             
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
@@ -400,7 +404,9 @@ class LaporanController extends Controller
                 'startdate' => $sd,
                 'enddate'=>$ed,
                 'kampus'=>$kampus,
-                'prodi' => $prodi
+                'prodi' => $prodi,
+                'komponen' => $komponen,
+                'tahun' => $tahun
             ],$headers)->send();
             
             if ($response->isOk) {
@@ -420,6 +426,7 @@ class LaporanController extends Controller
                     $sheet->setCellValue('G'.$ii, $d['terbayar']);
                     $sheet->setCellValue('H'.$ii, $d['sisa']);
                     $sheet->setCellValue('I'.$ii, $d['created_at']);
+                    $sheet->setCellValue('J'.$ii, $d['updated_at']);
                     $ii++;
                 }
 
@@ -433,6 +440,7 @@ class LaporanController extends Controller
                 $sheet->setCellValue('G'.$ii, $total_terbayar);
                 $sheet->setCellValue('H'.$ii, $total_sisa);
                 $sheet->setCellValue('I'.$ii, '');
+                $sheet->setCellValue('J'.$ii, '');
                 $sheet->setTitle('Laporan Pembayaran');
                 
                 // ob_end_clean();

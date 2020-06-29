@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
+use kartik\depdrop\DepDrop;
 
 // use app\models\TagihanSearch;
 
@@ -81,12 +82,33 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
         </div>
     </div>
     <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Tahun Akademik</label>
+        <div class="col-lg-2 col-sm-10">
+          <?= Html::dropDownList('tahun', null,
+      ArrayHelper::map(\app\models\Tahun::find()->orderBy(['id'=>SORT_DESC])->limit(10)->all(), 'id', function($data){
+        return $data->id.' - '.$data->nama;
+      }),['class' => 'form-control', 'id' => 'tahun','prompt'=>'- Pilih Tahun -']) ?>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Komponen</label>
         <div class="col-lg-2 col-sm-10">
-          <?= Html::dropDownList('komponen', null,
-      ArrayHelper::map(\app\models\KomponenBiaya::find()->all(), 'id', function($data){
-        return $data->tahun.' - '.$data->nama;
-      }),['class' => 'form-control', 'id' => 'komponen','prompt'=>'Semua Komponen']) ?>
+
+         <?= DepDrop::widget([
+                'name' => 'komponen',
+                'options' => ['id'=>'komponen','class'=>'form-control'],
+                // 'pluginEvents'=> [
+                //     "depdrop.afterChange"=>"function(event, id, value) { 
+                //         console.log('value: ' + value + ' id: ' + id); 
+                //     }"
+                // ],
+                'pluginOptions'=>[
+                    'depends'=>['tahun'],
+                    'initialize' => true,
+                    'placeholder' => '- Pilih Komponen -',
+                    'url' => Url::to(['/komponen-biaya/subkomponen'])
+                ]   
+            ]) ?>
         </div>
     </div>
     <div class="col-sm-2">
@@ -124,9 +146,20 @@ function getTagihan(){
     let kampus = $('#kampus').val();
     let prodi = $('#prodi').val();
     let komponen = $('#komponen').val();
+    let tahun = $('#tahun').val();
+
+    var obj = new Object;
+    obj.sd = sd;
+    obj.ed = ed;
+    obj.kampus = kampus;
+    obj.prodi = prodi;
+    obj.komponen = komponen;
+    obj.tahun = tahun;
     $.ajax({
         type : 'POST',
-        data : 'sd='+sd+'&ed='+ed+'&kampus='+kampus+'&prodi='+prodi+'&komponen='+komponen,
+        data : {
+            dataPost : obj
+        },
         url : '/api/tagihan',
         beforeSend : function(){
             $('#loading').show();
@@ -137,12 +170,12 @@ function getTagihan(){
         },
         success : function(data){
 
-            var data = $.parseJSON(data);
+            // var data = $.parseJSON(data);
             
             $('#loading').hide();  
             $('#tabel_tagihan').empty();
             var row = '<thead>';
-                   row += '<tr><th>No</th><th>Komponen</th><th>CID</th><th>Nama</th><th>Prodi</th><th>Semester</th><th>Nilai</th><th>Terbayar</th><th>Sisa Tagihan</th><th>Tanggal</th></tr>';
+                   row += '<tr><th>No</th><th>Komponen</th><th>CID</th><th>Nama</th><th>Prodi</th><th>Semester</th><th>Nilai</th><th>Terbayar</th><th>Sisa Tagihan</th><th>Tanggal Tagihan Dibuat</th></tr>';
                 row += '</thead>';
                 row += '<tbody>';
 
@@ -165,6 +198,7 @@ function getTagihan(){
             row += '<td colspan=\"6\"  style=\"text-align:right\">Total</td>';
             row += '<td style=\"text-align:right\">'+data.total_terbayar+'</td>';
             row += '<td style=\"text-align:right\">'+data.total_sisa+'</td>';
+            row += '<td>&nbsp;</td>';
             row += '<td>&nbsp;</td>';
             row += '</tr>';            
             row += '</tbody>';
@@ -192,7 +226,7 @@ function getListKampus(){
             
             $('#loading').hide();  
             $('#kampus').empty();
-            var row = '';
+            var row = '<option value=\"\">- Pilih Kampus -</option>';
                    
             $.each(data.values,function(i, obj){
                 row += '<option value=\"'+obj.kode_kampus+'\">'+obj.nama_kampus+'</option>';
@@ -207,10 +241,11 @@ function getListKampus(){
     });
 }
 
-function getListProdi(){
+function getListProdi(kampus){
     $.ajax({
         type : 'POST',
         url : '/api/list-prodi',
+        data : 'id='+kampus,
         beforeSend : function(){
             $('#loading').show();
         },
@@ -221,12 +256,12 @@ function getListProdi(){
         success : function(data){
 
             var data = $.parseJSON(data);
-            
             $('#loading').hide();  
             $('#prodi').empty();
             var row = '<option value=\"\">Semua Prodi</option>';
                    
-            $.each(data.values,function(i, obj){
+            $.each(data,function(i, obj){
+
                 row += '<option value=\"'+obj.kode_prodi+'\">'+obj.nama_prodi+'</option>';
                 
             });
@@ -241,9 +276,13 @@ function getListProdi(){
 
 $(document).ready(function(){
     getListKampus();
-    getListProdi();
+    
     $('#search').click(function(){
         getTagihan();
+    });
+
+    $('#kampus').change(function(){
+        getListProdi($(this).val());
     });
 });
 

@@ -8,6 +8,7 @@ use app\models\KomponenBiayaSearch;
 use app\models\Kategori;
 use app\models\Tahun;
 
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -57,6 +58,35 @@ class KomponenBiayaController extends Controller
         
         header('Content-Type: application/json');
         echo \yii\helpers\Json::encode($out);
+    }
+
+    public function actionSubkomponen()
+    {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $tahun = $parents[0];
+                $out = (new \yii\db\Query())
+                    ->select(['id', 'nama as name'])
+                    ->from('bill_komponen_biaya')
+                    ->where([
+                      'tahun' => $tahun
+                    ])
+                    ->orderBy(['kode'=>SORT_ASC])
+                    ->all();
+
+                // the getSubCatList function will query the database based on the
+                // cat_id and return an array like below:
+                // [
+                //    ['id'=>'<sub-cat-id-1>', 'name'=>'<sub-cat-name1>'],
+                //    ['id'=>'<sub-cat_id_2>', 'name'=>'<sub-cat-name2>']
+                // ]
+                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                return;
+            }
+        }
+        // select semester from simak_mastermahasiswa where kode_prodi = 1 and status_aktivitas = 'A' group by semester order by semester
     }
 
     /**

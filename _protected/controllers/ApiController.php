@@ -137,20 +137,15 @@ class ApiController extends Controller
         $params = ['key'=>$id];
         $response = $client->get('/k/p/list', $params,$headers)->send();
 
-        $results[] = [
+        $results = [
             'kode' => '',
             'nama' => '- Pilih Prodi -' 
         ];
 
         if ($response->isOk) {
-            $tmp = $response->data['values'];
+            $results = $response->data['values'];
 
-            foreach($tmp as $item){
-                $results[] = [
-                    'kode' => $item['kode_prodi'],
-                    'nama' => $item['nama_prodi'],
-                ];
-            }
+            
         }
         header('Content-Type: application/json');
         echo \yii\helpers\Json::encode($results); 
@@ -271,6 +266,7 @@ class ApiController extends Controller
                         'terbayar' => \app\helpers\MyHelper::formatRupiah($d['terbayar']),
                         'sisa' => \app\helpers\MyHelper::formatRupiah($d['sisa']),
                         'created_at' => $d['created_at'],
+                        'updated_at' => $d['updated_at'],
                     ];
                 }
 
@@ -290,14 +286,16 @@ class ApiController extends Controller
     public function actionTagihan() {
 
         $out = [];
-         ob_start();
-        if(!empty($_POST['sd']) && !empty($_POST['ed']))
+        
+        $dataPost = $_POST['dataPost'];
+        if(!empty($dataPost['sd']) && !empty($dataPost['ed']))
         {
-            $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
-            $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
-            $kampus = $_POST['kampus'];
-            $prodi = $_POST['prodi'];
-            $komponen = $_POST['komponen'];
+            $sd = date('Ymd',strtotime($dataPost['sd'])).'000001';
+            $ed = date('Ymd',strtotime($dataPost['ed'])).'235959';
+            $kampus = $dataPost['kampus'];
+            $prodi = $dataPost['prodi'];
+            $komponen = $dataPost['komponen'];
+            $tahun = $dataPost['tahun'];
             $client_token = Yii::$app->params['client_token'];
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
@@ -309,7 +307,8 @@ class ApiController extends Controller
                 'enddate'=>$ed,
                 'kampus' => $kampus,
                 'prodi' => $prodi,
-                'komponen' => $komponen
+                'komponen' => $komponen,
+                'tahun' => $tahun
             ],$headers)->send();
             
             
@@ -333,6 +332,7 @@ class ApiController extends Controller
                         'terbayar' => \app\helpers\MyHelper::formatRupiah($d['terbayar']),
                         'sisa' => \app\helpers\MyHelper::formatRupiah($d['sisa']),
                         'created_at' => $d['created_at'],
+                        'updated_at' => $d['updated_at'],
                     ];
                 }
 
@@ -345,7 +345,7 @@ class ApiController extends Controller
         header('Content-Type: application/json');
         echo \yii\helpers\Json::encode($out);
 
-      
+        die();
     }
 
     public function actionAjaxGetEkd() {

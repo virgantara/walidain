@@ -561,24 +561,42 @@ class TagihanController extends Controller
                     'tahun_id' => $model->tahun
                 ])->all();
 
-                foreach($konfirmasis as $konfirmasi)
+                if(count($konfirmasis) == 0)
                 {
-                    $konfirmasi->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
-                   
-                    $konfirmasi->save();
+                    $k = new SimakKonfirmasipembayaran;
+                    $k->nim = $model->nim;
+                    $k->pembayaran = '01';
+                    $k->semester = $model->nim0->semester;
+                    $k->jumlah = $model->terbayar;
+                    $k->bank = '-';
+                    $k->tanggal = date('Y-m-d');
+                    $k->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
+                    $k->save();
+                }
 
-                    if($konfirmasi->status == 1){
-                        $mhs = $model->nim0;
-                        $mhs->status_aktivitas = 'A';
-                        $mhs->save(false,['status_aktivitas']);
-                    }
+                else
+                {
+                    foreach($konfirmasis as $konfirmasi)
+                    {
+                        $konfirmasi->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
+                       
+                        $konfirmasi->save();
 
-                    else{
-                        $mhs = $model->nim0;
-                        $mhs->status_aktivitas = 'N';
-                        $mhs->save(false,['status_aktivitas']);
+                        if($konfirmasi->status == 1){
+                            $mhs = $model->nim0;
+                            $mhs->status_aktivitas = 'A';
+                            $mhs->save(false,['status_aktivitas']);
+                        }
+
+                        else{
+                            $mhs = $model->nim0;
+                            $mhs->status_aktivitas = 'N';
+                            $mhs->save(false,['status_aktivitas']);
+                        }
                     }
                 }
+
+                
 
             }
             

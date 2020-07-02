@@ -275,8 +275,8 @@ $(document).on('click','.btn-quick-update',function(e){
                 data: { 'id': id,'nominal':nominal},
                 cache: false,
                 success: function(response) {
-
-                    resolve(200)
+                    var hsl = $.parseJSON(response);
+                    resolve(hsl)
                 },
                 failure: function (response) {
                     reject(500)
@@ -290,7 +290,7 @@ $(document).on('click','.btn-quick-update',function(e){
       allowOutsideClick: () => !Swal.isLoading()
     }).then((result) => {
       if (result) {
-        if(result.value == 200){
+        if(result.value.code == 200){
             Swal.fire({
               icon: 'success',
               title: 'Yeay...',
@@ -299,11 +299,11 @@ $(document).on('click','.btn-quick-update',function(e){
             $.pjax.reload({container:'#pjax-container'});
         }
 
-        else if (result.value == 500){
+        else if (result.value.code == 500){
             Swal.fire({
               icon: 'error',
               title: 'Oops...',
-              text: 'Something went wrong!',
+              text: result.value.message,
             })   ;
             $.pjax.reload({container:'#pjax-container'});
         }

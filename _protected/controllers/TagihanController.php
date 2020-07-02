@@ -61,67 +61,115 @@ class TagihanController extends Controller
         $model = $this->findModel($id);
 
         $model->terbayar = $_POST['nominal'];
+        $transaction = \Yii::$app->db->beginTransaction();
+        $errors = '';
+        $results = [];
 
-        if($model->save(false,['terbayar']))
+        try 
         {
-            if($model->komponen->kategori->kode == '01')
+            if($model->save(false,['terbayar']))
             {
-                $konfirmasis = SimakKonfirmasipembayaran::find()->where([
-                    'nim' => $model->nim,
-                    'pembayaran' => '01',
-                    'tahun_id' => $model->tahun
-                ])->all();
-
-                if(count($konfirmasis) == 0)
+                if($model->komponen->kategori->kode == '01')
                 {
-                    $k = new SimakKonfirmasipembayaran;
-                    $k->nim = $model->nim;
-                    $k->pembayaran = '01';
-                    $k->semester = $model->nim0->semester;
-                    $k->jumlah = $model->terbayar;
-                    $k->bank = '-';
-                    $k->tanggal = date('Y-m-d');
-                    $k->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
-                    $k->save();
-                }
+                    $konfirmasis = SimakKonfirmasipembayaran::find()->where([
+                        'nim' => $model->nim,
+                        'pembayaran' => '01',
+                        'tahun_id' => $model->tahun
+                    ])->all();
 
-                else
-                {
-                    foreach($konfirmasis as $konfirmasi)
+                    if(count($konfirmasis) == 0)
                     {
-                        $konfirmasi->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
-                       
-                        $konfirmasi->save();
-
-                        if($konfirmasi->status == 1){
-                            $mhs = $model->nim0;
-                            $mhs->status_aktivitas = 'A';
-                            $mhs->save(false,['status_aktivitas']);
+                        $k = new SimakKonfirmasipembayaran;
+                        $k->nim = $model->nim;
+                        $k->pembayaran = '01';
+                        $k->semester = $model->nim0->semester;
+                        $k->jumlah = $model->terbayar;
+                        $k->bank = '-';
+                        $k->tanggal = date('Y-m-d');
+                        $k->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
+                        if(!$k->save())
+                        {
+                            $errors .= \app\helpers\MyHelper::logError($k);
+                            
+                            throw new \Exception;
                         }
 
                         else{
-                            $mhs = $model->nim0;
-                            $mhs->status_aktivitas = 'N';
-                            $mhs->save(false,['status_aktivitas']);
+                            if($k->status == 1){
+                                $mhs = $model->nim0;
+                                $mhs->status_aktivitas = 'A';
+                                $mhs->save(false,['status_aktivitas']);
+                            }
+
+                            else{
+                                $mhs = $model->nim0;
+                                $mhs->status_aktivitas = 'N';
+                                $mhs->save(false,['status_aktivitas']);
+                            }
                         }
                     }
+
+                    else
+                    {
+                        foreach($konfirmasis as $konfirmasi)
+                        {
+                            $konfirmasi->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
+                           
+                            $konfirmasi->save();
+
+                            if($konfirmasi->status == 1){
+                                $mhs = $model->nim0;
+                                $mhs->status_aktivitas = 'A';
+                                $mhs->save(false,['status_aktivitas']);
+                            }
+
+                            else{
+                                $mhs = $model->nim0;
+                                $mhs->status_aktivitas = 'N';
+                                $mhs->save(false,['status_aktivitas']);
+                            }
+                        }
+                    }
+
+                    $results = [
+                        'code' => 200,
+                        'message' => 'Data updated'
+                    ];
+
                 }
 
+                $transaction->commit();
+                if (!Yii::$app->request->isAjax) {
+                    return $this->redirect(['index']);
+                }
+            }
+            
+            else{
+                $errors .= \app\helpers\MyHelper::logError($model);
+                throw new \Exception;
                 
-
             }
-
-            if (!Yii::$app->request->isAjax) {
-                return $this->redirect(['index']);
-            }
+        } catch (\Exception $e) {
+            $errors .= $e->getMessage();
+            $results = [
+                'code' => 500,
+                'message' => $errors
+            ];
+            $transaction->rollBack();
+            
+        } catch (\Throwable $e) {
+            $errors .= $e->getMessage();
+            $results = [
+                'code' => 500,
+                'message' => $errors
+            ];
+            $transaction->rollBack();
+            
+            
         }
         
-        else{
-            $errors .= \app\helpers\MyHelper::logError($model);
-            echo json_encode($errors);
-            die();
-        }
-    
+        echo json_encode($results);
+        die();
     }
 
     public function actionDuNonaktif()

@@ -146,52 +146,48 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
+                'template' => '{quick-update} {view} {update} {delete}',
                 'visibleButtons' => [
                     
                     'delete' => function ($model) {
                         return $model->status_bayar != 1;
                     },
                 ],
-                // 'buttons' => [
+                'buttons' => [
                    
-                //     'delete' => function ($url, $model) {
-                //         return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
-                //                    'title'        => 'delete',
-                //                     'onclick' => "
-                //                     if (confirm('Buang data ini?')) {
-                //                         $.ajax('$url', {
-                //                             type: 'POST'
-                //                         }).done(function(data) {
-                //                             $.pjax.reload({container: '#pjax-container'});
-                                            
-                //                         });
-                //                     }
-                //                     return false;
-                //                 ",
-                //                     // 'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
-                //                     // 'data-method'  => 'post',
-                //         ]);
-                //     }
-                // ],
-                // 'urlCreator' => function ($action, $model, $key, $index) {
+                    'quick-update' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-edit"></span>', $url, [
+                                   'title'        => 'Quick Set Terbayar',
+                                   'class' => 'btn-quick-update',
+                                   'data-item' => $model->id,
+                                   
+                                    
+                        ]);
+                    }
+                ],
+                'urlCreator' => function ($action, $model, $key, $index) {
                     
-                //     if ($action === 'delete') {
-                //         $url =Url::to(['tagihan/delete','id'=>$model->id]);
-                //         return $url;
-                //     }
+                    if ($action === 'delete') {
+                        $url =Url::to(['tagihan/delete','id'=>$model->id]);
+                        return $url;
+                    }
 
-                //     else if ($action === 'update') {
-                //         $url =Url::to(['tagihan/update','id'=>$model->id]);
-                //         return $url;
-                //     }
+                    else if ($action === 'update') {
+                        $url =Url::to(['tagihan/update','id'=>$model->id]);
+                        return $url;
+                    }
 
-                //     else if ($action === 'view') {
-                //         $url =Url::to(['tagihan/view','id'=>$model->id]);
-                //         return $url;
-                //     }
+                    else if ($action === 'view') {
+                        $url =Url::to(['tagihan/view','id'=>$model->id]);
+                        return $url;
+                    }
 
+                    else if ($action === 'quick-update') {
+                        
+                        return "javascript:void(0)";
+                    }
                   
-                // }
+                }
             ],
             
 ];?>
@@ -230,6 +226,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'fontAwesome' => true
         ],
         'pjax' => true,
+        'pjaxSettings' =>[
+            'neverTimeout'=>true,
+            'options'=>[
+                'id'=>'pjax-container',
+            ]
+        ],  
         'bordered' => true,
         'striped' => true,
         // 'condensed' => false,
@@ -243,3 +245,77 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 </div>
 </div>
+
+<?php
+
+$script = "
+
+
+$(document).on('click','.btn-quick-update',function(e){
+
+    e.preventDefault();
+    var id = $(this).data('item');
+
+
+
+    Swal.fire({
+      title: 'Update nominal terbayar',
+      input: 'text',
+      inputAttributes: {
+        autocapitalize: 'off'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Update',
+      showLoaderOnConfirm: true,
+      preConfirm: (nominal) => {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                type: \"POST\",
+                url: \"".Url::to(['tagihan/ajax-quick-update'])."\",
+                data: { 'id': id,'nominal':nominal},
+                cache: false,
+                success: function(response) {
+
+                    resolve(200)
+                },
+                failure: function (response) {
+                    reject(500)
+                }
+            });
+
+        })
+        
+        
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+      if (result) {
+        if(result.value == 200){
+            Swal.fire({
+              icon: 'success',
+              title: 'Yeay...',
+              text: 'Data updated!',
+            })    ;
+            $.pjax.reload({container:'#pjax-container'});
+        }
+
+        else if (result.value == 500){
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong!',
+            })   ;
+            $.pjax.reload({container:'#pjax-container'});
+        }
+        
+      }
+    })
+});
+
+";
+$this->registerJs(
+    $script,
+    \yii\web\View::POS_READY
+);
+// $this->registerJs($script);
+?>

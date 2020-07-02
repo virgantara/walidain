@@ -32,12 +32,12 @@ class TagihanController extends Controller
                 'denyCallback' => function ($rule, $action) {
                     throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page');
                 },
-                'only' => ['create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat'],
+                'only' => ['create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat','ajax-quick-update'],
                 'rules' => [
                     
                     [
                         'actions' => [
-                            'create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat','du-nonaktif'
+                            'create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat','du-nonaktif','ajax-quick-update'
                         ],
                         'allow' => true,
                         'roles' => ['admin'],
@@ -52,6 +52,76 @@ class TagihanController extends Controller
                 ],
             ],
         ];
+    }
+
+    public function actionAjaxQuickUpdate()
+    {
+        $id = $_POST['id'];
+
+        $model = $this->findModel($id);
+
+        $model->terbayar = $_POST['nominal'];
+
+        if($model->save(false,['terbayar']))
+        {
+            if($model->komponen->kategori->kode == '01')
+            {
+                $konfirmasis = SimakKonfirmasipembayaran::find()->where([
+                    'nim' => $model->nim,
+                    'pembayaran' => '01',
+                    'tahun_id' => $model->tahun
+                ])->all();
+
+                if(count($konfirmasis) == 0)
+                {
+                    $k = new SimakKonfirmasipembayaran;
+                    $k->nim = $model->nim;
+                    $k->pembayaran = '01';
+                    $k->semester = $model->nim0->semester;
+                    $k->jumlah = $model->terbayar;
+                    $k->bank = '-';
+                    $k->tanggal = date('Y-m-d');
+                    $k->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
+                    $k->save();
+                }
+
+                else
+                {
+                    foreach($konfirmasis as $konfirmasi)
+                    {
+                        $konfirmasi->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
+                       
+                        $konfirmasi->save();
+
+                        if($konfirmasi->status == 1){
+                            $mhs = $model->nim0;
+                            $mhs->status_aktivitas = 'A';
+                            $mhs->save(false,['status_aktivitas']);
+                        }
+
+                        else{
+                            $mhs = $model->nim0;
+                            $mhs->status_aktivitas = 'N';
+                            $mhs->save(false,['status_aktivitas']);
+                        }
+                    }
+                }
+
+                
+
+            }
+
+            if (!Yii::$app->request->isAjax) {
+                return $this->redirect(['index']);
+            }
+        }
+        
+        else{
+            $errors .= \app\helpers\MyHelper::logError($model);
+            echo json_encode($errors);
+            die();
+        }
+    
     }
 
     public function actionDuNonaktif()

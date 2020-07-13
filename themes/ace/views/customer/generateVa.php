@@ -137,7 +137,7 @@ function getListProdi(kampus){
             var row = '';
                    
             $.each(data,function(i, obj){
-                row += '<option value=\"'+obj.kode+'\">'+obj.nama+'</option>';
+                row += '<option value=\"'+obj.kode_prodi+'\">'+obj.nama_prodi+'</option>';
                 
             });
 

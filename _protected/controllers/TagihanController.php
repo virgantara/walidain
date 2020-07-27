@@ -181,14 +181,14 @@ class TagihanController extends Controller
 
         if($model->load(Yii::$app->request->post()))
         {
-            $sa = ['A','N'];
+            $sa = $_POST['status_aktivitas'];
             $query = SimakMastermahasiswa::find()->where([
                 'kode_prodi' => $_POST['prodi'],
                 'kampus' => $_POST['kampus'],
                 'tahun_masuk' => $_POST['tahun_masuk']
             ]);
 
-            $query->andWhere(['in','status_aktivitas',$sa]);
+            $query->where(['status_aktivitas' => $sa]);
 
             $listCustomer = $query->all();
             $k = KomponenBiaya::findOne($_POST['komponen']);

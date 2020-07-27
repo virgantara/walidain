@@ -152,17 +152,16 @@ class CustomerController extends Controller
         $tahun_masuk = $dataPost['tahun_masuk'];
         $kampus = $dataPost['kampus'];
         $komponen_id = $dataPost['komponen_id'];
-        $sa = ['A','N'];
+        $status_aktivitas = $dataPost['status_aktivitas'];
+        // $sa = ['A','N'];
         $tahun = Tahun::getTahunAktif();
 
         $listMhs = SimakMastermahasiswa::find()->where([
             'kode_prodi' => $prodi,
             'tahun_masuk' => $tahun_masuk,
-            'kampus' => $kampus
-        ])
-        ->andWhere(['in','status_aktivitas',$sa])
-        // ->andWhere(['not in','nim_mhs',$sa])
-        ->all();        
+            'kampus' => $kampus,
+            'status_aktivitas' => $status_aktivitas
+        ])->all();        
 
         $counter = 0;
         foreach($listMhs as $m)

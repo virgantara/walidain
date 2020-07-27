@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
 $this->title = 'Generate Bulk Tagihan Per Angkatan / Tahun Masuk ';
 $this->params['breadcrumbs'][] = $this->title;
 
-
+$status_aktivitas = !empty($_POST['status_aktivitas']) ? $_POST['status_aktivitas'] : '';
 ?>
 <div class="row">
     <div class="col-xs-6">
@@ -77,6 +77,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
         </div>
     </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Status Mahasiswa</label>
+        <div class="col-sm-9">
+            <?= Html::dropDownList('status_aktivitas',$status_aktivitas,['N'=>'N - Non Aktif','C'=>'C - Cuti','A'=>'A - Aktif'],['id'=>'status_aktivitas','class'=>'form-control','prompt'=>'- Pilih Status -']);?>
+                
+        </div>
+    </div>
      <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Komponen</label>
         <div class="col-sm-9">
@@ -84,6 +91,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 
         </div>
     </div>
+
+
     
     <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Nilai Tagihan</label>
@@ -218,6 +227,7 @@ $(document).on('click','#generate',function(e){
     obj.kampus = $('#kampus').val();
     obj.tahun_masuk = $('#tahun_masuk').val();
     obj.komponen_id = $('#komponen_id').val();
+    obj.status_aktivitas = $('#status_aktivitas').val();
     $.ajax({
         type : 'POST',
         data : {

@@ -175,8 +175,56 @@ class KomponenBiayaController extends Controller
 
         ];
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+
+            $transaction = \Yii::$app->db->beginTransaction();
+            $errors = '';
+            try 
+            {
+                $counter = 0;
+                if($model->save())
+                {
+
+                    foreach($model->tagihans as $t)
+                    {
+
+                        $t->nilai = $model->biaya_awal;
+                        $t->nilai_minimal = $model->biaya_minimal;
+
+                        if($t->save(false,['nilai','nilai_minimal']))
+                        {
+                            $counter++;
+                        }
+
+                        else{
+                            $errors .= \app\helpers\MyHelper::logError($t);
+                            throw new Exception;
+                        }
+                    }
+
+                    $transaction->commit();
+                    Yii::$app->session->setFlash('success', $counter." tagihan telah diupdate");
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            } 
+            
+            catch (\Exception $e) 
+            {
+                $errors .= $e->getMessage();
+                $model->addError('id',$errors);
+                $transaction->rollBack();
+                
+            } 
+
+            catch (\Throwable $e) 
+            {
+                $errors .= $e->getMessage();
+                $model->addError('id',$errors);
+                $transaction->rollBack();
+                
+                
+            }
+            
         }
 
         return $this->render('update', [

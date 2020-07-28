@@ -14,7 +14,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="komponen-biaya-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <?php
+      foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
+          echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
+     } ?>
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [

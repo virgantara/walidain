@@ -15,6 +15,9 @@ use kartik\number\NumberControl;
     <div class="col-xs-6">
 
         <?php $form = ActiveForm::begin(); ?>
+
+        <?=$form->errorSummary($model,['header'=>'<div class="alert alert-danger">','footer'=>'</div>']);?>
+
         <?= $form->field($model, 'tahun')->dropDownList($tahun,['prompt'=>'Pilih Tahun']) ?>
 
         <?= $form->field($model, 'kategori_id')->dropDownList($kategori,['prompt'=>'Pilih Kategori']) ?>

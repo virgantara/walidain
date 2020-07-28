@@ -86,10 +86,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         return \Yii::$app->user->can('theCreator');
                     },
                     'delete' => function ($model) {
-                        return \Yii::$app->user->can('theCreator');
+                        return \Yii::$app->user->can('admin');
                     },
                     'oppose' => function ($model) {
-                        return \Yii::$app->user->can('theCreator');
+                        return \Yii::$app->user->can('admin');
                     },
                 ],
             ]

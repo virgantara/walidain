@@ -8,7 +8,7 @@ use yii\grid\GridView;
 use kartik\depdrop\DepDrop;
 
 use yii\helpers\ArrayHelper;
-// use app\models\TagihanSearch;
+use app\models\Tagihan;
 
 // use keygenqt\autocompleteAjax\AutocompleteAjax;
 use yii\widgets\ActiveForm;
@@ -118,7 +118,7 @@ $komponen = !empty($_GET['komponen']) ? $_GET['komponen'] : '';
     foreach($results as $q => $m)
     {
 
-
+        // $du = Tagihan::find()->where(['tahun'=>$tahun,'urutan'=>1])->one();
     ?>
     <tr>
         <td><?=$q+1;?></td>

@@ -4,12 +4,15 @@ namespace app\controllers;
 
 use Yii;
 use app\models\KomponenBiaya;
+use app\models\Tagihan;
+use app\models\Pencekalan;
 use app\models\SyaratPencekalan;
 use app\models\SyaratPencekalanSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
+use yii\filters\AccessControl;
 /**
  * SyaratPencekalanController implements the CRUD actions for SyaratPencekalan model.
  */
@@ -21,10 +24,35 @@ class SyaratPencekalanController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'denyCallback' => function ($rule, $action) {
+                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page');
+                },
+                'only' => ['create','update','delete','index'],
+                'rules' => [
+                    
+                    [
+                        'actions' => [
+                            'create','update','delete','index'
+                        ],
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                    [
+                        'actions' => [
+                            'create','update','delete','index'
+                        ],
+                        'allow' => true,
+                        'roles' => ['theCreator'],
+                    ],
+                   
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['post'],
                 ],
             ],
         ];
@@ -114,6 +142,17 @@ class SyaratPencekalanController extends Controller
                     {
                         $errors .= \app\helpers\MyHelper::logError($m);
                         throw new Exception;
+                    }
+
+                    foreach($v->tagihans as $tagihan)
+                    {
+
+                        if(!empty($tagihan))
+                        {
+
+                            $tagihan->is_tercekal = $tagihan->terbayar >= $nilai_minimal ? 2 : 1;
+                            $tagihan->save(false,['is_tercekal']);                            
+                        }
                     }
                 }
 

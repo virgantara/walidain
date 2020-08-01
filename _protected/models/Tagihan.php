@@ -44,7 +44,7 @@ class Tagihan extends \yii\db\ActiveRecord
             [['urutan', 'semester', 'tahun', 'komponen_id', 'edit', 'status_bayar'], 'integer'],
             [['semester', 'tahun', 'nim', 'komponen_id', 'nilai','nilai','nilai_minimal'], 'required'],
             [['nilai', 'nilai_minimal', 'terbayar'], 'number'],
-            [['created_at', 'updated_at','nilai','nilai_minimal'], 'safe'],
+            [['created_at', 'updated_at','nilai','nilai_minimal','is_tercekal'], 'safe'],
             [['nim'], 'string', 'max' => 25],
             [['komponen_id'], 'exist', 'skipOnError' => true, 'targetClass' => KomponenBiaya::className(), 'targetAttribute' => ['komponen_id' => 'id']],
             [['nim'], 'exist', 'skipOnError' => true, 'targetClass' => SimakMastermahasiswa::className(), 'targetAttribute' => ['nim' => 'nim_mhs']],

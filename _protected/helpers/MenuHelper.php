@@ -84,7 +84,21 @@ class MenuHelper
 	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Transaksi </span>', 'url' => ['/transaksi'],
 	       ];
 
-	       $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Pencekalan </span>', 'url' => ['/simak-pencekalan'],
+	       $menuItems[] = [
+	       		'label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Pencekalan </span><i class="caret"></i>', 
+	       		'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
+	       		'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
+	       		'url' => '#',
+	       		'items'=>[
+		           	[
+		            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Daftar Tercekal',  
+		                'url' => ['/simak-pencekalan/index'],	         
+		            ],
+		            // [
+		            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i> Validasi',  
+		            //     'url' => ['/syarat-pencekalan/validate'],	         
+		            // ],
+		        ]
 	       ];
 	       
 	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Laporan </span><i class="caret"></i>', 'url' => '#',
@@ -183,11 +197,21 @@ class MenuHelper
 	               
 	            ],
 	            [
-	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Pencekalan ',  
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Syarat Pencekalan <b class="arrow fa fa-angle-down"></b>',  
 	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	                'visible' => Yii::$app->user->can('admin'),
 	                'url' => ['syarat-pencekalan/index'],
-	               
+	               	'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
+	                'items' => [
+
+	                     ['label' => ( '<i class="menu-icon fa fa-caret-right"></i> Manage'),'url' => ['syarat-pencekalan/index']],
+	                     [
+	                        'label' => ( '<i class="menu-icon fa fa-caret-right"></i> Tambah'),
+	                        'visible' => Yii::$app->user->can('admin'),
+	                        'url' => ['syarat-pencekalan/create']],
+	                     ['label' => '<hr style="padding:0px;margin:0px">'],
+	                     
+	                ],
 	            ],
 	           	[
 	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Tahun <b class="arrow fa fa-angle-down"></b>',  

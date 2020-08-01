@@ -57,19 +57,21 @@ $tahun = !empty($_GET['SyaratPencekalan']['tahun_id']) ? $_GET['SyaratPencekalan
 		  					<th>No</th>
 		  					<th>Nama Komponen</th>
 		  					<th>Nilai Tagihan</th>
-		  					<th>Nilai Minimal</th>
+                            <th>Minimal Pembayaran</th>
+		  					<th>Nilai Minimal Syarat</th>
 		  				</tr>
 		  			</thead>
 		  			<tbody>
 		  				<?php 
 		  				foreach($results as $q => $v)
 		  				{
-		  					$nilai_minimal = !empty($v->biaya_minimal) ? $v->biaya_minimal : $v->biaya_awal;
+		  					$nilai_minimal = $v->biaya_awal;
 		  				?>
 		  				<tr>
 		  					<td><?=$q+1;?></td>
 		  					<td><?=$v->nama;?></td>
 		  					<td class="text-right"><?=MyHelper::formatRupiah($v->biaya_awal);?>
+                            <td class="text-right"><?=MyHelper::formatRupiah($v->biaya_minimal);?>
 		  					<td class="text-right"><?=Html::textInput('nilai_minimal_'.$v->id.'_'.$tahun,$nilai_minimal,[]);?></td>
 		  				</tr>
 		  				<?php 

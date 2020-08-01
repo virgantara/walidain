@@ -18,7 +18,9 @@ $this->params['breadcrumbs'][] = 'Update';
         'model' => $model,
         'kategori' => $kategori,
         'tahun' => $tahun,
-        'list_prioritas' => $list_prioritas
+        'list_prioritas' => $list_prioritas,
+        'listKampus' => $listKampus,
+            'listBulan' => $listBulan
     ]) ?>
 
 </div>

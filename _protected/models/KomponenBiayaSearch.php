@@ -21,7 +21,7 @@ class KomponenBiayaSearch extends KomponenBiaya
     {
         return [
             [['id', 'prioritas', 'kategori_id', 'tahun'], 'integer'],
-            [['kode', 'nama', 'created_at', 'updated_at','namaKategori','biaya_minimal'], 'safe'],
+            [['kode', 'nama', 'created_at', 'updated_at','namaKategori','biaya_minimal','kampus_id','bulan_id'], 'safe'],
             [['biaya_awal'], 'number'],
         ];
     }
@@ -82,6 +82,17 @@ class KomponenBiayaSearch extends KomponenBiaya
             $query->andWhere(['kategori_id'=>$this->kategori_id]);
         }
 
+        if(!empty($this->bulan_id))
+        {
+            $query->andWhere(['bulan_id'=>$this->bulan_id]);
+        }
+
+        if(!empty($this->kampus_id))
+        {
+            $query->andWhere(['kampus_id'=>$this->kampus_id]);
+        }
+
+
         $query->andFilterWhere(['like', self::tableName().'kode', $this->kode])
             ->andFilterWhere(['like', self::tableName().'.nama', $this->nama]);
             // ->andFilterWhere(['like', 'k.nama', $this->namaKategori]);
@@ -92,6 +103,20 @@ class KomponenBiayaSearch extends KomponenBiaya
     public static function getKategoriList()
     {
         $list = \yii\helpers\ArrayHelper::map(Kategori::find()->all(),'id','nama');
+
+        return $list;
+    }
+
+    public static function getKampusList()
+    {
+        $list = \yii\helpers\ArrayHelper::map(SimakKampus::find()->all(),'kode_kampus','nama_kampus');
+
+        return $list;
+    }
+
+    public static function getBulanList()
+    {
+        $list = \yii\helpers\ArrayHelper::map(Bulan::find()->all(),'id','nama');
 
         return $list;
     }

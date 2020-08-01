@@ -10,7 +10,10 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\helpers\MyHelper;
+use yii\helpers\ArrayHelper;
 use yii\httpclient\Client;
+use app\models\Bulan;
+use app\models\SimakKampus;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -139,8 +142,31 @@ class LaporanController extends Controller
     public function actionRekapTunggakan(){
 
         $model = new TagihanSearch();
+        $listBulan = Bulan::find()->orderBy(['id'=>SORT_ASC])->all();
+        $listKampus = SimakKampus::find()->orderBy(['kode_kampus'=>SORT_ASC])->all();
 
-        if(!empty($_GET['export']))
+        $results = [];
+        if(!empty($_GET['btn-search']) && !empty($_GET['kampus']) && !empty($_GET['prodi']) && !empty($_GET['tahun'] && !empty($_GET['status_aktivitas'])))
+        {
+            $client_token = Yii::$app->params['client_token'];
+            $headers = ['x-access-token'=>$client_token];
+
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+
+            $response = $client->get('/b/rekap/pembayaran', [
+                'kampus' => $_GET['kampus'],
+                'prodi'=>$_GET['prodi'],
+                'tahun'=>$_GET['tahun'],
+                'status_aktivitas' => $_GET['status_aktivitas']
+            ],$headers)->send();
+            
+            if ($response->isOk) {
+                $results = $response->data['values'];
+            }
+        }
+
+        else if(!empty($_GET['export']))
         {
             
             $spreadsheet = new Spreadsheet();
@@ -176,7 +202,7 @@ class LaporanController extends Controller
             $sd = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_awal'])).'000001';
             $ed = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_akhir'])).'235959';
             $client_token = Yii::$app->params['client_token'];
-             $headers = ['x-access-token'=>$client_token];
+            $headers = ['x-access-token'=>$client_token];
             // $list = Pasien::find()->addFilterWhere(['like',])
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
@@ -222,8 +248,12 @@ class LaporanController extends Controller
 
         }
 
+
         return $this->render('tunggakan_rekap',[
-            'model' => $model
+            'model' => $model,
+            'results' => $results,
+            'listBulan' => $listBulan,
+            'listKampus' => $listKampus
         ]);
     }
 

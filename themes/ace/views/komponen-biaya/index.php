@@ -41,6 +41,27 @@ $list_prioritas = [
         'header'=>'',
         'headerOptions'=>['class'=>'kartik-sheet-style']
     ],
+            
+            [
+                'attribute'=>'kampus_id',
+                'filter' => $searchModel->kampusList,
+                'value' => function ($data) {
+                    return !empty($data->kampus) ? $data->kampus->nama_kampus : '(not set)';
+                },
+                // 'contentOptions'=>function($model, $key, $index, $column) {
+                //     return ['class'=>CssHelper::userStatusCss($model->status)];
+                // }
+            ],
+            [
+                'attribute'=>'bulan_id',
+                'filter' => $searchModel->bulanList,
+                'value' => function ($data) {
+                    return !empty($data->bulan) ? $data->bulan->nama : '(not set)';
+                },
+                // 'contentOptions'=>function($model, $key, $index, $column) {
+                //     return ['class'=>CssHelper::userStatusCss($model->status)];
+                // }
+            ],
             [
                 'attribute'=>'tahun',
                 'filter' => $searchModel->tahunList,
@@ -49,6 +70,7 @@ $list_prioritas = [
                 },
                
             ],
+
             [
                 'attribute'=>'kategori_id',
                 'filter' => $searchModel->kategoriList,

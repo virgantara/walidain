@@ -37,13 +37,17 @@ class KomponenBiaya extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['kode', 'nama', 'kategori_id', 'tahun'], 'required'],
+            [['kode', 'nama', 'kategori_id', 'tahun','semester','kampus_id','bulan_id'], 'required'],
             [['biaya_awal', 'biaya_minimal'], 'number'],
             [['prioritas', 'kategori_id', 'tahun'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at','kampus_id','bulan_id','prodi_id','semester'], 'safe'],
             [['kode'], 'string', 'max' => 5],
             [['nama'], 'string', 'max' => 255],
             [['kategori_id'], 'exist', 'skipOnError' => true, 'targetClass' => Kategori::className(), 'targetAttribute' => ['kategori_id' => 'id']],
+            [['bulan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Bulan::className(), 'targetAttribute' => ['bulan_id' => 'id']],
+            [['kampus_id'], 'exist', 'skipOnError' => true, 'targetClass' => SimakKampus::className(), 'targetAttribute' => ['kampus_id' => 'kode_kampus']],
+
+         
         ];
     }
 
@@ -60,6 +64,8 @@ class KomponenBiaya extends \yii\db\ActiveRecord
             'biaya_minimal' => 'Biaya Minimal',
             'prioritas' => 'Prioritas',
             'kategori_id' => 'Kategori ID',
+            'bulan_id' => 'Bulan',
+            'kampus_id' => 'Kampus',
             'tahun' => 'Tahun',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -77,6 +83,18 @@ class KomponenBiaya extends \yii\db\ActiveRecord
     public function getKategori()
     {
         return $this->hasOne(Kategori::className(), ['id' => 'kategori_id']);
+    }
+
+   
+
+    public function getKampus()
+    {
+        return $this->hasOne(SimakKampus::className(), ['kode_kampus' => 'kampus_id']);
+    }
+
+    public function getBulan()
+    {
+        return $this->hasOne(Bulan::className(), ['id' => 'bulan_id']);
     }
 
     /**

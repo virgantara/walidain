@@ -7,6 +7,8 @@ use app\models\KomponenBiaya;
 use app\models\KomponenBiayaSearch;
 use app\models\Kategori;
 use app\models\Tahun;
+use app\models\SimakKampus;
+use app\models\Bulan;
 
 use yii\helpers\Json;
 use yii\web\Controller;
@@ -141,6 +143,10 @@ class KomponenBiayaController extends Controller
 
         $tahun = ArrayHelper::map(Tahun::find()->where(['buka' => 'Y'])->orderBy(['id'=>SORT_DESC])->all(),'id','nama');
 
+        $listKampus = ArrayHelper::map(SimakKampus::find()->orderBy(['kode_kampus'=>SORT_ASC])->all(),'kode_kampus','nama_kampus');
+
+        $listBulan = ArrayHelper::map(Bulan::find()->orderBy(['id'=>SORT_ASC])->all(),'id','nama');
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -149,7 +155,9 @@ class KomponenBiayaController extends Controller
             'model' => $model,
             'kategori' => $kategori,
             'tahun' => $tahun,
-            'list_prioritas' => $list_prioritas
+            'list_prioritas' => $list_prioritas,
+            'listKampus' => $listKampus,
+            'listBulan' => $listBulan
         ]);
     }
 
@@ -166,7 +174,11 @@ class KomponenBiayaController extends Controller
         $kategori = ArrayHelper::map(Kategori::find()->all(),'id','nama');
         $tahun = ArrayHelper::map(Tahun::find()->all(),'id','nama');
         
-         $list_prioritas = [
+        $listKampus = ArrayHelper::map(SimakKampus::find()->orderBy(['kode_kampus'=>SORT_ASC])->all(),'kode_kampus','nama_kampus');
+
+        $listBulan = ArrayHelper::map(Bulan::find()->orderBy(['id'=>SORT_ASC])->all(),'id','nama');
+
+        $list_prioritas = [
             '1' => 'HIGH',
             '2' => 'MED',
             '3' => 'LOW',
@@ -231,7 +243,9 @@ class KomponenBiayaController extends Controller
             'model' => $model,
             'kategori' => $kategori,
             'tahun' => $tahun,
-            'list_prioritas' => $list_prioritas
+            'list_prioritas' => $list_prioritas,
+            'listKampus' => $listKampus,
+            'listBulan' => $listBulan
         ]);
     }
 

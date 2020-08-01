@@ -9,6 +9,23 @@ use Yii;
 class MyHelper
 {
 
+    public static function getListSemester()
+    {
+        $list_semester = [
+            1 => 'Semester 1',
+            2 => 'Semester 2',
+            3 => 'Semester 3',
+            4 => 'Semester 4',
+            5 => 'Semester 5',
+            6 => 'Semester 6',
+            7 => 'Semester 7',
+            8 => 'Semester 8',
+            9 => 'Semester 9 ke atas',
+        ];
+
+        return $list_semester;
+    }
+
 	public static function getKampusList()
     {
         $results = [];

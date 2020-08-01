@@ -139,7 +139,7 @@ class LaporanController extends Controller
     }
 
 
-    public function actionRekapTunggakan(){
+    public function actionRekapPembayaran(){
 
         $model = new TagihanSearch();
         $listBulan = Bulan::find()->orderBy(['id'=>SORT_ASC])->all();

@@ -34,7 +34,7 @@ $komponen = !empty($_GET['komponen']) ? $_GET['komponen'] : '';
   <div class="row">
     <?php $form = ActiveForm::begin([
         'method' => 'get',
-        'action' => ['laporan/rekap-tunggakan'],
+        'action' => ['laporan/rekap-pembayaran'],
         'options' => [
             'class' => 'form-horizontal'
         ]

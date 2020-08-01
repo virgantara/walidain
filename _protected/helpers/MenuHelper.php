@@ -102,8 +102,8 @@ class MenuHelper
 	                'url' => ['/laporan/tunggakan'],	         
 	            ],
 	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan Rekapitulasi Tunggakan',  
-	                'url' => ['/laporan/rekap-tunggakan'],	         
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan Rekapitulasi Pembayaran',  
+	                'url' => ['/laporan/rekap-pembayaran'],	         
 	            ],
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan Transaksi',  

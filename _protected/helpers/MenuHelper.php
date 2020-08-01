@@ -124,6 +124,27 @@ class MenuHelper
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	        'items'=>[
 	        	[
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Batas Pembayaran',  
+	                'visible' => Yii::$app->user->can('admin'),
+	                'url' => ['batas-pembayaran/index'],
+	                
+	            ],
+	            [
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulan <b class="arrow fa fa-angle-down"></b>',  
+	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
+	                'visible' => Yii::$app->user->can('admin'),
+	                'url' => ['#'],
+	                 'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
+	                'items' => [
+
+	                     ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['bulan/index']],
+	                     [
+	                        'label' => ( '<i class="menu-icon fa fa-caret-right"></i>Tambah'),
+	                        'visible' => Yii::$app->user->can('admin'),
+	                        'url' => ['bulan/create']]
+	                ],
+	            ],
+	        	[
 	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Kategori Komponen <b class="arrow fa fa-angle-down"></b>',  
 	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	                'visible' => Yii::$app->user->can('admin'),
@@ -153,26 +174,19 @@ class MenuHelper
 	                        'url' => ['komponen-biaya/create']]
 	                ],
 	            ],
-	            [
-	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Bulan <b class="arrow fa fa-angle-down"></b>',  
-	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
-	                'visible' => Yii::$app->user->can('admin'),
-	                'url' => ['#'],
-	                 'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	                'items' => [
-
-	                     ['label' => ( '<i class="menu-icon fa fa-caret-right"></i>Manage'),'url' => ['bulan/index']],
-	                     [
-	                        'label' => ( '<i class="menu-icon fa fa-caret-right"></i>Tambah'),
-	                        'visible' => Yii::$app->user->can('admin'),
-	                        'url' => ['bulan/create']]
-	                ],
-	            ],
+	            
 	            [
 	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Mahasiswa ',  
 	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	                'visible' => Yii::$app->user->can('admin'),
 	                'url' => ['customer/index'],
+	               
+	            ],
+	            [
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Pencekalan ',  
+	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
+	                'visible' => Yii::$app->user->can('admin'),
+	                'url' => ['syarat-pencekalan/index'],
 	               
 	            ],
 	           	[
@@ -191,12 +205,7 @@ class MenuHelper
 	                    ]
 	                ],
 	            ],
-	            [
-	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Batas Pembayaran',  
-	                'visible' => Yii::$app->user->can('admin'),
-	                'url' => ['batas-pembayaran/index'],
-	                
-	            ],
+	            
 	            [
 	                'label' => '<i class="menu-icon fa fa-caret-right"></i>VA Generator',  
 	                'visible' => Yii::$app->user->can('admin'),

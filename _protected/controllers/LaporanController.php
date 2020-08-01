@@ -169,82 +169,144 @@ class LaporanController extends Controller
         else if(!empty($_GET['export']))
         {
             
+            $client_token = Yii::$app->params['client_token'];
+            $headers = ['x-access-token'=>$client_token];
+
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+
+            $response = $client->get('/b/rekap/pembayaran', [
+                'kampus' => $_GET['kampus'],
+                'prodi'=>$_GET['prodi'],
+                'tahun'=>$_GET['tahun'],
+                'status_aktivitas' => $_GET['status_aktivitas']
+            ],$headers)->send();
+            
+            if ($response->isOk) {
+                $results = $response->data['values'];
+            }
+
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
             
             
             // Add column headers
             $sheet->setCellValue('A3', 'No')
-                ->setCellValue('B3', 'Prodi')
-                ->setCellValue('C3', 'Semester')
-                ->setCellValue('D3', 'Nominal')
-                ->setCellValue('E3', 'Jml Mhs');
-;
+                ->setCellValue('B3', 'NIM')
+                ->setCellValue('C3', 'Nama Mahasiswa')
+                ->setCellValue('D3', 'Prodi')
+                ->setCellValue('E3', 'Semester')
+                ->setCellValue('F3', 'DU Genap/Ganjil')
+                ->setCellValue('G3', 'SPP Bulanan');
 
-            $sheet->mergeCells('A1:E1')->getStyle('A1:E1')->getAlignment()->setHorizontal('center');
-            $sheet->setCellValue('A1','LAPORAN REKAP TUNGGAKAN');
+            $sheet->mergeCells('G3:R3')->getStyle('G3:R3')->getAlignment()->setHorizontal('center');
+            $sheet->mergeCells('A3:A4');
+            $sheet->mergeCells('B3:B4');
+            $sheet->mergeCells('C3:C4');
+            $sheet->mergeCells('D3:D4');
+            $sheet->mergeCells('E3:E4');
+            $sheet->mergeCells('F3:F4');
+            
+            $col = 7;
+            foreach($listBulan as $q => $b)
+            {
+                
+                $sheet->setCellValueByColumnAndRow($col,4,$b->nama);
+                $col++;
+            }
+                
 
-            $sheet->mergeCells('A2:E2')->getStyle('A2:E2')->getAlignment()->setHorizontal('center');
-            $sheet->setCellValue('A2','Tanggal '.$_GET['TagihanSearch']['tanggal_awal'].' s/d '.$_GET['TagihanSearch']['tanggal_akhir']);
+            $sheet->mergeCells('A1:R1')->getStyle('A1:R1')->getAlignment()->setHorizontal('center');
+            $sheet->setCellValue('A1','LAPORAN REKAP PEMBAYARAN');
+
 
             //Put each record in a new cell
 
             $sheet->getColumnDimension('A')->setWidth(5);
-            $sheet->getColumnDimension('B')->setWidth(25);
-            $sheet->getColumnDimension('C')->setWidth(8);
-            $sheet->getColumnDimension('D')->setWidth(15);
-            $sheet->getColumnDimension('E')->setWidth(8);
+            $sheet->getColumnDimension('B')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(35);
+            $sheet->getColumnDimension('D')->setWidth(7);
+            $sheet->getColumnDimension('E')->setWidth(10);
+            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('G')->setWidth(15);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(15);
+            $sheet->getColumnDimension('J')->setWidth(15);
+            $sheet->getColumnDimension('K')->setWidth(15);
+            $sheet->getColumnDimension('L')->setWidth(15);
+            $sheet->getColumnDimension('M')->setWidth(15);
+            $sheet->getColumnDimension('N')->setWidth(15);
+            $sheet->getColumnDimension('O')->setWidth(15);
+            $sheet->getColumnDimension('P')->setWidth(15);
+            $sheet->getColumnDimension('Q')->setWidth(15);
+            $sheet->getColumnDimension('R')->setWidth(15);
+            $sheet->getStyle('F')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('G')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('H')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('I')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('J')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('K')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('L')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('M')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('N')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('O')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('P')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('Q')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet->getStyle('R')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
             $i= 0;
-            $ii = 4;
+            $rows = 5;
 
             $total = 0;
 
-            $sd = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_awal'])).'000001';
-            $ed = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_akhir'])).'235959';
-            $client_token = Yii::$app->params['client_token'];
-            $headers = ['x-access-token'=>$client_token];
-            // $list = Pasien::find()->addFilterWhere(['like',])
-            $api_baseurl = Yii::$app->params['api_baseurl'];
-            $client = new Client(['baseUrl' => $api_baseurl]);
-
-            $response = $client->get('/b/tunggakan/rekap', ['startdate' => $sd,'enddate'=>$ed],$headers)->send();
+            $response = $client->get('/b/rekap/pembayaran', [
+                'kampus' => $_GET['kampus'],
+                'prodi'=>$_GET['prodi'],
+                'tahun'=>$_GET['tahun'],
+                'status_aktivitas' => $_GET['status_aktivitas']
+            ],$headers)->send();
             
             if ($response->isOk) {
-                $result = $response->data['values'];
-                $total_sisa = 0;
-                $total_terbayar = 0;
-                foreach ($result as $q => $d) {
-                    $total_sisa += $d['sisa'];
-                    // $total_terbayar += $d['terbayar'];
-                    
-                    $sheet->setCellValue('A'.$ii, $q+1);
-                    $sheet->setCellValue('B'.$ii, $d['prodi']);
-                    $sheet->setCellValue('C'.$ii, $d['semester']);
-                    $sheet->setCellValue('D'.$ii, $d['sisa']);
-                    $sheet->setCellValue('E'.$ii, $d['total']);
-                    $ii++;
+                $results = $response->data['values'];
+
+                foreach($results as $q => $v)
+                {
+                    $sheet->setCellValue('A'.$rows, $q+1);
+                    $sheet->setCellValue('B'.$rows, $v['nim_mhs']);
+                    $sheet->setCellValue('C'.$rows, $v['nama_mahasiswa']);
+                    $sheet->setCellValue('D'.$rows, $v['singkatan']);
+                    $sheet->setCellValue('E'.$rows, $v['semester']);
+                    $sheet->setCellValue('F'.$rows, $v['du']);
+                    $sheet->setCellValue('G'.$rows, $v['syawal']);
+                    $sheet->setCellValue('H'.$rows, $v['dzulqodah']);
+                    $sheet->setCellValue('I'.$rows, $v['dzulhijjah']);
+                    $sheet->setCellValue('J'.$rows, $v['muharram']);
+                    $sheet->setCellValue('K'.$rows, $v['shafar']);
+                    $sheet->setCellValue('L'.$rows, $v['rabiulawal']);
+                    $sheet->setCellValue('M'.$rows, $v['rabiulakhir']);
+                    $sheet->setCellValue('N'.$rows, $v['jumadilula']);
+                    $sheet->setCellValue('O'.$rows, $v['jumadiltsani']);
+                    $sheet->setCellValue('P'.$rows, $v['rajab']);
+                    $sheet->setCellValue('Q'.$rows, $v['syaban']);
+                    $sheet->setCellValue('R'.$rows, $v['ramadan']);
+
+
+
+                    $rows++;
                 }
 
                 
-                $sheet->setCellValue('A'.$ii, '');
-                $sheet->setCellValue('B'.$ii, '');
-                $sheet->setCellValue('C'.$ii, 'Total');
-                $sheet->setCellValue('D'.$ii, $total_sisa);
-                // $sheet->setCellValue('E'.$ii, $total_sisa);
-                $sheet->setCellValue('E'.$ii, '');
-                $sheet->setTitle('Laporan Tunggakan');
+                $sheet->setTitle('Laporan Rekap Pembayaran');
                 
                 // ob_end_clean();
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="laporan_tunggakan.xlsx"');
+                header('Content-Disposition: attachment;filename="laporan_rekap_pembayaran.xlsx"');
                 header('Cache-Control: max-age=0');
                 
                 $writer = new Xlsx($spreadsheet);
                 $writer->save('php://output');
                 exit;
             }
-            
-            
+
 
         }
 

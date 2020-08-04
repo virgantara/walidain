@@ -75,7 +75,7 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            'semester' => $this->semester,
             'tgl_lahir' => $this->tgl_lahir,
             'tgl_masuk' => $this->tgl_masuk,
             'tgl_lulus' => $this->tgl_lulus,
@@ -108,13 +108,18 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
             $query->andWhere(['kampus'=>$this->kampus]);
         }
 
+        if(!empty($this->nim_mhs))
+        {
+            $query->andWhere(['nim_mhs'=>$this->nim_mhs]);
+        }
+
+
         $query->andFilterWhere(['like', 'kode_fakultas', $this->kode_fakultas])
-            ->andFilterWhere(['like', 'nim_mhs', $this->nim_mhs])
+            
             ->andFilterWhere(['like', 'nama_mahasiswa', $this->nama_mahasiswa])
             ->andFilterWhere(['like', 'tempat_lahir', $this->tempat_lahir])
             ->andFilterWhere(['like', 'jenis_kelamin', $this->jenis_kelamin])
             ->andFilterWhere(['like', 'status_aktivitas', $this->status_aktivitas])
-            ->andFilterWhere(['like', 'semester', $this->semester])
             ->andFilterWhere(['like', 'keterangan', $this->keterangan])
             ->andFilterWhere(['like', 'telepon', $this->telepon])
             ->andFilterWhere(['like', 'hp', $this->hp])

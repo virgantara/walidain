@@ -28,7 +28,7 @@ $status_aktivitas = !empty($_GET['status_aktivitas']) ? $_GET['status_aktivitas'
 	<div class="col-sm-12">
 		<?=Html::dropDownList('tahun',$tahun,ArrayHelper::map(Tahun::find()->orderBy(['id'=>SORT_DESC])->all(),'id','nama'),['id'=>'tahun','prompt'=>'- Pilih Tahun -']);?>
 
-		<?=Html::dropDownList('status_aktivitas',$status_aktivitas,['A'=>'Aktif','N'=>'Non-Aktif','K'=>'Keluar','C'=>'Cuti','D'=>'DO'],['id'=>'status_aktivitas','prompt'=>'- Pilih Status -']);?>
+		<?=Html::dropDownList('status_aktivitas',$status_aktivitas,['A'=>'Aktif','N'=>'Non-Aktif','K'=>'Keluar','C'=>'Cuti','L'=>'Lulus','D'=>'DO'],['id'=>'status_aktivitas','prompt'=>'- Pilih Status -']);?>
 
 		<button id="btn-filter" type="button" class="btn btn-primary">Show</button>
 	</div>

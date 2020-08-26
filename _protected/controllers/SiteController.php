@@ -8,6 +8,8 @@ use app\models\PasswordResetRequestForm;
 use app\models\ResetPasswordForm;
 use app\models\SignupForm;
 use app\models\ContactForm;
+
+use yii\httpclient\Client;
 use yii\helpers\Html;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -108,6 +110,93 @@ class SiteController extends Controller
         exit;
     }
 
+    public function actionAjaxRincianTagihan()
+    {
+        if(Yii::$app->request->isPost)
+        {
+            
+            $dataItem = $_POST['dataItem'];
+            $tahun = $dataItem['tahun'];
+            $status_aktivitas = $dataItem['status_aktivitas'];
+            $singkatan = $dataItem['singkatan'];
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+            $client_token = Yii::$app->params['client_token'];
+
+            $headers = ['x-access-token'=>$client_token];
+            
+            $params = [
+                'tahun' => $tahun,
+                'status_aktivitas' => $status_aktivitas,
+                'singkatan' => $singkatan
+            ];
+
+            $results = [];
+
+            $response = $client->get('/tagihan/rincian', $params,$headers)->send();
+        
+            if ($response->isOk) {
+                $results = $response->data['values'];
+
+                
+               
+            }
+
+            echo json_encode($results);
+
+            die();
+        }
+    }
+
+    public function actionAjaxDataTagihan()
+    {
+        if(Yii::$app->request->isPost)
+        {
+            
+            $dataItem = $_POST['dataItem'];
+            $tahun = $dataItem['tahun'];
+            $status_aktivitas = $dataItem['status_aktivitas'];
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+            $client_token = Yii::$app->params['client_token'];
+
+            $headers = ['x-access-token'=>$client_token];
+            
+            $params = [
+                'tahun' => $tahun,
+                'status_aktivitas' => $status_aktivitas
+            ];
+
+            $results = [];
+
+            $response = $client->get('/tagihan/rekap', $params,$headers)->send();
+        
+            if ($response->isOk) {
+                $tmp = $response->data['values'];
+
+
+                $total_tagihan = 0;
+                $total_terbayar = 0;
+                foreach($tmp as $t)
+                {
+                    $total_tagihan += $t['tagihan'];
+                    $total_terbayar += $t['terbayar'];
+                }
+
+                $total_piutang = $total_tagihan - $total_terbayar;
+
+                $results['rincian'] = $tmp;
+                $results['total_tagihan'] = $total_tagihan;
+                $results['total_terbayar'] = $total_terbayar;
+                $results['total_piutang'] = $total_piutang;
+            }
+
+            echo json_encode($results);
+
+            die();
+        }
+    }
+
     /**
      * Displays the index (home) page.
      * Use it in case your home page contains static content.
@@ -126,7 +215,9 @@ class SiteController extends Controller
 
         else
         {
-            return $this->render('index');
+            
+            return $this->render('index',[
+            ]);
         }
     }
 

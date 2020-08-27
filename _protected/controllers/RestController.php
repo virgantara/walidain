@@ -63,7 +63,7 @@ class RestController extends ActiveController
 			}
 
 			else{
-				$msg .= 'Kredit minus/nol '.$kredit;
+				$msg .= 'Kredit minus/nol '.json_encode($input);
 			}
 
 			$count = 0;

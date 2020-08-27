@@ -158,6 +158,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'fontAwesome' => true
         ],
         'pjax' => true,
+        'pjaxSettings' =>[
+            'neverTimeout'=>true,
+            'options'=>[
+                'id'=>'pjax-container',
+            ]
+        ],  
         'bordered' => true,
         'striped' => true,
         // 'condensed' => false,
@@ -171,3 +177,17 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
     </div>
 </div>
+
+
+<?php
+
+$script = "
+
+
+";
+$this->registerJs(
+    $script,
+    \yii\web\View::POS_READY
+);
+// $this->registerJs($script);
+?>

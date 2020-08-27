@@ -30,6 +30,16 @@ $config = [
     ],
     'timeZone' => 'Asia/Jakarta',
     'components' => [
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+                'google' => [
+                    'class' => 'yii\authclient\clients\Google',
+                    'clientId' => '354579823896-5espjv9mjgo4f2vl706kogg67d32omn1.apps.googleusercontent.com',
+                    'clientSecret' => 'DCxSLzkbtTnnQGGKVXatAVk6'
+                ]
+            ]
+        ],
         'pdf' => [
             'class' => \kartik\mpdf\Pdf::classname(),
             'format' => \kartik\mpdf\Pdf::FORMAT_A4,

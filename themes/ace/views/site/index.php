@@ -53,8 +53,9 @@ $status_aktivitas = !empty($_GET['status_aktivitas']) ? $_GET['status_aktivitas'
 					</h4>
 
 					<div class="widget-toolbar">
-						<a href="#" data-action="collapse">
-							<i class="ace-icon fa fa-chevron-up"></i>
+						<input type="hidden" id="singkatan"/>
+						<a href="javascript:void(0)" class="btn btn-sm btn-success" title="download data ini" id="btn-download">
+							<i class="ace-icon fa fa-download"></i> Download
 						</a>
 					</div>
 				</div>
@@ -92,11 +93,48 @@ $status_aktivitas = !empty($_GET['status_aktivitas']) ? $_GET['status_aktivitas'
 
 $this->registerJs('
 
+$(document).on("click","#btn-download",function(e){
+	e.preventDefault();
+	var obj = new Object;
+	obj.tahun = $("#tahun").val();
+	obj.status_aktivitas = $("#status_aktivitas").val();
+	obj.singkatan = $("#singkatan").val();
+	$.ajax({
+		type : \'POST\',
+		url : \''.Url::to(['laporan/ajax-rincian-tagihan-export']).'\',
+		data : {
+			dataItem : obj
+		},
+		dataType: "json",
+		success : function(data){
+			
+			var $a = $("<a>");
+		    $a.attr("href",data.file);
+		    $("body").append($a);
+		    $a.attr("download","file_pembayaran.xlsx");
+		    $a[0].click();
+		    $a.remove();
+		},
+	})
+	
+});
+
+$(document).on("click","#btn-filter",function(e){
+	e.preventDefault();
+
+	fetchTahun($("#tahun").val(),$("#status_aktivitas").val(), function(err, res){
+		generateChart(res);
+		generatePie(res.total_terbayar,res.total_piutang);
+
+	})
+});
+
 function fetchRincian(param){
 	var obj = new Object;
 	obj.tahun = $("#tahun").val();
 	obj.status_aktivitas = $("#status_aktivitas").val();
 	obj.singkatan = param.category;
+	$("#singkatan").val(param.category);
 	$.ajax({
 		type : \'POST\',
 		url : \''.Url::to(['site/ajax-rincian-tagihan']).'\',
@@ -277,14 +315,7 @@ function generateChart(tagihan){
     });
 }
 
-$(document).on("click","#btn-filter",function(e){
-	e.preventDefault();
 
-	fetchTahun($("#tahun").val(),$("#status_aktivitas").val(), function(err, res){
-		generateChart(res);
-		generatePie(res.total_terbayar,res.total_piutang)
-	})
-});
 
 ', \yii\web\View::POS_READY);
 

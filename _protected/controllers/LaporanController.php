@@ -38,6 +38,131 @@ class LaporanController extends Controller
         ];
     }
 
+    public function actionAjaxRincianTagihanExport()
+    {
+        if(Yii::$app->request->isPost)
+        {
+            
+            $dataItem = $_POST['dataItem'];
+            $tahun = $dataItem['tahun'];
+            $status_aktivitas = $dataItem['status_aktivitas'];
+            $singkatan = $dataItem['singkatan'];
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+            $client_token = Yii::$app->params['client_token'];
+
+            $headers = ['x-access-token'=>$client_token];
+            
+            $params = [
+                'tahun' => $tahun,
+                'status_aktivitas' => $status_aktivitas,
+                'singkatan' => $singkatan
+            ];
+
+            $results = [];
+
+            $response = $client->get('/tagihan/rincian', $params,$headers)->send();
+        
+            if ($response->isOk) {
+                $results = $response->data['values'];
+
+                $spreadsheet = new Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                
+                
+                // Add column headers
+                $sheet->setCellValue('A3', 'No')
+                    ->setCellValue('B3', 'NIM')
+                    ->setCellValue('C3', 'NAMA')
+                    ->setCellValue('D3', 'SMT')
+                    ->setCellValue('E3', 'KAMPUS')
+                    ->setCellValue('F3', 'PRODI')
+                    ->setCellValue('G3', 'TAGIHAN')
+                    ->setCellValue('H3', 'TERBAYAR')
+                    ->setCellValue('I3', 'SISA TAGIHAN');
+
+
+                $sheet->mergeCells('A1:I1')->getStyle('A1:I1')->getAlignment()->setHorizontal('center');
+                $sheet->setCellValue('A1','DATA PEMBAYARAN MAHASISWA');
+
+
+                $sheet->getColumnDimension('A')->setWidth(5);
+                $sheet->getColumnDimension('B')->setWidth(25);
+                $sheet->getColumnDimension('C')->setWidth(20);
+                $sheet->getColumnDimension('D')->setWidth(35);
+                $sheet->getColumnDimension('E')->setWidth(30);
+                $sheet->getColumnDimension('F')->setWidth(20);
+                $sheet->getColumnDimension('G')->setWidth(20);
+                $sheet->getColumnDimension('H')->setWidth(20);
+                $sheet->getColumnDimension('I')->setWidth(20);
+                // $sheet->getColumnDimension('G')->setWidth(20);
+                $i= 0;
+                $ii = 4;
+
+            
+                $total_terbayar = 0;
+                $total_piutang = 0;
+                $total_tagihan = 0;
+                foreach ($results as $q => $d) {
+
+                    $sheet->setCellValue('A'.$ii, $q+1);
+                    $sheet->setCellValue('B'.$ii, $d['nim_mhs']);
+                    $sheet->setCellValue('C'.$ii, $d['nama_mahasiswa']);
+                    $sheet->setCellValue('D'.$ii, $d['semester']);
+                    $sheet->setCellValue('E'.$ii, $d['nama_kampus']);
+                    $sheet->setCellValue('F'.$ii, $d['singkatan']);
+                    $sheet->setCellValue('G'.$ii, $d['tagihan']);
+                    $sheet->setCellValue('H'.$ii, $d['terbayar']);
+                    $sheet->setCellValue('I'.$ii, $d['piutang']);
+
+                    $sheet->getStyle('G'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                    $sheet->getStyle('H'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                    $sheet->getStyle('I'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1); 
+                    // $sheet->setCellValue('G'.$ii, $d['nl']);
+                    $ii++;
+
+                    $total_piutang += $d['piutang'];
+                    $total_terbayar += $d['terbayar'];
+                    $total_tagihan += $d['tagihan'];
+                }
+
+                
+                $sheet->setCellValue('A'.$ii, '');
+                $sheet->setCellValue('B'.$ii, '');
+                $sheet->setCellValue('C'.$ii, '');
+                $sheet->setCellValue('D'.$ii, '');
+                $sheet->setCellValue('E'.$ii, '');
+                $sheet->setCellValue('F'.$ii, 'Total');
+                $sheet->setCellValue('G'.$ii, $total_tagihan);
+                $sheet->setCellValue('H'.$ii, $total_terbayar);
+                $sheet->setCellValue('I'.$ii, $total_piutang);
+
+                $sheet->getStyle('G'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $sheet->getStyle('H'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $sheet->getStyle('I'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1); 
+                $sheet->setTitle('Data Pembayaran Mahasiswa');
+                
+                // ob_end_clean();
+                // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                // header('Content-Disposition: attachment;filename="data_pembayaran.xlsx"');
+                // header('Cache-Control: max-age=0');
+                
+                $writer = new Xlsx($spreadsheet);
+                ob_start();
+                $writer->save('php://output');
+                $xlsData = ob_get_contents();
+                ob_end_clean();
+                $response =  array(
+                    'op' => 'ok',
+                    'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+                );
+
+                die(json_encode($response));
+            }
+
+        }
+    }
+
     public function actionTransaksi(){
 
         $model = new TransaksiSearch();

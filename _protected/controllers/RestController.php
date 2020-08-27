@@ -35,6 +35,7 @@ class RestController extends ActiveController
 
 		$transaction = \Yii::$app->db->beginTransaction();
         $errors = '';
+        $msg = '';
 		$results = [];
 		try 
         {
@@ -53,7 +54,11 @@ class RestController extends ActiveController
 				$trx->TRANSNO = $transno;
 				if(!$trx->save())
 				{
-					$errors = \app\helpers\MyHelper::logError($trx);
+					$errors .= \app\helpers\MyHelper::logError($trx);
+				}
+
+				else{
+					$msg .= 'Transaksi '.$trx->METODE.' bertambah '.$kredit;
 				}
 			}
 
@@ -102,7 +107,7 @@ class RestController extends ActiveController
 
 							else
 							{
-								$errors = \app\helpers\MyHelper::logError($trx).' line 91';
+								$errors .= \app\helpers\MyHelper::logError($trx).' line 91';
 								throw new \Exception;
 								
 							}
@@ -137,7 +142,7 @@ class RestController extends ActiveController
 
 								if(!$konfirmasi->save())
 								{
-									$errors = \app\helpers\MyHelper::logError($konfirmasi);
+									$errors .= \app\helpers\MyHelper::logError($konfirmasi);
 									throw new \Exception;
 								}
 							}
@@ -146,7 +151,7 @@ class RestController extends ActiveController
 
 					else
 					{
-						$errors = \app\helpers\MyHelper::logError($t);
+						$errors .= \app\helpers\MyHelper::logError($t);
 						throw new \Exception;
 					}
 				}
@@ -158,7 +163,7 @@ class RestController extends ActiveController
 			$transaction->commit();
 			$results = [
             	'code' => 200,
-            	'message' => 'Autodebet berhasil. Total : '.$count
+            	'message' => 'Autodebet berhasil. Total : '.$count.' '.$msg
             ];
 		} catch (\Exception $e) {
             $errors .= $e->getMessage();

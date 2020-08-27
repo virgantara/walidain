@@ -32,15 +32,15 @@ $this->params['breadcrumbs'][] = $this->title;
         
         'nama_mahasiswa',
         [
-                'attribute'=>'kampus',
-                'filter' => \app\helpers\MyHelper::getKampusList(),
-                'value' => function ($data) {
-                    return $data->kampus0->nama_kampus;
-                },
-                'contentOptions'=>function($model, $key, $index, $column) {
-                    return ['class'=>\app\helpers\CssHelper::roleCss($model->kampus)];
-                }
-            ],
+            'attribute'=>'kampus',
+            'filter' => \app\helpers\MyHelper::getKampusList(),
+            'value' => function ($data) {
+                return $data->kampus0->nama_kampus;
+            },
+            'contentOptions'=>function($model, $key, $index, $column) {
+                return ['class'=>\app\helpers\CssHelper::roleCss($model->kampus)];
+            }
+        ],
         
         //'kode_prodi',
         [

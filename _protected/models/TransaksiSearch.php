@@ -18,6 +18,9 @@ class TransaksiSearch extends Transaksi
     public $namaProdi;
     public $namaKampus;
     public $namaTahun;
+    public $semester;
+
+
     /**
      * {@inheritdoc}
      */
@@ -25,7 +28,7 @@ class TransaksiSearch extends Transaksi
     {
         return [
             [['urut', 'DEBET', 'KREDIT'], 'integer'],
-            [['CUSTID', 'METODE', 'TRXDATE', 'NOREFF', 'FIDBANK', 'KDCHANNEL', 'REFFBANK', 'TRANSNO', 'created_at', 'updated_at','namaCustomer','tagihan_id'], 'safe'],
+            [['CUSTID', 'METODE', 'TRXDATE', 'NOREFF', 'FIDBANK', 'KDCHANNEL', 'REFFBANK', 'TRANSNO', 'created_at', 'updated_at','namaCustomer','tagihan_id','semester','namaProdi','namaKampus'], 'safe'],
         ];
     }
 
@@ -48,7 +51,7 @@ class TransaksiSearch extends Transaksi
     public function search($params)
     {
         $query = Transaksi::find();
-        $query->joinWith(['cUST as m']);
+        $query->joinWith(['cUST as m','cUST.kodeProdi as p','cUST.kampus0 as k']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -71,15 +74,30 @@ class TransaksiSearch extends Transaksi
             'desc' => ['m.nama_mahasiswa'=>SORT_DESC]
         ];
 
+        $dataProvider->sort->attributes['namaProdi'] = [
+            'asc' => ['p.nama_prodi'=>SORT_ASC],
+            'desc' => ['p.nama_prodi'=>SORT_DESC]
+        ];
+
+        $dataProvider->sort->attributes['namaKampus'] = [
+            'asc' => ['k.nama_kampus'=>SORT_ASC],
+            'desc' => ['k.nama_kampus'=>SORT_DESC]
+        ];
+
+        $dataProvider->sort->attributes['semester'] = [
+            'asc' => ['m.semester'=>SORT_ASC],
+            'desc' => ['m.semester'=>SORT_DESC]
+        ];
+
         // grid filtering conditions
-        // $query->andFilterWhere([
-        //     'urut' => $this->urut,
-        //     'TRXDATE' => $this->TRXDATE,
-        //     'DEBET' => $this->DEBET,
-        //     'KREDIT' => $this->KREDIT,
-        //     'created_at' => $this->created_at,
-        //     'updated_at' => $this->updated_at,
-        // ]);
+        $query->andFilterWhere([
+            'm.semester' => $this->semester,
+            'TRXDATE' => $this->TRXDATE,
+            'DEBET' => $this->DEBET,
+            'KREDIT' => $this->KREDIT,
+            'm.kode_prodi' => $this->namaProdi,
+            'k.kode_kampus' => $this->namaKampus
+        ]);
 
         $query->andFilterWhere(['like', 'CUSTID', $this->CUSTID])
             ->andFilterWhere(['like', 'METODE', $this->METODE])

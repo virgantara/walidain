@@ -45,6 +45,31 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'CUSTID',
             'namaCustomer',
+            [
+                'attribute' => 'semester',
+                'value' => function($data){
+                    return $data->cUST->semester;
+                }
+            ],
+            
+            [
+                'attribute' => 'namaProdi',
+                'label' => 'Prodi',
+                'format' => 'raw',
+                'filter'=>\yii\helpers\ArrayHelper::map(\app\models\SimakMasterprogramstudi::getProdiList(),'kode_prodi','nama_prodi'),
+                'value' => function($data){
+                    return $data->cUST->kodeProdi->nama_prodi;
+                }
+            ],
+            [
+                'attribute'=>'namaKampus',
+                'label' => 'Kampus',
+                'filter' => \app\helpers\MyHelper::getKampusList(),
+                'value' => function ($data) {
+                    return $data->cUST->kampus0->nama_kampus;
+                },
+                
+            ],
             'TRXDATE',
             'NOREFF',
             //'FIDBANK',

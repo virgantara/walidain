@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model app\models\Transaksi */
 
 $this->title = $model->urut;
-$this->params['breadcrumbs'][] = ['label' => 'Transaksis', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Transaksi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -41,6 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'KREDIT',
             'REFFBANK',
             'TRANSNO',
+            'keterangan',
             'created_at',
             'updated_at',
         ],

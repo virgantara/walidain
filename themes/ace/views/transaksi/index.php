@@ -15,6 +15,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="transaksi-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
+<p>
+    <?= Html::a('Manual Jurnal Entry', ['create'], ['class' => 'btn btn-success']) ?>
+</p>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <div class="table-responsive">
     <?php 

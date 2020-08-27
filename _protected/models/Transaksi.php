@@ -39,7 +39,7 @@ class Transaksi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['TRXDATE', 'created_at', 'updated_at'], 'safe'],
+            [['TRXDATE','keterangan'], 'safe'],
             [['DEBET', 'KREDIT'], 'required'],
             [['DEBET', 'KREDIT'], 'integer'],
             [['CUSTID'], 'string', 'max' => 25],

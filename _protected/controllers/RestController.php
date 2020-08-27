@@ -62,6 +62,10 @@ class RestController extends ActiveController
 				}
 			}
 
+			else{
+				$msg .= 'Kredit minus/nol '.$kredit;
+			}
+
 			$count = 0;
 			
 			$listTagihan = Tagihan::find()->where([

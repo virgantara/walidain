@@ -214,38 +214,38 @@ class TagihanController extends Controller
                 }
 
                 
-                foreach($listCustomer as $c)
-                {
+                // foreach($listCustomer as $c)
+                // {
 
-                    $t = Tagihan::find()->where([
-                        'komponen_id' => $_POST['komponen'],
-                        'nim' => $c->nim_mhs,
-                        'tahun' => $_POST['tahun'],
+                //     $t = Tagihan::find()->where([
+                //         'komponen_id' => $_POST['komponen'],
+                //         'nim' => $c->nim_mhs,
+                //         'tahun' => $_POST['tahun'],
 
-                    ])->one();
+                //     ])->one();
 
-                    if(!empty($t)) continue;
+                //     if(!empty($t)) continue;
                     
-                    $t = new Tagihan;
-                    $t->tahun = $_POST['tahun'];
-                    $t->komponen_id = $_POST['komponen'];
-                    $t->nilai = $model->nilai;
-                    $t->nilai_minimal = $model->nilai_minimal;
-                    $t->urutan = $k->prioritas;
-                    $t->nim = $c->nim_mhs;
-                    $t->semester = $c->semester;
+                //     $t = new Tagihan;
+                //     $t->tahun = $_POST['tahun'];
+                //     $t->komponen_id = $_POST['komponen'];
+                //     $t->nilai = $model->nilai;
+                //     $t->nilai_minimal = $model->nilai_minimal;
+                //     $t->urutan = $k->prioritas;
+                //     $t->nim = $c->nim_mhs;
+                //     $t->semester = $c->semester;
 
-                    if(!$t->save())
-                    {
-                        // print_r($t->attributes);exit;
-                        $errors .= \app\helpers\MyHelper::logError($t);
+                //     if(!$t->save())
+                //     {
+                //         // print_r($t->attributes);exit;
+                //         $errors .= \app\helpers\MyHelper::logError($t);
                         
-                        throw new \Exception;
+                //         throw new \Exception;
                         
                         
-                    }
+                //     }
 
-                }
+                // }
 
                 Yii::$app->session->setFlash('success', " Data telah tersimpan");
 

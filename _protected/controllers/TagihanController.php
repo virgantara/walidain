@@ -185,10 +185,10 @@ class TagihanController extends Controller
             $query = SimakMastermahasiswa::find()->where([
                 'kode_prodi' => $_POST['prodi'],
                 'kampus' => $_POST['kampus'],
-                'tahun_masuk' => $_POST['tahun_masuk']
+                'tahun_masuk' => $_POST['tahun_masuk'],
+                'status_aktivitas' => $sa
             ]);
 
-            $query->andWhere(['status_aktivitas' => $sa]);
 
             $listCustomer = $query->all();
             $k = KomponenBiaya::findOne($_POST['komponen']);

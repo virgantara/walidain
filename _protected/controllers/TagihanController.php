@@ -182,7 +182,7 @@ class TagihanController extends Controller
         if($model->load(Yii::$app->request->post()))
         {
             $sa = $_POST['status_aktivitas'];
-            $query = SimakMastermahasiswa::find()->where([
+            $query = SimakMastermahasiswa::find()->select(['nim_mhs','semester'])->where([
                 'kode_prodi' => $_POST['prodi'],
                 'kampus' => $_POST['kampus'],
                 'tahun_masuk' => $_POST['tahun_masuk']

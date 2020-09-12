@@ -13,10 +13,10 @@ use kartik\number\NumberControl;
 ?>
 
 <div class="row">
-    <div class="col-xs-12">
+    
 
         <?php $form = ActiveForm::begin(); ?>
-
+        <div class="col-xs-12 col-lg-6">
         <?=$form->errorSummary($model,['header'=>'<div class="alert alert-danger">','footer'=>'</div>']);?>
         
         <?= $form->field($model, 'kampus_id')->dropDownList($listKampus,['id'=>'kampus','prompt'=>'- Pilih Kampus -']) ?>
@@ -25,10 +25,14 @@ use kartik\number\NumberControl;
 
         <?= $form->field($model, 'tahun')->dropDownList($tahun,['prompt'=>'Pilih Tahun']) ?>
 
-        <?= $form->field($model, 'semester')->dropDownList(\app\helpers\MyHelper::getListSemester(),['prompt'=>'- Pilih Semester -']) ?>
+       
 
         <?= $form->field($model, 'kategori_id')->dropDownList($kategori,['prompt'=>'Pilih Kategori']) ?>
-        <?= $form->field($model, 'prioritas')->dropDownList($list_prioritas) ?>
+      
+         <?= $form->field($model, 'prioritas')->dropDownList($list_prioritas) ?>
+        </div>
+         <div class="col-xs-12 col-lg-6">
+             
 
         
         
@@ -51,15 +55,15 @@ use kartik\number\NumberControl;
                 'radixPoint' => ','
             ]
         ]) ?>
-
-      
         
-        <div class="form-group">
-            <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+         </div>
+         <div class="col-xs-12">
+         <div class="form-group">
+            <?= Html::submitButton('<i class="fa fa-save"></i> Save', ['class' => 'btn btn-lg btn-success btn-block']) ?>
         </div>
-
-        <?php ActiveForm::end(); ?>
     </div>
+        <?php ActiveForm::end(); ?>
+   
 </div>
 
 
@@ -78,9 +82,7 @@ $("#komponenbiaya-kategori_id").change(function(){
     $("#komponenbiaya-kode").val(pad($(this).val(),2));
 });
 
-$(document).on("keyup","#komponenbiaya-biaya_awal-disp",function(){
-    $("#komponenbiaya-biaya_minimal-disp").val($(this).val());
-});
+
 
 $(\'#kampus\').change(function(){
     getListProdi($(this).val());
@@ -118,7 +120,7 @@ function getListKampus(){
 
            
             $(\'#kampus\').append(row);
-            
+            $(\'#kampus\').val('.$model->kampus_id.');
         }
 
     });

@@ -44,6 +44,7 @@ class Tagihan extends \yii\db\ActiveRecord
             [['urutan', 'semester', 'tahun', 'komponen_id', 'edit', 'status_bayar'], 'integer'],
             [['semester', 'tahun', 'nim', 'komponen_id', 'nilai','nilai','nilai_minimal'], 'required'],
             [['nilai', 'nilai_minimal', 'terbayar'], 'number'],
+            [['tahun', 'nim', 'komponen_id'], 'unique', 'targetAttribute' => ['tahun', 'nim', 'komponen_id']],
             [['created_at', 'updated_at','nilai','nilai_minimal','is_tercekal'], 'safe'],
             [['nim'], 'string', 'max' => 25],
             [['komponen_id'], 'exist', 'skipOnError' => true, 'targetClass' => KomponenBiaya::className(), 'targetAttribute' => ['komponen_id' => 'id']],
@@ -133,6 +134,11 @@ class Tagihan extends \yii\db\ActiveRecord
         $row = $query->one();
 
         return !empty($row) ? $row['nama_kampus'] : '';
+    }
+
+    public function getTransaksis()
+    {
+        return $this->hasMany(Transaksi::className(), ['tagihan_id' => 'id']);
     }
 
     public function getStatusPembayaran()

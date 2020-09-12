@@ -6,7 +6,8 @@ use yii\grid\GridView;
 use kartik\depdrop\DepDrop;
 
 use kartik\number\NumberControl;
-// use app\models\TagihanSearch;
+
+use kartik\select2\Select2;
 
 // use keygenqt\autocompleteAjax\AutocompleteAjax;
 use yii\widgets\ActiveForm;
@@ -87,7 +88,19 @@ $status_aktivitas = !empty($_POST['status_aktivitas']) ? $_POST['status_aktivita
      <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Komponen</label>
         <div class="col-sm-9">
-            <?= Html::dropDownList('komponen','',$komponen,['id'=>'komponen_id','class'=>'form-control','prompt'=>'- Pilih Komponen -']);?>
+            <?= DepDrop::widget([
+                    'name' =>'komponen',
+                    'type'=>DepDrop::TYPE_SELECT2,
+                    'options'=>['id'=>'komponen_id'],
+                    'select2Options'=>['pluginOptions'=>['allowClear'=>true]],
+                    'pluginOptions'=>[
+                        'depends'=>['kampus'],
+                        'initialize' => true,
+                        'placeholder'=>'- Pilih komponen biaya -',
+                        'url'=>Url::to(['komponen-biaya/subkomponen-kampus'])
+                    ]
+                ]) ?>
+           
                 
         </div>
     </div>

@@ -36,6 +36,34 @@ class KomponenBiayaController extends Controller
         ];
     }
 
+    public function actionSubkomponenKampus() {
+        // Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $kampus_id = $parents[0];
+                $out = (new \yii\db\Query())
+                    ->select(['id', 'nama as name'])
+                    ->from('bill_komponen_biaya')
+                    ->where([
+                      'kampus_id' => $kampus_id
+                    ])
+                    ->orderBy(['kode'=>SORT_ASC])
+                    ->all();
+
+                // the getSubCatList function will query the database based on the
+                // cat_id and return an array like below:
+                // [
+                //    ['id'=>'<sub-cat-id-1>', 'name'=>'<sub-cat-name1>'],
+                //    ['id'=>'<sub-cat_id_2>', 'name'=>'<sub-cat-name2>']
+                // ]
+                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                return;
+            }
+        }
+    }
+
     public function actionAjaxGetKomponen()
     {
         $out = [];

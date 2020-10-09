@@ -37,10 +37,10 @@ class KomponenBiaya extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['kode', 'nama', 'kategori_id', 'tahun','kampus_id','bulan_id'], 'required'],
+            [['kode', 'nama', 'kategori_id', 'tahun','kampus_id'], 'required'],
             [['biaya_awal', 'biaya_minimal'], 'number'],
             [['prioritas', 'kategori_id', 'tahun'], 'integer'],
-            [['created_at', 'updated_at','kampus_id','bulan_id','prodi_id','semester','biaya_minimal','biaya_awal'], 'safe'],
+            [['created_at', 'updated_at','kampus_id','bulan_id','prodi_id','semester','biaya_minimal','biaya_awal','is_pencekalan'], 'safe'],
             [['kode'], 'string', 'max' => 5],
             [['nama'], 'string', 'max' => 255],
             [['kategori_id'], 'exist', 'skipOnError' => true, 'targetClass' => Kategori::className(), 'targetAttribute' => ['kategori_id' => 'id']],
@@ -67,6 +67,7 @@ class KomponenBiaya extends \yii\db\ActiveRecord
             'bulan_id' => 'Bulan',
             'kampus_id' => 'Kampus',
             'tahun' => 'Tahun',
+            'is_pencekalan' => 'Pencekalan ?',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

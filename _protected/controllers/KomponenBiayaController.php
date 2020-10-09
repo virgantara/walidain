@@ -15,6 +15,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\filters\AccessControl;
 
 /**
  * KomponenBiayaController implements the CRUD actions for KomponenBiaya model.
@@ -27,13 +28,171 @@ class KomponenBiayaController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'denyCallback' => function ($rule, $action) {
+                    throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page');
+                },
+                'only' => ['create','update','delete','index','pencekalan','ajax-approve-cekal','ajax-approve-cekal-bulk'],
+                'rules' => [
+                    [
+                        'actions' => [
+                            'create','update','delete','index','pencekalan','ajax-approve-cekal','ajax-approve-cekal-bulk'
+                        ],
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['post'],
                 ],
             ],
         ];
+    }
+
+    public function actionAjaxApproveCekalBulk()
+    {
+
+        $results  = [];
+        $code = '';
+        $errors = '';
+        if(Yii::$app->request->isPost)
+        {
+            $dataPost = $_POST['dataPost'];
+            $transaction = \Yii::$app->db->beginTransaction();
+            
+            try 
+            {
+
+                $counter = 0;
+                foreach($dataPost as $data)
+                {
+
+                    $id = $data['id'];
+                    $cekal = $data['cekal'];
+
+                    $model = KomponenBiaya::findOne($id);
+                    if(!empty($model))
+                    {
+                        $model->is_pencekalan = $cekal;
+                        if($model->save())
+                        {
+                            $counter++;
+                            $code = '200';
+                            $message = $counter.' Data updated';
+                        }
+
+                        else
+                        {
+
+                            $errors .= \app\helpers\MyHelper::logError($model);
+                            throw new \Exception;
+                            
+                        }
+                    }
+
+                    else{
+                        $errors .= 'Model not found';
+                    }
+                }
+
+                $transaction->commit();
+
+            } 
+            
+            catch (\Exception $e) 
+            {
+                $code = '500';
+                $errors .= $e->getMessage();
+                $transaction->rollBack();
+                $message = $errors;
+            } 
+
+            catch (\Throwable $e) 
+            {
+                $code = '500';
+                $errors .= $e->getMessage();
+                $transaction->rollBack();
+                $message = $errors;
+                
+            }
+
+            $results = [
+                'code' => $code,
+                'message' => $message
+            ];
+        }
+
+        echo json_encode($results);
+        die();
+    }
+
+    public function actionAjaxApproveCekal()
+    {
+
+        $results  = [];
+        if(Yii::$app->request->isPost)
+        {
+            $dataPost = $_POST['dataPost'];
+            $id = $dataPost['id'];
+            $cekal = $dataPost['cekal'];
+            $model = KomponenBiaya::findOne($id);
+            if(!empty($model))
+            {
+                $model->is_pencekalan = $cekal;
+                if($model->save())
+                {
+                    $results = [
+                        'code' => 200,
+                        'message' => 'Data Updated'
+                    ];
+                }
+
+                else
+                {
+
+                    $errors = \app\helpers\MyHelper::logError($model);
+                    $results = [
+                        'code' => 510,
+                        'message' => $errors
+                    ];
+                }
+            }
+
+            else{
+                $results = [
+                    'code' => 510,
+                    'message' => 'Model not found'
+                ];
+            }
+
+        }
+
+        echo json_encode($results);
+        die();
+    }
+
+    public function actionPencekalan()
+    {
+        
+        $query = KomponenBiaya::find();
+        $results = [];
+        if(!empty($_GET['btn-search']) && !empty($_GET['tahun']) && !empty($_GET['kampus']))
+        {
+            $query->where([
+                'tahun'=>$_GET['tahun'],
+                'kampus_id' => $_GET['kampus']
+            ]);
+
+            $results = $query->all();
+        }
+
+        return $this->render('pencekalan', [
+            'results' => $results,
+        ]);
     }
 
     public function actionSubkomponenKampus() {

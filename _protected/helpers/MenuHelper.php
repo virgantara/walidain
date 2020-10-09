@@ -90,14 +90,15 @@ class MenuHelper
 	       		'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	       		'url' => '#',
 	       		'items'=>[
-		           	[
-		            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Daftar Tercekal',  
-		                'url' => ['/simak-pencekalan/index'],	         
+	       			[
+		            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Komponen Pencekalan',  
+		                'url' => ['/komponen-biaya/pencekalan'],	         
 		            ],
-		            // [
-		            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i> Validasi',  
-		            //     'url' => ['/syarat-pencekalan/validate'],	         
+		           	// [
+		            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i> Daftar Tercekal',  
+		            //     'url' => ['/simak-pencekalan/index'],	         
 		            // ],
+		            
 		        ]
 	       ];
 	       

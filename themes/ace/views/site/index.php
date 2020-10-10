@@ -9,6 +9,8 @@ $this->title = Yii::t('app', Yii::$app->name);
 \app\assets\HighchartAsset::register($this);
 $tahun = !empty($_GET['tahun']) ? $_GET['tahun'] : '';
 $status_aktivitas = !empty($_GET['status_aktivitas']) ? $_GET['status_aktivitas'] : 'A';
+
+$list_kampus = ArrayHelper::map(\app\models\SimakKampus::find()->all(),'kode_kampus','nama_kampus');
 ?>
 <div class="alert alert-block alert-success">
     <button type="button" class="close" data-dismiss="alert">
@@ -27,6 +29,8 @@ $status_aktivitas = !empty($_GET['status_aktivitas']) ? $_GET['status_aktivitas'
 <div class="row">
 	<div class="col-sm-12">
 		<?=Html::dropDownList('tahun',$tahun,ArrayHelper::map(Tahun::find()->orderBy(['id'=>SORT_DESC])->all(),'id','nama'),['id'=>'tahun','prompt'=>'- Pilih Tahun -']);?>
+
+		<?=Html::dropDownList('tahun',$tahun,$list_kampus,['id'=>'kampus','prompt'=>'- Pilih Kampus -']);?>
 
 		<?=Html::dropDownList('status_aktivitas',$status_aktivitas,['A'=>'Aktif','N'=>'Non-Aktif','K'=>'Keluar','C'=>'Cuti','L'=>'Lulus','D'=>'DO'],['id'=>'status_aktivitas','prompt'=>'- Pilih Status -']);?>
 
@@ -90,13 +94,17 @@ $status_aktivitas = !empty($_GET['status_aktivitas']) ? $_GET['status_aktivitas'
 
 <?php
 
+$list_kampus = json_encode($list_kampus);
 
 $this->registerJs('
+
+var list_kampus = '.$list_kampus.';
 
 $(document).on("click","#btn-download",function(e){
 	e.preventDefault();
 	var obj = new Object;
 	obj.tahun = $("#tahun").val();
+	obj.kampus = $("#kampus").val();
 	obj.status_aktivitas = $("#status_aktivitas").val();
 	obj.singkatan = $("#singkatan").val();
 	$.ajax({
@@ -122,7 +130,7 @@ $(document).on("click","#btn-download",function(e){
 $(document).on("click","#btn-filter",function(e){
 	e.preventDefault();
 
-	fetchTahun($("#tahun").val(),$("#status_aktivitas").val(), function(err, res){
+	fetchTahun($("#tahun").val(),$("#status_aktivitas").val(), $("#kampus").val(), function(err, res){
 		generateChart(res);
 		generatePie(res.total_terbayar,res.total_piutang);
 
@@ -132,6 +140,7 @@ $(document).on("click","#btn-filter",function(e){
 function fetchRincian(param){
 	var obj = new Object;
 	obj.tahun = $("#tahun").val();
+	obj.kampus = $("#kampus").val();
 	obj.status_aktivitas = $("#status_aktivitas").val();
 	obj.singkatan = param.category;
 	$("#singkatan").val(param.category);
@@ -179,9 +188,10 @@ function fetchRincian(param){
 	})
 }
 
-function fetchTahun(tahun, status_aktivitas, callback){
+function fetchTahun(tahun, status_aktivitas, kampus, callback){
 	var obj = new Object;
 	obj.tahun = tahun;
+	obj.kampus = kampus;
 	obj.status_aktivitas = status_aktivitas;
 	$.ajax({
 		type : \'POST\',

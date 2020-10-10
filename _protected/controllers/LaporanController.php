@@ -45,6 +45,7 @@ class LaporanController extends Controller
             
             $dataItem = $_POST['dataItem'];
             $tahun = $dataItem['tahun'];
+            $kampus = $dataItem['kampus'];
             $status_aktivitas = $dataItem['status_aktivitas'];
             $singkatan = $dataItem['singkatan'];
             $api_baseurl = Yii::$app->params['api_baseurl'];
@@ -55,6 +56,7 @@ class LaporanController extends Controller
             
             $params = [
                 'tahun' => $tahun,
+                'kampus' => $kampus,
                 'status_aktivitas' => $status_aktivitas,
                 'singkatan' => $singkatan
             ];

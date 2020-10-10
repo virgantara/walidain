@@ -146,6 +146,7 @@ class SiteController extends Controller
             
             $dataItem = $_POST['dataItem'];
             $tahun = $dataItem['tahun'];
+            $kampus = $dataItem['kampus'];
             $status_aktivitas = $dataItem['status_aktivitas'];
             $singkatan = $dataItem['singkatan'];
             $api_baseurl = Yii::$app->params['api_baseurl'];
@@ -157,6 +158,7 @@ class SiteController extends Controller
             $params = [
                 'tahun' => $tahun,
                 'status_aktivitas' => $status_aktivitas,
+                'kampus' => $kampus,
                 'singkatan' => $singkatan
             ];
 
@@ -184,6 +186,7 @@ class SiteController extends Controller
             
             $dataItem = $_POST['dataItem'];
             $tahun = $dataItem['tahun'];
+            $kampus =  $dataItem['kampus'];
             $status_aktivitas = $dataItem['status_aktivitas'];
             $api_baseurl = Yii::$app->params['api_baseurl'];
             $client = new Client(['baseUrl' => $api_baseurl]);
@@ -193,6 +196,7 @@ class SiteController extends Controller
             
             $params = [
                 'tahun' => $tahun,
+                'kampus' => $kampus,
                 'status_aktivitas' => $status_aktivitas
             ];
 

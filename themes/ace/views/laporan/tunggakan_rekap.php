@@ -99,16 +99,32 @@ $komponen = !empty($_GET['komponen']) ? $_GET['komponen'] : '';
         <th rowspan="2">Nama Mahasiswa</th>
         <th rowspan="2">Prodi</th>
         <th rowspan="2">Semester</th>
-        <th rowspan="2">DU Genap/Ganjil</th>
-        <th colspan="12" class="text-center">SPP Bulanan</th>
+         <?php 
+        foreach($list_komponen as $b)
+        {   
+        ?>
+        <th class="text-center" colspan="<?=count($b['items']);?>"><?=$b['nama'];?>
+
+        </th>
+        <?php 
+        }
+        ?>
+
+        
     </tr>
     <tr>
         <?php 
-        foreach($listBulan as $b)
+        foreach($list_komponen as $cats)
         {
+            foreach($cats['items'] as $cat)
+            {
         ?>
-        <th  class="text-center"><?=$b->nama;?></th>
+        <th class="text-center"><?=$cat['nama'];?>
+            <br>
+            <?=\app\helpers\MyHelper::formatRupiah($cat['biaya_awal']);?>
+        </th>
         <?php 
+            }
         }
         ?>
     </tr>
@@ -118,27 +134,43 @@ $komponen = !empty($_GET['komponen']) ? $_GET['komponen'] : '';
     foreach($results as $q => $m)
     {
 
-        // $du = Tagihan::find()->where(['tahun'=>$tahun,'urutan'=>1])->one();
+        
     ?>
     <tr>
         <td><?=$q+1;?></td>
         <td><?=$m['nim_mhs'];?></td>
         <td><?=$m['nama_mahasiswa'];?></td> 
         <td><?=$m['singkatan'];?></td>    
-        <td><?=$m['semester'];?></td> 
-        <td class="text-right"><?=MyHelper::formatRupiah($m['du']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['syawal']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['dzulqodah']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['dzulhijjah']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['muharram']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['shafar']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['rabiulawal']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['rabiulakhir']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['jumadilula']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['jumadiltsani']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['rajab']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['syaban']);?></td>
-        <td class="text-right"><?=MyHelper::formatRupiah($m['ramadan']);?></td> 
+        <td class="text-center"><?=$m['semester'];?></td> 
+        <?php 
+        foreach($list_komponen as $cats)
+        {
+            foreach($cats['items'] as $cat)
+            {
+                $t = Tagihan::find()->where([
+                    'komponen_id' => $cat['id'],
+                    'nim' => $m['nim_mhs'],
+                ])->one();
+
+                $terbayar = '-';
+                $style = '';
+                if(!empty($t))
+                {
+                    if($t->terbayar < $t->nilai){
+                        $style="alert alert-danger";
+                    }
+
+                    $terbayar = \app\helpers\MyHelper::formatRupiah($t->terbayar);
+                }
+
+
+        ?>
+        <td class="text-right <?=$style;?>"><?=$terbayar;?></td>
+        <?php 
+            }
+        }
+
+        ?>
     </tr>
     <?php 
     }

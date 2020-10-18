@@ -14,10 +14,11 @@ use yii\helpers\ArrayHelper;
 use yii\httpclient\Client;
 use app\models\Bulan;
 use app\models\SimakKampus;
+use app\models\Tagihan;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 /**
  * PenjualanController implements the CRUD actions for Penjualan model.
  */
@@ -272,6 +273,8 @@ class LaporanController extends Controller
         $listBulan = Bulan::find()->orderBy(['id'=>SORT_ASC])->all();
         $listKampus = SimakKampus::find()->orderBy(['kode_kampus'=>SORT_ASC])->all();
 
+        $list_komponen = [];
+
         $results = [];
         if(!empty($_GET['btn-search']) && !empty($_GET['kampus']) && !empty($_GET['prodi']) && !empty($_GET['tahun'] && !empty($_GET['status_aktivitas'])))
         {
@@ -287,10 +290,51 @@ class LaporanController extends Controller
                 'tahun'=>$_GET['tahun'],
                 'status_aktivitas' => $_GET['status_aktivitas']
             ],$headers)->send();
-            
+
             if ($response->isOk) {
                 $results = $response->data['values'];
             }
+
+            $rows = (new \yii\db\Query())
+            ->select(['k.id', 'k.nama'])
+            ->from('bill_tagihan t')
+            ->join('JOIN','bill_komponen_biaya kb', 't.komponen_id = kb.id')
+            ->join('JOIN','bill_kategori k', 'kb.kategori_id = k.id')
+            ->join('JOIN','simak_mastermahasiswa m', 'm.nim_mhs = t.nim')
+            ->where([
+                'm.kode_prodi' => $_GET['prodi'],
+                'm.kampus' => $_GET['kampus'],
+                't.tahun' => $_GET['tahun'],
+                'm.status_aktivitas' => $_GET['status_aktivitas']
+            ])
+            ->groupBy(['k.id'])->orderBy(['k.id' => SORT_ASC]);
+
+            $list_cat = $rows->all();
+
+            foreach($list_cat as $cat)
+            {
+                $rows = (new \yii\db\Query())
+                ->select(['kb.id', 'kb.nama','kb.biaya_awal'])
+                ->from('bill_tagihan t')
+                ->join('JOIN','bill_komponen_biaya kb', 't.komponen_id = kb.id')
+                ->join('JOIN','bill_kategori k', 'kb.kategori_id = k.id')
+                ->join('JOIN','simak_mastermahasiswa m', 'm.nim_mhs = t.nim')
+                ->where([
+                    'm.kode_prodi' => $_GET['prodi'],
+                    'm.kampus' => $_GET['kampus'],
+                    't.tahun' => $_GET['tahun'],
+                    'm.status_aktivitas' => $_GET['status_aktivitas'],
+                    'k.id' => $cat['id']
+                ])
+                ->groupBy(['kb.id'])->orderBy(['kb.id' => SORT_ASC]);
+                $hasil = $rows->all();
+                $list_komponen[$cat['id']] = [
+                    'nama' => $cat['nama'],
+                    'items' => $hasil
+                ];
+                
+            }
+            
         }
 
         else if(!empty($_GET['export']))
@@ -313,126 +357,178 @@ class LaporanController extends Controller
                 $results = $response->data['values'];
             }
 
+
+
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
             
-            
-            // Add column headers
-            $sheet->setCellValue('A3', 'No')
-                ->setCellValue('B3', 'NIM')
-                ->setCellValue('C3', 'Nama Mahasiswa')
-                ->setCellValue('D3', 'Prodi')
-                ->setCellValue('E3', 'Semester')
-                ->setCellValue('F3', 'DU Genap/Ganjil')
-                ->setCellValue('G3', 'SPP Bulanan');
+            $rows = (new \yii\db\Query())
+            ->select(['k.id', 'k.nama'])
+            ->from('bill_tagihan t')
+            ->join('JOIN','bill_komponen_biaya kb', 't.komponen_id = kb.id')
+            ->join('JOIN','bill_kategori k', 'kb.kategori_id = k.id')
+            ->join('JOIN','simak_mastermahasiswa m', 'm.nim_mhs = t.nim')
+            ->where([
+                'm.kode_prodi' => $_GET['prodi'],
+                'm.kampus' => $_GET['kampus'],
+                't.tahun' => $_GET['tahun'],
+                'm.status_aktivitas' => $_GET['status_aktivitas']
+            ])
+            ->groupBy(['k.id'])->orderBy(['k.id' => SORT_ASC]);
 
-            $sheet->mergeCells('G3:R3')->getStyle('G3:R3')->getAlignment()->setHorizontal('center');
-            $sheet->mergeCells('A3:A4');
-            $sheet->mergeCells('B3:B4');
-            $sheet->mergeCells('C3:C4');
-            $sheet->mergeCells('D3:D4');
-            $sheet->mergeCells('E3:E4');
-            $sheet->mergeCells('F3:F4');
+            $list_cat = $rows->all();
+            $sheet->mergeCells('A2:A3');
+            $sheet->mergeCells('B2:B3');
+            $sheet->mergeCells('C2:C3');
+            $sheet->mergeCells('D2:D3');
+            $sheet->mergeCells('E2:E3');
+            $sheet->setCellValue('A2', 'No')
+                ->setCellValue('B2', 'NIM')
+                ->setCellValue('C2', 'Nama Mahasiswa')
+                ->setCellValue('D2', 'Prodi')
+                ->setCellValue('E2', 'Semester');
             
-            $col = 7;
-            foreach($listBulan as $q => $b)
+            $col = 6;
+            foreach($list_cat as $cat)
             {
-                
-                $sheet->setCellValueByColumnAndRow($col,4,$b->nama);
+                $rows = (new \yii\db\Query())
+                ->select(['kb.id', 'kb.nama','kb.biaya_awal'])
+                ->from('bill_tagihan t')
+                ->join('JOIN','bill_komponen_biaya kb', 't.komponen_id = kb.id')
+                ->join('JOIN','bill_kategori k', 'kb.kategori_id = k.id')
+                ->join('JOIN','simak_mastermahasiswa m', 'm.nim_mhs = t.nim')
+                ->where([
+                    'm.kode_prodi' => $_GET['prodi'],
+                    'm.kampus' => $_GET['kampus'],
+                    't.tahun' => $_GET['tahun'],
+                    'm.status_aktivitas' => $_GET['status_aktivitas'],
+                    'k.id' => $cat['id']
+                ])
+                ->groupBy(['kb.id'])->orderBy(['kb.id' => SORT_ASC]);
+                $hasil = $rows->all();
+                $list_komponen[$cat['id']] = [
+                    'nama' => $cat['nama'],
+                    'items' => $hasil
+                ];
+
+                $countItems = count($hasil)-1;
+                $sheet->setCellValueByColumnAndRow($col,2,$cat['nama']);
+                $sheet->mergeCellsByColumnAndRow($col,2,$col+$countItems,2);
+                $col = $col+$countItems;
                 $col++;
+
+            }
+
+            $col = 6;
+            foreach($list_komponen as $cats)
+            {
+                foreach($cats['items'] as $cat)
+                {
+                    $sheet->setCellValueByColumnAndRow($col,3,$cat['nama']);
+                    $cell = $sheet->getCellByColumnAndRow($col, 3);
+                    $cell->getStyle()->getAlignment()->setTextRotation(90)->setWrapText(true);
+                    $col++;
+                }
+            }    
+
+            $row = 4;
+            foreach($results as $q => $m)
+            {
+                $sheet->setCellValueByColumnAndRow(1,$row,$q+1);
+                $sheet->setCellValueByColumnAndRow(2,$row,$m['nim_mhs']);
+                $sheet->setCellValueByColumnAndRow(3,$row,$m['nama_mahasiswa']);
+                $sheet->setCellValueByColumnAndRow(4,$row,$m['singkatan']);
+                $sheet->setCellValueByColumnAndRow(5,$row,$m['semester']);
+
+                $col = 6;
+                foreach($list_komponen as $cats)
+                {
+                    foreach($cats['items'] as $cat)
+                    {
+                        $t = Tagihan::find()->where([
+                            'komponen_id' => $cat['id'],
+                            'nim' => $m['nim_mhs'],
+                        ])->one();
+
+                        $terbayar = '-';
+                        $style = '';
+                        if(!empty($t))
+                        {
+                            if($t->terbayar < $t->nilai){
+                                $style="danger";
+                            }
+
+
+
+                            $terbayar = $t->terbayar;
+                        }
+
+                        $kolom = Coordinate::stringFromColumnIndex($col);
+                        $sheet->getStyle($kolom)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                        $sheet->setCellValueByColumnAndRow($col,$row,$terbayar);
+                        if($style != ''){
+                            
+                            $sheet->getStyle($kolom.$row)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('d9534f');
+                            $sheet->getStyle($kolom.$row)->getFont()->getColor()->setRGB('ffffff');
+                        }
+
+                        
+                        $col++;
+                    }
+                }
+
+
+
+                $row++;
             }
                 
+            
 
-            $sheet->mergeCells('A1:R1')->getStyle('A1:R1')->getAlignment()->setHorizontal('center');
+
+
+            // $sheet->mergeCells('G3:R3')->getStyle('G3:R3')->getAlignment()->setHorizontal('center');
+            // $sheet->mergeCells('A3:A4');
+            // $sheet->mergeCells('B3:B4');
+            // $sheet->mergeCells('C3:C4');
+            // $sheet->mergeCells('D3:D4');
+            // $sheet->mergeCells('E3:E4');
+            // $sheet->mergeCells('F3:F4');
+            
+            // $col = 7;
+            // foreach($listBulan as $q => $b)
+            // {
+                
+            //     $sheet->setCellValueByColumnAndRow($col,4,$b->nama);
+            //     $col++;
+            // }
+                
+
+            $sheet->mergeCells('A1:E1')->getStyle('A1:E1')->getAlignment()->setHorizontal('center');
             $sheet->setCellValue('A1','LAPORAN REKAP PEMBAYARAN');
 
 
-            //Put each record in a new cell
+            // //Put each record in a new cell
 
-            $sheet->getColumnDimension('A')->setWidth(5);
-            $sheet->getColumnDimension('B')->setWidth(15);
-            $sheet->getColumnDimension('C')->setWidth(35);
-            $sheet->getColumnDimension('D')->setWidth(7);
-            $sheet->getColumnDimension('E')->setWidth(10);
-            $sheet->getColumnDimension('F')->setWidth(15);
-            $sheet->getColumnDimension('G')->setWidth(15);
-            $sheet->getColumnDimension('H')->setWidth(15);
-            $sheet->getColumnDimension('I')->setWidth(15);
-            $sheet->getColumnDimension('J')->setWidth(15);
-            $sheet->getColumnDimension('K')->setWidth(15);
-            $sheet->getColumnDimension('L')->setWidth(15);
-            $sheet->getColumnDimension('M')->setWidth(15);
-            $sheet->getColumnDimension('N')->setWidth(15);
-            $sheet->getColumnDimension('O')->setWidth(15);
-            $sheet->getColumnDimension('P')->setWidth(15);
-            $sheet->getColumnDimension('Q')->setWidth(15);
-            $sheet->getColumnDimension('R')->setWidth(15);
-            $sheet->getStyle('F')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('G')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('H')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('I')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('J')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('K')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('L')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('M')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('N')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('O')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('P')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('Q')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $sheet->getStyle('R')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $i= 0;
-            $rows = 5;
+            // // $sheet->getColumnDimension('A')->setWidth(5);
+          
+            // // $sheet->getStyle('F')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 
-            $total = 0;
-
-            $response = $client->get('/b/rekap/pembayaran', [
-                'kampus' => $_GET['kampus'],
-                'prodi'=>$_GET['prodi'],
-                'tahun'=>$_GET['tahun'],
-                'status_aktivitas' => $_GET['status_aktivitas']
-            ],$headers)->send();
-            
-            if ($response->isOk) {
-                $results = $response->data['values'];
-
-                foreach($results as $q => $v)
-                {
-                    $sheet->setCellValue('A'.$rows, $q+1);
-                    $sheet->setCellValue('B'.$rows, $v['nim_mhs']);
-                    $sheet->setCellValue('C'.$rows, $v['nama_mahasiswa']);
-                    $sheet->setCellValue('D'.$rows, $v['singkatan']);
-                    $sheet->setCellValue('E'.$rows, $v['semester']);
-                    $sheet->setCellValue('F'.$rows, $v['du']);
-                    $sheet->setCellValue('G'.$rows, $v['syawal']);
-                    $sheet->setCellValue('H'.$rows, $v['dzulqodah']);
-                    $sheet->setCellValue('I'.$rows, $v['dzulhijjah']);
-                    $sheet->setCellValue('J'.$rows, $v['muharram']);
-                    $sheet->setCellValue('K'.$rows, $v['shafar']);
-                    $sheet->setCellValue('L'.$rows, $v['rabiulawal']);
-                    $sheet->setCellValue('M'.$rows, $v['rabiulakhir']);
-                    $sheet->setCellValue('N'.$rows, $v['jumadilula']);
-                    $sheet->setCellValue('O'.$rows, $v['jumadiltsani']);
-                    $sheet->setCellValue('P'.$rows, $v['rajab']);
-                    $sheet->setCellValue('Q'.$rows, $v['syaban']);
-                    $sheet->setCellValue('R'.$rows, $v['ramadan']);
-
-
-
-                    $rows++;
-                }
-
-                
-                $sheet->setTitle('Laporan Rekap Pembayaran');
-                
-                // ob_end_clean();
-                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="laporan_rekap_pembayaran.xlsx"');
-                header('Cache-Control: max-age=0');
-                
-                $writer = new Xlsx($spreadsheet);
-                $writer->save('php://output');
-                exit;
+            foreach(range('A','Z') as $columnID) {
+                $sheet->getColumnDimension($columnID)
+                    ->setAutoSize(true);
             }
+                    
+            $sheet->setTitle('Laporan Rekap Pembayaran');
+            
+            // ob_end_clean();
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="laporan_rekap_pembayaran.xlsx"');
+            header('Cache-Control: max-age=0');
+            
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+            exit;
+            // }
 
 
         }
@@ -442,7 +538,8 @@ class LaporanController extends Controller
             'model' => $model,
             'results' => $results,
             'listBulan' => $listBulan,
-            'listKampus' => $listKampus
+            'listKampus' => $listKampus,
+            'list_komponen' => $list_komponen
         ]);
     }
 

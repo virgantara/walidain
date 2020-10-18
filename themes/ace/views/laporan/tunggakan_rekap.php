@@ -86,7 +86,7 @@ $komponen = !empty($_GET['komponen']) ? $_GET['komponen'] : '';
 
     <?php ActiveForm::end(); ?>
 <p>
-    <small>Menampilkan <?=count($results);?> data</small>
+    Menampilkan <?=count($results);?> data
 </p>
 <div class="row">
     <div class="table-responsive">

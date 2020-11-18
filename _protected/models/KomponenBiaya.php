@@ -65,7 +65,7 @@ class KomponenBiaya extends \yii\db\ActiveRecord
             'prioritas' => 'Prioritas',
             'kategori_id' => 'Kategori ID',
             'bulan_id' => 'Bulan',
-            'kampus_id' => 'Kampus',
+            'kampus_id' => 'Kelas',
             'tahun' => 'Tahun',
             'is_pencekalan' => 'Pencekalan ?',
             'created_at' => 'Created At',

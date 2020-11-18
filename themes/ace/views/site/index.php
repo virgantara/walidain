@@ -30,7 +30,7 @@ $list_kampus = ArrayHelper::map(\app\models\SimakKampus::find()->all(),'kode_kam
 	<div class="col-sm-12">
 		<?=Html::dropDownList('tahun',$tahun,ArrayHelper::map(Tahun::find()->orderBy(['id'=>SORT_DESC])->all(),'id','nama'),['id'=>'tahun','prompt'=>'- Pilih Tahun -']);?>
 
-		<?=Html::dropDownList('tahun',$tahun,$list_kampus,['id'=>'kampus','prompt'=>'- Pilih Kampus -']);?>
+		<?=Html::dropDownList('tahun',$tahun,$list_kampus,['id'=>'kampus','prompt'=>'- Pilih Kelas -']);?>
 
 		<?=Html::dropDownList('status_aktivitas',$status_aktivitas,['A'=>'Aktif','N'=>'Non-Aktif','K'=>'Keluar','C'=>'Cuti','L'=>'Lulus','D'=>'DO'],['id'=>'status_aktivitas','prompt'=>'- Pilih Status -']);?>
 
@@ -72,7 +72,7 @@ $list_kampus = ArrayHelper::map(\app\models\SimakKampus::find()->all(),'kode_kam
 									<th>No</th>
 									<th>NIM</th>
 									<th>Nama / Semester </th>
-									<th >Kampus</th>
+									<th >Kelas</th>
 									<th >Prodi</th>
 									<th >Tagihan</th>
 									<th >Terbayar</th>

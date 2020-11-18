@@ -36,9 +36,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'namaProdi',
             [
                 'attribute' => 'namaKampus',
-                'label' => 'Kampus',
+                'label' => 'Kelas',
                 'format' => 'raw',
-                'filter'=>["Siman"=>"Siman","Mantingan"=>"Mantingan","Mantingan Reguler"=>"Mantingan Reguler"],
+                'filter'=>["Siman"=>"A","Mantingan"=>"C3","Mantingan Reguler"=>"C1"],
                 'value'=>function($model,$url){
 
                     

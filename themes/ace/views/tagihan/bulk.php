@@ -60,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kampus</label>
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kelas</label>
         <div class="col-lg-2 col-sm-10">
           <select id="kampus">
               

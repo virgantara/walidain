@@ -208,7 +208,7 @@ class TagihanController extends Controller
 
                 if(empty($_POST['kampus']))
                 {
-                    $errors .= 'Kampus harus diisi';
+                    $errors .= 'Kelas harus diisi';
                         
                     throw new \Exception;
                 }
@@ -324,7 +324,7 @@ class TagihanController extends Controller
 
                 if(empty($_POST['kampus']))
                 {
-                    $errors .= 'Kampus harus diisi';
+                    $errors .= 'Kelas harus diisi';
                         
                     throw new \Exception;
                 }

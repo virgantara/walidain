@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
      } ?>  <?= Html::hiddenInput('tahun',$model->tahun, ['id'=>'tahun_id','class'=>'form-control','readonly'=>'readonly']) ?>
         
     <div class="form-group">
-        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Kampus</label>
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Kelas</label>
         <div class="col-sm-9">
           <select id="kampus" name="kampus"  class="form-control">
               
@@ -164,7 +164,7 @@ function getListKampus(){
             
             $('#loading').hide();  
             $('#kampus').empty();
-             var row = '<option value=\"\">- Pilih Kampus -</option>';
+             var row = '<option value=\"\">- Pilih Kelas -</option>';
                    
             $.each(data.values,function(i, obj){
                 row += '<option value=\"'+obj.kode_kampus+'\">'+obj.kode_kampus+' - '+obj.nama_kampus+'</option>';

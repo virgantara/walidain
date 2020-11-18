@@ -29,7 +29,7 @@ $tahun = !empty($_GET['SyaratPencekalan']['tahun_id']) ? $_GET['SyaratPencekalan
       }),['id'=>'tahun_id','prompt'=>'- Pilih Tahun -']) ?>
 
 	<div class="form-group">
-        <label class="control-label no-padding-right" for="form-field-1"> Kampus</label>
+        <label class="control-label no-padding-right" for="form-field-1"> Kelas</label>
           <?=Html::dropDownList('kampus',$kampus,[],['id'=>'kampus','class'=>'form-control']);?>
         
     </div>
@@ -134,7 +134,7 @@ function getListKampus(){
             
             $('#loading').hide();  
             $('#kampus').empty();
-             var row = '<option value=\"\">- Semua Kampus -</option>';
+             var row = '<option value=\"\">- Semua Kelas -</option>';
                    
             $.each(data.values,function(i, obj){
                 row += '<option value=\"'+obj.kode_kampus+'\">'+obj.kode_kampus+' - '+obj.nama_kampus+'</option>';

@@ -36,7 +36,7 @@ $kampus = !empty($_GET['kampus']) ? $_GET['kampus'] : '';
     ]); ?>
     
     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kampus</label>
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kelas</label>
         <div class="col-lg-2 col-sm-10">
           <select id="kampus" name="kampus"  class="form-control">
               
@@ -242,7 +242,7 @@ function getListKampus(){
             
             $('#loading').hide();  
             $('#kampus').empty();
-            var row = '<option value=\"\">- Pilih Kampus -</option>';
+            var row = '<option value=\"\">- Pilih Kelas -</option>';
                    
             $.each(data.values,function(i, obj){
                 row += '<option value=\"'+obj.kode_kampus+'\">'+obj.nama_kampus+'</option>';

@@ -19,7 +19,7 @@ use kartik\number\NumberControl;
         <div class="col-xs-12 col-lg-6">
         <?=$form->errorSummary($model,['header'=>'<div class="alert alert-danger">','footer'=>'</div>']);?>
         
-        <?= $form->field($model, 'kampus_id')->dropDownList($listKampus,['id'=>'kampus','prompt'=>'- Pilih Kampus -']) ?>
+        <?= $form->field($model, 'kampus_id')->dropDownList($listKampus,['id'=>'kampus','prompt'=>'- Pilih Kelas -']) ?>
 
         <?= $form->field($model, 'bulan_id')->dropDownList($listBulan,['prompt'=>'Pilih Bulan']) ?>
 

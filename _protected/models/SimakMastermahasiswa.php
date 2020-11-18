@@ -215,7 +215,7 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
             'tgl_sk_yudisium' => 'Tgl Sk Yudisium',
             'no_ijazah' => 'No Ijazah',
             'status_mahasiswa' => 'Status Mahasiswa',
-            'kampus' => 'Kampus',
+            'kampus' => 'Kelas',
             'jur_thn_smta' => 'Jur Thn Smta',
             'is_synced' => 'Is Synced',
             'kode_pd' => 'Kode Pd',

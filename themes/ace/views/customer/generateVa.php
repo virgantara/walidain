@@ -35,9 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="lds-facebook" id="loading" style="height: 32px;display: none"><div></div><div></div><div></div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kampus</label>
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kelas</label>
         <div class="col-lg-2 col-sm-10">
-            <?= $form->field($model,'kampus',['options'=>['tag'=>false]])->dropDownList([],['id'=>'kampus','prompt'=>'- Pilih Kampus -'])->label(false);?>
+            <?= $form->field($model,'kampus',['options'=>['tag'=>false]])->dropDownList([],['id'=>'kampus','prompt'=>'- Pilih Kelas -'])->label(false);?>
           
         </div>
     </div>
@@ -101,7 +101,7 @@ function getListKampus(){
             
             $('#loading').hide();  
             $('#kampus').empty();
-            var row = '<option value=\"\">- Pilih Kampus -</option>';
+            var row = '<option value=\"\">- Pilih Kelas -</option>';
                    
             $.each(data.values,function(i, obj){
                 row += '<option value=\"'+obj.kode_kampus+'\">'+obj.nama_kampus+'</option>';

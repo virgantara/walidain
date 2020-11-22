@@ -19,7 +19,7 @@ use app\models\SimakKonfirmasipembayaran;
 /**
  * TagihanController implements the CRUD actions for Tagihan model.
  */
-class TagihanController extends Controller
+class TagihanController extends AppController
 {
     /**
      * {@inheritdoc}

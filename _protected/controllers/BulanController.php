@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * BulanController implements the CRUD actions for Bulan model.
  */
-class BulanController extends Controller
+class BulanController extends AppController
 {
     /**
      * {@inheritdoc}

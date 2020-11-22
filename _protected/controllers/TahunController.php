@@ -13,7 +13,7 @@ use yii\filters\AccessControl;
 /**
  * TahunController implements the CRUD actions for Tahun model.
  */
-class TahunController extends Controller
+class TahunController extends AppController
 {
     /**
      * {@inheritdoc}

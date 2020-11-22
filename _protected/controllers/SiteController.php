@@ -16,6 +16,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use \Firebase\JWT\JWT;
 use Yii;
 
 /**
@@ -23,7 +24,7 @@ use Yii;
  * It is responsible for displaying static pages, logging users in and out,
  * sign up and account activation, and password reset.
  */
-class SiteController extends Controller
+class SiteController extends AppController
 {
     public $successUrl = '';
     
@@ -101,6 +102,39 @@ class SiteController extends Controller
             // redirect ke form signup, dengan mengset nilai variabell global successUrl
             $this->successUrl = \yii\helpers\Url::to(['site/index']);
         }   
+    }
+
+    public function actionLoginSso($token)
+    {
+        // print_r($token);exit;
+        
+        $key = Yii::$app->params['jwt_key'];
+        $decoded = JWT::decode($token, base64_decode(strtr($key, '-_', '+/')), ['HS256']);
+        
+        $uuid = $decoded->uuid; // will print "1"
+        $user = \app\models\User::find()
+            ->where([
+                'uuid'=>$uuid,
+            ])
+            ->one();
+
+        if(!empty($user))
+        {
+
+            
+            $session = Yii::$app->session;
+            $session->set('token',$token);
+           
+            Yii::$app->user->login($user);
+            return $this->redirect(['site/index']);
+        }
+
+        else{
+            
+            
+            return $this->redirect($decoded->iss.'/site/sso-callback?code=302')->send();
+        }
+       
     }
 
 //------------------------------------------------------------------------------------------------//
@@ -346,9 +380,11 @@ class SiteController extends Controller
     public function actionLogout()
     {
         
+        $session = Yii::$app->session;
+        $session->remove('token');
         Yii::$app->user->logout();
-
-        return $this->goHome();
+        $url = Yii::$app->params['sso_logout'];
+        return $this->redirect($url);
     }
 
 /*----------------*

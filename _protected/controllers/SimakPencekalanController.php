@@ -17,7 +17,7 @@ use yii\filters\VerbFilter;
 /**
  * SimakPencekalanController implements the CRUD actions for SimakPencekalan model.
  */
-class SimakPencekalanController extends Controller
+class SimakPencekalanController extends AppController
 {
     /**
      * {@inheritdoc}

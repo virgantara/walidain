@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * SimakTahunakademikController implements the CRUD actions for SimakTahunakademik model.
  */
-class SimakTahunakademikController extends Controller
+class SimakTahunakademikController extends AppController
 {
     /**
      * {@inheritdoc}

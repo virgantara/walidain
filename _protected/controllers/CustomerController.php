@@ -21,7 +21,7 @@ use yii\httpclient\Client;
 /**
  * CustomerController implements the CRUD actions for Customer model.
  */
-class CustomerController extends Controller
+class CustomerController extends AppController
 {
     /**
      * {@inheritdoc}

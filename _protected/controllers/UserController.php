@@ -18,6 +18,35 @@ class UserController extends AppController
      */
     protected $_pageSize = 11;
 
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                    
+                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['theCreator','admin'],
+                    ],
+                    
+                    
+                ], // rules
+
+            ], // access
+
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ], // verbs
+
+        ]; // return
+
+    } // behaviors
+
     /**
      * Lists all User models.
      *

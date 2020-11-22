@@ -16,7 +16,7 @@ use yii\filters\AccessControl;
 /**
  * SyaratPencekalanController implements the CRUD actions for SyaratPencekalan model.
  */
-class SyaratPencekalanController extends Controller
+class SyaratPencekalanController extends AppController
 {
     /**
      * {@inheritdoc}

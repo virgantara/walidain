@@ -37,7 +37,8 @@
         "2amigos/yii2-ckeditor-widget": "^2.1",
         "guzzlehttp/guzzle": "^6.3",
         "phpoffice/phpspreadsheet": "^1.6",
-        "kartik-v/yii2-number": "@dev"
+        "kartik-v/yii2-number": "@dev",
+        "firebase/php-jwt": "^5.2"
     
     },
     "require-dev": {

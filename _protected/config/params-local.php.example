@@ -3,5 +3,8 @@
 return [
 
    'api_baseurl' => 'http://localhost:1926',
-   'client_token' => ''
+   'client_token' => '',
+   'jwt_key' => '',
+   'sso_login' => 'http://local.central.com/site/login',
+   'sso_logout' => 'http://local.central.com/site/sess-logout',
 ];

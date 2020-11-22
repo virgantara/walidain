@@ -20,7 +20,7 @@ use yii\filters\AccessControl;
 /**
  * KomponenBiayaController implements the CRUD actions for KomponenBiaya model.
  */
-class KomponenBiayaController extends Controller
+class KomponenBiayaController extends AppController
 {
     /**
      * {@inheritdoc}

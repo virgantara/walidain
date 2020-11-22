@@ -12,50 +12,31 @@ use Yii;
  */
 class AppController extends Controller
 {
-    /**
-     * Returns a list of behaviors that this component should behave as.
-     * Here we use RBAC in combination with AccessControl filter.
-     *
-     * @return array
-     */
-    public function behaviors()
+    public function beforeAction($action)
     {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'controllers' => ['user'],
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
-                        'allow' => true,
-                        'roles' => ['theCreator','admin'],
-                    ],
-                    [
-                        'controllers' => ['tagihan'],
-                        'actions' => ['index', 'view', 'create', 'update', 'delete','bulk','instant'],
-                        'allow' => true,
-                        'roles' => ['theCreator','admin'],
-                    ],
-                    [
-                        'controllers' => ['transaksi'],
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
-                        'allow' => true,
-                        'roles' => ['theCreator','admin'],
-                    ],
-                    
-                ], // rules
+        
+        $session = Yii::$app->session;
+        // $session->remove('token');
+        if($session->has('token'))
+        {
+            if (!parent::beforeAction($action)) {
+                return false;
+            }
 
-            ], // access
+        }
 
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
-                ],
-            ], // verbs
+        else
+        {
+            
+            return $this->redirect(Yii::$app->params['sso_login']);
+        }
 
-        ]; // return
+        
 
-    } // behaviors
+        // other custom code here
+
+        return true; // or false to not run the action
+    }
+    
 
 } // AppController

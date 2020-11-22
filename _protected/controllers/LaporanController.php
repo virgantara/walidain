@@ -22,7 +22,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 /**
  * PenjualanController implements the CRUD actions for Penjualan model.
  */
-class LaporanController extends Controller
+class LaporanController extends AppController
 {
     /**
      * {@inheritdoc}

@@ -15,7 +15,7 @@ use yii\httpclient\Client;
 /**
  * PenjualanController implements the CRUD actions for Penjualan model.
  */
-class ApiController extends Controller
+class ApiController extends AppController
 {
     /**
      * {@inheritdoc}

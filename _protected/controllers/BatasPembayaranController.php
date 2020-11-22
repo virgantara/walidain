@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * BatasPembayaranController implements the CRUD actions for BatasPembayaran model.
  */
-class BatasPembayaranController extends Controller
+class BatasPembayaranController extends AppController
 {
     /**
      * {@inheritdoc}

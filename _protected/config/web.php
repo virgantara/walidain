@@ -115,6 +115,7 @@ $config = [
         ],
         'session' => [
             'class' => 'app\components\SafeSession',
+            'cookieParams' => ['lifetime' => 7 * 24 *60 * 60],
             'savePath' => '@app/runtime/session'
         ],
         'authManager' => [

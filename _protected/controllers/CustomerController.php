@@ -34,18 +34,18 @@ class CustomerController extends AppController
                 'denyCallback' => function ($rule, $action) {
                     throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page');
                 },
-                'only' => ['view','index','generate-va'],
+                'only' => ['view','index','generate-va','detil'],
                 'rules' => [
                     [
                         'actions' => [
-                            'index','view','generate-va'
+                            'index','view','generate-va','detil'
                         ],
                         'allow' => true,
                         'roles' => ['admin'],
                     ],
                     [
                         'actions' => [
-                            'index','view','generate-va'
+                            'index','view','generate-va','detil'
                         ],
                         'allow' => true,
                         'roles' => ['theCreator'],
@@ -322,6 +322,18 @@ class CustomerController extends AppController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionDetil($id)
+    {
+
+        $model = $this->findModel($id);
+            
+        $kabupaten = \app\models\SimakKabupaten::find()->where(['id'=>$model->kabupaten])->one();
+        return $this->renderAjax('detil', [
+            'model' => $model,
+            'kabupaten' => $kabupaten
         ]);
     }
 

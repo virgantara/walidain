@@ -71,7 +71,26 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{view}'
+            'template' => '{view} {detil}',
+            'buttons' => [
+               
+                'detil' => function ($url, $model) {
+                                 return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url , ['class' => 'detil', 'data-pjax' => '0']);
+                            },
+            ],
+            // 'urlCreator' => function ($action, $model, $key, $index) {
+                    
+            //     if ($action === 'view') {
+            //         $url =\yii\helpers\Url::to(['customer/view','id'=>$model->id]);
+            //         return $url;
+            //     }
+
+            //     else if ($action === 'detil') {
+                    
+            //         return "javascript:void(0)";
+            //     }
+              
+            // }
         ]
     ]
     ?>
@@ -122,3 +141,20 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 </div>
 </div>
+<?php
+    yii\bootstrap\Modal::begin(['id' =>'pModal']);
+    yii\bootstrap\Modal::end();
+
+$this->registerJs(
+ "$(document).on('ready pjax:success', function() {  // 'pjax:success' use if you have used pjax
+    $('.detil').click(function(e){
+       e.preventDefault();      
+       $('#pModal').modal('show')
+                  .find('.modal-content')
+                  .load($(this).attr('href'));  
+   });
+});
+"
+);
+?>
+

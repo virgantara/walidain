@@ -5,7 +5,7 @@ return [
    'api_baseurl' => 'http://localhost:1926',
    'client_token' => '',
    'jwt_key' => '',
-   'sso_login' => 'http://local.central.com/site/login',
+   'sso_login' => 'http://local.central.com/site/login?callback=http://local.ebilling.com',
    'sso_logout' => 'http://local.central.com/site/sess-logout',
    'invoke_token_uri' => 'http://local.central.com/site/invoke-token'
 ];

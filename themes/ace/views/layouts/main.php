@@ -56,10 +56,56 @@ $theme = $this->theme;
                     </button>
                 </div>
 <?php 
-if(!Yii::$app->user->isGuest){
+if(!Yii::$app->user->isGuest)
+{
+    $key = Yii::$app->params['jwt_key'];
+    $session = Yii::$app->session;
+    if($session->has('token'))
+    {
+        $token = $session->get('token');
+        try
+        {
+            $decoded = \Firebase\JWT\JWT::decode($token, base64_decode(strtr($key, '-_', '+/')), ['HS256']);
+            foreach($decoded->apps as $d)
+            {
+                $list_apps[] = [
+                    'template' => '<a href="{url}">{label}</a>',
+                    'label' => $d->app_name,
+                    'url' => $d->app_url.$token
+                ];
+            }
+        }
+        catch(\Exception $e) 
+        {
+            // return Yii::$app->response->redirect(Yii::$app->params['sso_login']);
+        }
+    
+
+        
+    }
 ?>
                 <div class="navbar-buttons navbar-header pull-right  collapse navbar-collapse" role="navigation">
                     <ul class="nav ace-nav">
+                        <li class="grey dropdown-modal">
+
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <i class="ace-icon fa fa-tasks"></i>
+                                <span class="badge badge-grey"><?=count($list_apps);?></span>
+                            </a>
+
+                            <?php
+
+                                
+                               echo Menu::widget([
+                                    'options'=>['class'=>'user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close'],
+                                    // 'itemOptions'=>array('class'=>'dropdown-menu'),
+                                    // 'itemCssClass'=>'item-test',
+                                    'encodeLabels'=>false,
+                                    'items' => $list_apps,
+                                ]);
+
+                             ?>
+                        </li>
                           <li class="blue dropdown-modal">
                             <?php 
                             $listNotif = \app\models\Notif::listNotif();
@@ -108,20 +154,20 @@ if(!Yii::$app->user->isGuest){
 
 
 
-echo Menu::widget([
-    'options'=>['class'=>'user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close'],
-    // 'itemOptions'=>array('class'=>'dropdown-menu'),
-    // 'itemCssClass'=>'item-test',
-    'encodeLabels'=>false,
-    'items' => [
-        ['label'=>'<i class="ace-icon fa fa-user"></i>Profil', 'url'=>['/pegawai/view','id'=>'']],
-        ['label'=> '','itemOptions'=>['class'=>'divider']],
-        ['label'=>'Pengguna', 'url'=>['/user/index']],
-        ['label'=> '','itemOptions'=>['class'=>'divider']],
-        ['label'=>'<li><a data-method="POST" href="'.Url::to(['/site/logout']).'">Logout</a></li>'],
+                                echo Menu::widget([
+                                    'options'=>['class'=>'user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close'],
+                                    // 'itemOptions'=>array('class'=>'dropdown-menu'),
+                                    // 'itemCssClass'=>'item-test',
+                                    'encodeLabels'=>false,
+                                    'items' => [
+                                        ['label'=>'<i class="ace-icon fa fa-user"></i>Profil', 'url'=>['/pegawai/view','id'=>'']],
+                                        ['label'=> '','itemOptions'=>['class'=>'divider']],
+                                        ['label'=>'Pengguna', 'url'=>['/user/index']],
+                                        ['label'=> '','itemOptions'=>['class'=>'divider']],
+                                        ['label'=>'<li><a data-method="POST" href="'.Url::to(['/site/logout']).'">Logout</a></li>'],
 
-    ],
-]);
+                                    ],
+                                ]);
 
  ?>
                         

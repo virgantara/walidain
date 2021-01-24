@@ -12,7 +12,7 @@ use Yii;
  */
 class AppController extends Controller
 {
-     public function beforeAction($action)
+    public function beforeAction($action)
     {
         
         $session = Yii::$app->session;
@@ -27,27 +27,35 @@ class AppController extends Controller
                 $key = Yii::$app->params['jwt_key'];
                 $decoded = \Firebase\JWT\JWT::decode($token, base64_decode(strtr($key, '-_', '+/')), ['HS256']);
 
-                // $api_baseurl = Yii::$app->params['invoke_token_uri'];
-                // $client = new \yii\httpclient\Client(['baseUrl' => $api_baseurl]);
-                // $headers = ['x-jwt-token'=>$token];
-
-                // $params = [];
-                // $response = $client->get($api_baseurl, $params,$headers)->send();
-                // if ($response->isOk) {
-                //     $res = $response->data;
-                //     if($res['code'] != '200')
-                //     {
-                //         $session->remove('token');
-                //         throw new \Exception;
-                        
-                //     }
-                // }
-
             }
 
             catch(\Exception $e) 
             {
-                return $this->redirect(Yii::$app->params['sso_login']);
+                // print_r($e);exit;
+                $session = Yii::$app->session;
+                
+                $api_baseurl = Yii::$app->params['invoke_token_uri'];
+                $client = new Client(['baseUrl' => $api_baseurl]);
+                $headers = ['x-jwt-token'=>$token];
+
+                $params = [
+                    'uuid' => Yii::$app->user->identity->uuid
+                ];
+                
+                $response = $client->get($api_baseurl, $params,$headers)->send();
+                if ($response->isOk) {
+                    $res = $response->data;
+
+                    if($res['code'] != '200')
+                    {
+                        return $this->redirect(Yii::$app->params['sso_login']);
+                    }
+
+                    else{
+                        $session->set('token',$res['token']);
+                    }
+                }
+                // 
             }
             
             if (!parent::beforeAction($action)) {

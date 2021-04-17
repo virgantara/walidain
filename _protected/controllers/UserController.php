@@ -5,6 +5,8 @@ use app\models\User;
 use app\models\UserSearch;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use Yii;
 
 /**

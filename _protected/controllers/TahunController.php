@@ -32,6 +32,11 @@ class TahunController extends AppController
                     ],
                     [
                         'allow' => true,
+                        'actions' => ['update','create','index'],
+                        'roles' => ['admin'],
+                    ],
+                    [
+                        'allow' => true,
                         'actions' => ['index','view'],
                         'roles' => ['@'],
                     ],

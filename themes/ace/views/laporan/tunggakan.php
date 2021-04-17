@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
-
+use kartik\select2\Select2;
 use kartik\depdrop\DepDrop;
 // use app\models\TagihanSearch;
 
@@ -28,7 +28,8 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
         'method' => 'get',
         'action' => ['laporan/tunggakan'],
         'options' => [
-            'class' => 'form-horizontal'
+            'class' => 'form-horizontal',
+            'id' => 'form-tunggakan'
         ]
     ]); ?>
   
@@ -58,24 +59,19 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Komponen</label>
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kategori Komponen</label>
         <div class="col-lg-2 col-sm-10">
 
-         <?= DepDrop::widget([
-                'name' => 'komponen',
-                'options' => ['id'=>'komponen','class'=>'form-control'],
-                // 'pluginEvents'=> [
-                //     "depdrop.afterChange"=>"function(event, id, value) { 
-                //         console.log('value: ' + value + ' id: ' + id); 
-                //     }"
-                // ],
-                'pluginOptions'=>[
-                    'depends'=>['tahun'],
-                    'initialize' => true,
-                    'placeholder' => '- Pilih Komponen -',
-                    'url' => Url::to(['/komponen-biaya/subkomponen'])
-                ]   
-            ]) ?>
+         <?= Select2::widget([
+            'data' => \yii\helpers\ArrayHelper::map(\app\models\Kategori::find()->all(),'id',function($data){
+                return $data->kode.' - '.$data->nama;
+            }),
+            'name' => 'komponen',
+            'options'=>['placeholder'=>Yii::t('app','- Pilih Kelompok Bidang -'),'id'=>'komponen'],
+            'pluginOptions' => [
+                'allowClear' => true,
+            ],
+        ])?>  
         </div>
     </div>
     <div class="col-sm-2">
@@ -97,7 +93,23 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
 
 <table id="tabel_tagihan" class="table table-bordered table-striped">
     
-    
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Komponen</th>
+            <th>Cust. ID / NIM</th>
+            <th>Nama</th>
+            <th>Status</th>
+            <th>Prodi</th>
+            <th>Semester</th>
+            <th>Nilai</th>
+            <th>Terbayar</th>
+            <th>Sisa Tagihan</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+    </tbody>
 </table>
    
 </div>
@@ -108,14 +120,13 @@ $uid = !empty($_GET['unit_id']) ? $_GET['unit_id'] : '';
 $script = "
 
 function getTagihan(){
-    // let sd = $('#tagihansearch-tanggal_awal').val();
-    // let ed = $('#tagihansearch-tanggal_akhir').val();
-    let kampus = $('#kampus').val();
-    let prodi = $('#prodi').val();
-    let komponen = $('#komponen').val();
+    var obj = $('#form-tunggakan').serializeArray()
+        .reduce(function(a, x) { a[x.name] = x.value; return a; }, {});
     $.ajax({
         type : 'POST',
-        data : 'kampus='+kampus+'&prodi='+prodi+'&komponen='+komponen,
+        data : {
+            dataPost : obj
+        },
         url : '/api/tunggakan',
         beforeSend : function(){
             $('#loading').show();
@@ -129,44 +140,39 @@ function getTagihan(){
             var data = $.parseJSON(data);
             
             $('#loading').hide();  
-            $('#tabel_tagihan').empty();
-            var row = '<thead>';
-                   row += '<tr><th>No</th><th>Komponen</th><th>CID</th><th>Nama</th><th>Prodi</th><th>Semester</th><th>Nilai</th><th>Terbayar</th><th>Sisa Tagihan</th><th>Tanggal tagihan dibuat</th><th>Tanggal terakhir update</th></tr>';
-                row += '</thead>';
-                row += '<tbody>';
-
+            $('#tabel_tagihan > tbody').empty();
+            var row = '';
+                   
             $.each(data.values,function(i, obj){
 
                 var cls = '';
 
-                if(obj.terbayar == 0){
+                if(obj.sisaAmount > 0){
                     cls = 'alert alert-danger';
                 }
 
                 row += '<tr>';
-                row += '<td>'+eval(i+1)+'</td>';
-                row += '<td>'+obj.komponen+'</td>';
-                row += '<td>'+obj.custid+'</td>';
-                row += '<td>'+obj.nama_mahasiswa+'</td>';
-                row += '<td>'+obj.prodi+'</td>';
-                row += '<td>'+obj.semester+'</td>';
-                row += '<td style=\"text-align:right\">'+obj.nilai+'</td>';
-                row += '<td style=\"text-align:right\" class=\"'+cls+'\">'+obj.terbayar+'</td>';
-                row += '<td style=\"text-align:right\">'+obj.sisa+'</td>';
-                row += '<td>'+obj.created_at+'</td>';
-                row += '<td>'+obj.updated_at+'</td>';
+                row += '<td class=\"'+cls+'\">'+eval(i+1)+'</td>';
+                row += '<td class=\"'+cls+'\">'+obj.komponen+'</td>';
+                row += '<td class=\"'+cls+'\">'+obj.custid+'</td>';
+                row += '<td class=\"'+cls+'\">'+obj.nama_mahasiswa+'</td>';
+                row += '<td class=\"'+cls+'\">'+obj.status_mhs+'</td>';
+                row += '<td class=\"'+cls+'\">'+obj.prodi+'</td>';
+                row += '<td class=\"'+cls+'\">'+obj.semester+'</td>';
+                row += '<td class=\"'+cls+'\" style=\"text-align:right\">'+obj.nilai+'</td>';
+                row += '<td class=\"'+cls+'\" style=\"text-align:right\" >'+obj.terbayar+'</td>';
+                row += '<td style=\"text-align:right\" class=\"'+cls+'\">'+obj.sisa+'</td>';
+                
                 row += '</tr>';
             });
 
             row += '<tr>';
-            row += '<td colspan=\"7\"  style=\"text-align:right\">Total</td>';
+            row += '<td colspan=\"8\"  style=\"text-align:right\">Total</td>';
             row += '<td style=\"text-align:right\">'+data.total_terbayar+'</td>';
             row += '<td style=\"text-align:right\">'+data.total_sisa+'</td>';
-            row += '<td>&nbsp;</td>';
-            row += '<td>&nbsp;</td>';
-            row += '</tr>';            
-            row += '</tbody>';
-            $('#tabel_tagihan').append(row);
+            
+            row += '</tr>';      
+            $('#tabel_tagihan > tbody').append(row);
             
         }
 

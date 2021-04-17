@@ -558,97 +558,109 @@ class LaporanController extends AppController
             $sheet->setCellValue('A3', 'No')
                 ->setCellValue('B3', 'Komponen')
                 ->setCellValue('C3', 'Nama')
-                ->setCellValue('D3', 'Smt')
-                ->setCellValue('E3', 'Prodi')
-                ->setCellValue('F3', 'Nilai')
-                ->setCellValue('G3', 'Terbayar')
-                ->setCellValue('H3', 'Sisa')
-                ->setCellValue('I3', 'Tanggal');
-;
+                ->setCellValue('D3', 'Status')
+                ->setCellValue('E3', 'Smt')
+                ->setCellValue('F3', 'Prodi')
+                ->setCellValue('G3', 'Nilai')
+                ->setCellValue('H3', 'Terbayar')
+                ->setCellValue('I3', 'Sisa');
 
-            $sheet->mergeCells('A1:L1')->getStyle('A1:I1')->getAlignment()->setHorizontal('center');
+
+            $sheet->mergeCells('A1:I1')->getStyle('A1:I1')->getAlignment()->setHorizontal('center');
             $sheet->setCellValue('A1','LAPORAN TUNGGAKAN');
 
-            $sheet->mergeCells('A2:L2')->getStyle('A2:I2')->getAlignment()->setHorizontal('center');
-            $sheet->setCellValue('A2','Tanggal '.$_GET['TagihanSearch']['tanggal_awal'].' s/d '.$_GET['TagihanSearch']['tanggal_akhir']);
+            $sheet->mergeCells('A2:I2')->getStyle('A2:I2')->getAlignment()->setHorizontal('center');
+            $sheet->setCellValue('A2','TA: '.$_GET['tahun']);
 
             //Put each record in a new cell
 
             $sheet->getColumnDimension('A')->setWidth(5);
-            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('B')->setWidth(35);
             $sheet->getColumnDimension('C')->setWidth(35);
             $sheet->getColumnDimension('D')->setWidth(8);
-            $sheet->getColumnDimension('E')->setWidth(10);
+            $sheet->getColumnDimension('E')->setWidth(8);
             $sheet->getColumnDimension('F')->setWidth(20);
             $sheet->getColumnDimension('G')->setWidth(20);
             $sheet->getColumnDimension('H')->setWidth(20);
-            $sheet->getColumnDimension('I')->setWidth(25);
+            $sheet->getColumnDimension('I')->setWidth(20);
             $i= 0;
             $ii = 4;
 
             $total = 0;
-
-            $sd = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_awal'])).'000001';
-            $ed = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_akhir'])).'235959';
-             $kampus = $_GET['kampus'];
+            // print_r($_GET);exit;
+            // $sd = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_awal'])).'000001';
+            // $ed = date('Ymd',strtotime($_GET['TagihanSearch']['tanggal_akhir'])).'235959';
+            $kampus = $_GET['kampus'];
             $prodi = $_GET['prodi'];
+            $tahun = $_GET['tahun'];
             $komponen = $_GET['komponen'];
             
-            // $list = Pasien::find()->addFilterWhere(['like',])
-            $api_baseurl = Yii::$app->params['api_baseurl'];
-            $client = new Client(['baseUrl' => $api_baseurl]);
-            $client_token = Yii::$app->params['client_token'];
-            $headers = ['x-access-token'=>$client_token];
-            $response = $client->get('/b/tagihan/periode/tunggakan', [
-                
-                'kampus' => $kampus,
-                'prodi' => $prodi,
-                'komponen' => $komponen
-            ],$headers)->send();
             
-            if ($response->isOk) {
-                $result = $response->data['values'];
-                    
-                $total_sisa = 0;
-                $total_terbayar = 0;
-                foreach ($result as $q => $d) {
-                    $total_sisa += $d['sisa'];
-                    $total_terbayar += $d['terbayar'];
-                    $sheet->setCellValue('A'.$ii, $q+1);
-                    $sheet->setCellValue('B'.$ii, $d['komponen']);
-                    $sheet->setCellValue('C'.$ii, $d['nama_mahasiswa']);
-                    $sheet->setCellValue('D'.$ii, $d['semester']);
-                    $sheet->setCellValue('E'.$ii, $d['prodi']);
-                    $sheet->setCellValue('F'.$ii, $d['nilai']);
-                    $sheet->setCellValue('G'.$ii, $d['terbayar']);
-                    $sheet->setCellValue('H'.$ii, $d['sisa']);
-                    $sheet->setCellValue('I'.$ii, $d['created_at']);
-                    $sheet->setCellValue('J'.$ii, $d['updated_at']);
-                    $ii++;
-                }
-
-                
-                $sheet->setCellValue('A'.$ii, '');
-                $sheet->setCellValue('B'.$ii, '');
-                $sheet->setCellValue('C'.$ii, '');
-                $sheet->setCellValue('D'.$ii, '');
-                $sheet->setCellValue('E'.$ii, '');
-                $sheet->setCellValue('F'.$ii, 'Total');
-                $sheet->setCellValue('G'.$ii, $total_terbayar);
-                $sheet->setCellValue('H'.$ii, $total_sisa);
-                $sheet->setCellValue('I'.$ii, '');
-                $sheet->setCellValue('J'.$ii, '');
-                $sheet->setTitle('Laporan Tunggakan');
-                
-                // ob_end_clean();
-                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="laporan_tunggakan.xlsx"');
-                header('Cache-Control: max-age=0');
-                
-                $writer = new Xlsx($spreadsheet);
-                $writer->save('php://output');
-                die();
+            $query = \app\models\Tagihan::find();
+            $query->alias('p');
+            $query->joinWith(['nim0 as m']);
+            $query->joinWith(['komponen as k']);
+            $query->where([
+                'p.tahun' => $tahun,
+                'm.kampus' => $kampus
+            ]);
+            
+            if(!empty($prodi)){
+                $query->andWhere(['m.kode_prodi' => $prodi]);
             }
+
+            if(!empty($komponen))
+            {
+                $query->andWhere(['k.kategori_id' => $komponen]);   
+            }
+
+            $query->andWhere('p.terbayar < p.nilai');
+
+            $result = $query->all();
+            
+            // if ($response->isOk) {
+            //     $result = $response->data['values'];
+                    
+            $total_sisa = 0;
+            $total_terbayar = 0;
+            foreach ($result as $q => $d) {
+                $sisa = $d->nilai - $d->terbayar;
+                $terbayar = $d->terbayar;
+                $total_sisa += $sisa;
+                $total_terbayar += $terbayar;
+                $sheet->setCellValue('A'.$ii, $q+1);
+                $sheet->setCellValue('B'.$ii, $d->komponen->nama);
+                $sheet->setCellValue('C'.$ii, $d->nim0->nama_mahasiswa);
+                $sheet->setCellValue('D'.$ii, $d->nim0->status_aktivitas);
+                $sheet->setCellValue('E'.$ii, $d->semester);
+                $sheet->setCellValue('F'.$ii, $d->nim0->kodeProdi->nama_prodi);
+                $sheet->setCellValue('G'.$ii, $d->nilai);
+                $sheet->setCellValue('H'.$ii, $d->terbayar);
+                $sheet->setCellValue('I'.$ii, $sisa);
+                $ii++;
+            }
+
+            
+            $sheet->setCellValue('A'.$ii, '');
+            $sheet->setCellValue('B'.$ii, '');
+            $sheet->setCellValue('C'.$ii, '');
+            $sheet->setCellValue('D'.$ii, '');
+            $sheet->setCellValue('E'.$ii, '');
+            $sheet->setCellValue('F'.$ii, '');
+            $sheet->setCellValue('G'.$ii, 'Total');
+            $sheet->setCellValue('H'.$ii, $total_terbayar);
+            $sheet->setCellValue('I'.$ii,$total_sisa);
+            $sheet->setTitle('Laporan Tunggakan');
+            
+            // ob_end_clean();
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="laporan_tunggakan_'.rand(1,100).'.xlsx"');
+            header('Cache-Control: max-age=0');
+            
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+            die();
+            // }
             
             
 

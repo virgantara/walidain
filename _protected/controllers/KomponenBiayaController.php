@@ -272,9 +272,11 @@ class KomponenBiayaController extends AppController
                 //    ['id'=>'<sub-cat_id_2>', 'name'=>'<sub-cat-name2>']
                 // ]
                 echo Json::encode(['output'=>$out, 'selected'=>'']);
-                return;
+                 die();
             }
         }
+
+       
         // select semester from simak_mastermahasiswa where kode_prodi = 1 and status_aktivitas = 'A' group by semester order by semester
     }
 

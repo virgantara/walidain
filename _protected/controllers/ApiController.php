@@ -221,65 +221,90 @@ class ApiController extends AppController
       
     }
 
-    public function actionTunggakan() {
-
+    public function actionTunggakan() 
+    {
+        $dataPost = $_POST['dataPost'];
         $out = [];
-        ob_start();
-        if(!empty($_POST['kampus']) && !empty($_POST['komponen']))
+        if(!empty($dataPost['kampus']) && !empty($dataPost['tahun']) && !empty($dataPost['komponen']))
         {
             // $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
             // $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
-            $kampus = $_POST['kampus'];
-            $prodi = $_POST['prodi'];
-            $komponen = $_POST['komponen'];
+            $kampus = $dataPost['kampus'];
+            $prodi = $dataPost['prodi'];
+            $komponen = $dataPost['komponen'];
+            $tahun = $dataPost['tahun'];
             // $list = Pasien::find()->addFilterWhere(['like',])
-            $api_baseurl = Yii::$app->params['api_baseurl'];
-            $client = new Client(['baseUrl' => $api_baseurl]);
-            $client_token = Yii::$app->params['client_token'];
-           $headers = ['x-access-token'=>$client_token];
-            $response = $client->get('/b/tagihan/periode/tunggakan', [
-                // 'startdate' => $sd,
-                // 'enddate'=>$ed,
-                'kampus' => $kampus,
-                'prodi' => $prodi,
-                'komponen' => $komponen
-            ],$headers)->send();
+            // $api_baseurl = Yii::$app->params['api_baseurl'];
+            // $client = new Client(['baseUrl' => $api_baseurl]);
+            // $client_token = Yii::$app->params['client_token'];
+            // $headers = ['x-access-token'=>$client_token];
+            // $response = $client->get('/b/tagihan/periode/tunggakan', [
+            //     // 'startdate' => $sd,
+            //     // 'enddate'=>$ed,
+            //     'kampus' => $kampus,
+            //     'prodi' => $prodi,
+            //     'komponen' => $komponen
+            // ],$headers)->send();
             
+            $query = \app\models\Tagihan::find();
+            $query->alias('p');
+            $query->joinWith(['nim0 as m']);
+            $query->joinWith(['komponen as k']);
+            $query->where([
+                'p.tahun' => $tahun,
+                'm.kampus' => $kampus
+            ]);
             
+            if(!empty($prodi)){
+                $query->andWhere(['m.kode_prodi' => $prodi]);
+            }
+
+
+
+            if(!empty($komponen))
+            {
+                $query->andWhere(['k.kategori_id' => $komponen]);   
+            }
+
+            $query->andWhere('p.terbayar < p.nilai');
+
+            $result = $query->all();
             
-            if ($response->isOk) {
-                $result = $response->data['values'];
+            // if ($response->isOk) {
+                // $result = $response->data['values'];
                 $total_sisa = 0;
                 $total_terbayar = 0;
                 $out['values'] = [];
                 foreach ($result as $d) {
-                    $total_sisa += $d['sisa'];
-                    $total_terbayar += $d['terbayar'];
+                    $sisa = $d->nilai - $d->terbayar;
+                    $terbayar = $d->terbayar;
+                    $total_sisa += $sisa;
+                    $total_terbayar += $terbayar;
                     $out['values'][] = [
-                        'id' => $d['id'],
-                        'custid' => $d['custid'],
-                        'komponen'=> $d['komponen'],
-                        'nama_mahasiswa'=> $d['nama_mahasiswa'],
-                        'semester' => $d['semester'],
-                        'prodi'=> $d['prodi'],
-                        'nilai' => \app\helpers\MyHelper::formatRupiah($d['nilai']),
-                        'terbayar' => \app\helpers\MyHelper::formatRupiah($d['terbayar']),
-                        'sisa' => \app\helpers\MyHelper::formatRupiah($d['sisa']),
-                        'created_at' => $d['created_at'],
-                        'updated_at' => $d['updated_at'],
+                        'id' => $d->id,
+                        'custid' => $d->nim,
+                        'komponen'=> $d->komponen->nama,
+                        'nama_mahasiswa'=> $d->nim0->nama_mahasiswa,
+                        'semester' => $d->semester,
+                        'status_mhs' => $d->nim0->status_aktivitas,
+                        'prodi'=> $d->nim0->kodeProdi->nama_prodi,
+                        'nilai' => \app\helpers\MyHelper::formatRupiah($d->nilai),
+                        'terbayar' => \app\helpers\MyHelper::formatRupiah($d->terbayar),
+                        'sisa' => \app\helpers\MyHelper::formatRupiah($sisa),
+                        'sisaAmount' => $sisa,
+                        'created_at' => $d->created_at,
+                        'updated_at' => $d->updated_at,
                     ];
                 }
 
                 $out['total_sisa'] = \app\helpers\MyHelper::formatRupiah($total_sisa);
                 $out['total_terbayar'] = \app\helpers\MyHelper::formatRupiah($total_terbayar);
-            }
+            // }
         
         }
         
-        header('Content-Type: application/json');
-        echo \yii\helpers\Json::encode($out);
-        
-      
+        echo json_encode($out);
+        die();
     }
 
 

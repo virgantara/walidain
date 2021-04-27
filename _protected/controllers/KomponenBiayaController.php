@@ -202,11 +202,15 @@ class KomponenBiayaController extends AppController
             $parents = $_POST['depdrop_parents'];
             if ($parents != null) {
                 $kampus_id = $parents[0];
+                $tahun_id = $parents[1];
+                $kategori_id = $parents[2];
                 $out = (new \yii\db\Query())
                     ->select(['id', 'nama as name'])
                     ->from('bill_komponen_biaya')
                     ->where([
-                      'kampus_id' => $kampus_id
+                      'kampus_id' => $kampus_id,
+                      'tahun' => $tahun_id,
+                      'kategori_id' => $kategori_id
                     ])
                     ->orderBy(['kode'=>SORT_ASC])
                     ->all();
@@ -218,7 +222,7 @@ class KomponenBiayaController extends AppController
                 //    ['id'=>'<sub-cat_id_2>', 'name'=>'<sub-cat-name2>']
                 // ]
                 echo Json::encode(['output'=>$out, 'selected'=>'']);
-                return;
+                die();
             }
         }
     }

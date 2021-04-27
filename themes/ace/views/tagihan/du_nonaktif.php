@@ -1,5 +1,5 @@
 <?php
-
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
@@ -58,7 +58,7 @@ $status_aktivitas = !empty($_POST['status_aktivitas']) ? $_POST['status_aktivita
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Tahun Masuk</label>
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Tahun Angkatan/Masuk</label>
         <div class="col-sm-9">
             <?= DepDrop::widget([
                 'name' => 'tahun_masuk',
@@ -85,6 +85,23 @@ $status_aktivitas = !empty($_POST['status_aktivitas']) ? $_POST['status_aktivita
                 
         </div>
     </div>
+    
+    <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Kategori Komponen</label>
+        <div class="col-sm-9">
+
+         <?= Select2::widget([
+            'data' => \yii\helpers\ArrayHelper::map(\app\models\Kategori::find()->all(),'id',function($data){
+                return $data->kode.' - '.$data->nama;
+            }),
+            'name' => 'kategori_komponen',
+            'options'=>['placeholder'=>Yii::t('app','- Pilih Kategori Komponen -'),'id'=>'kategori_komponen'],
+            'pluginOptions' => [
+                'allowClear' => true,
+            ],
+        ])?>  
+        </div>
+    </div>
      <div class="form-group">
         <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Komponen</label>
         <div class="col-sm-9">
@@ -94,7 +111,7 @@ $status_aktivitas = !empty($_POST['status_aktivitas']) ? $_POST['status_aktivita
                     'options'=>['id'=>'komponen_id'],
                     'select2Options'=>['pluginOptions'=>['allowClear'=>true]],
                     'pluginOptions'=>[
-                        'depends'=>['kampus'],
+                        'depends'=>['kampus','tahun_id','kategori_komponen'],
                         'initialize' => true,
                         'placeholder'=>'- Pilih komponen biaya -',
                         'url'=>Url::to(['komponen-biaya/subkomponen-kampus'])

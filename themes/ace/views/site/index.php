@@ -114,8 +114,11 @@ $(document).on("click","#btn-download",function(e){
 			dataItem : obj
 		},
 		dataType: "json",
+		beforeSend: function(){
+			Swal.showLoading()
+		},
 		success : function(data){
-			
+			Swal.close()
 			var $a = $("<a>");
 		    $a.attr("href",data.file);
 		    $("body").append($a);
@@ -150,7 +153,11 @@ function fetchRincian(param){
 		data : {
 			dataItem : obj
 		},
+		beforeSend: function(){
+			Swal.showLoading()
+		},
 		success : function(data){
+			Swal.close()
 			var hsl = $.parseJSON(data);
 
 			$("#tabel_rincian > tbody").empty();
@@ -199,7 +206,11 @@ function fetchTahun(tahun, status_aktivitas, kampus, callback){
 		data : {
 			dataItem : obj
 		},
+		beforeSend: function(){
+			Swal.showLoading()
+		},
 		success : function(data){
+			Swal.close()
 			var hsl = $.parseJSON(data);
 
 			callback(null, hsl)

@@ -50,6 +50,7 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['status_aktivitas'=>SORT_ASC,'nama_mahasiswa' => SORT_ASC]],
         ]);
 
         // $query->where(['status_aktivitas'=>'A']);
@@ -89,17 +90,7 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
             'updated_at' => $this->updated_at,
         ]);
 
-        if(Yii::$app->user->identity->access_role == 'admin')
-        {
-            $list_kampus = explode(',', Yii::$app->user->identity->kampus);
-            $query->andWhere(['IN','kampus',$list_kampus]);
-            // $query->andFilterWhere(['or',
-            //     ['kampus'=>Yii::$app->user->identity->kampus],
-            //     ['kampus'=>Yii::$app->user->identity->kampus2]
-                
-            // ]);
-        }
-
+        
         if(!empty($this->kode_prodi))
         {
             $query->andWhere(['kode_prodi'=>$this->kode_prodi]);
@@ -114,6 +105,18 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
         {
             $query->andWhere(['nim_mhs'=>$this->nim_mhs]);
         }
+
+        if(Yii::$app->user->identity->access_role == 'admin')
+        {
+            $list_kampus = explode(',', Yii::$app->user->identity->kampus);
+            $query->andWhere(['IN','kampus',$list_kampus]);
+            // $query->andFilterWhere(['or',
+            //     ['kampus'=>Yii::$app->user->identity->kampus],
+            //     ['kampus'=>Yii::$app->user->identity->kampus2]
+                
+            // ]);
+        }
+
 
 
         $query->andFilterWhere(['like', 'kode_fakultas', $this->kode_fakultas])

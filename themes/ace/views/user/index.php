@@ -64,6 +64,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
             [
+                'class' => 'kartik\grid\EditableColumn',
+                'attribute' => 'uuid',
+                'readonly' => !Yii::$app->user->can('theCreator'),
+                'editableOptions' => [
+                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                    
+                ],
+            ],
+            [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => "Menu",
                 'template' => '{view} {update} {delete}',

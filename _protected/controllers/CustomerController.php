@@ -334,13 +334,22 @@ class CustomerController extends AppController
             // load model like any single model validation
             if ($model->load($post)) {
             // can save model or do something before saving model
-                $model->save();
+                if($model->save(false,['va_code']))
+                {
+                    // $out = json_encode(['output'=>'', 'message'=>'']);
+                }
 
-                
+                else{
+                    $errors = \app\helpers\MyHelper::logError($model);
+                    $out = json_encode(['output'=>'', 'message'=>$errors]);
+                }
             }
-            // return ajax json encoded response and exit
+
             echo $out;
-            return;
+
+            // return ajax json encoded response and exit
+            
+            return ;
         }
 
         return $this->render('index', [

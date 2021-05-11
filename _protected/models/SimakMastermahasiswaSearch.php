@@ -50,7 +50,7 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['status_aktivitas'=>SORT_ASC,'nama_mahasiswa' => SORT_ASC]],
+            'sort'=> ['defaultOrder' => ['status_aktivitas'=>SORT_ASC,'kode_prodi' => SORT_ASC,'nama_mahasiswa' => SORT_ASC]],
         ]);
 
         // $query->where(['status_aktivitas'=>'A']);

@@ -155,15 +155,7 @@ class TagihanSearch extends Tagihan
 
         $query->andWhere([self::tableName().'.tahun' => $tahun->id]);
 
-        if(Yii::$app->user->identity->access_role == 'admin')
-        {
-            $query->andFilterWhere(['or',
-                ['c.kampus'=>Yii::$app->user->identity->kampus],
-                ['c.kampus'=>Yii::$app->user->identity->kampus2]
-                
-            ]);
-        }
-
+        
         if(!empty($this->komponen_id))
         {
             $query->andWhere(['komponen_id'=>$this->komponen_id]);
@@ -188,6 +180,13 @@ class TagihanSearch extends Tagihan
                     break;
                 
             }
+        }
+
+        if(Yii::$app->user->identity->access_role == 'admin')
+        {
+            $list_kampus = explode(',', Yii::$app->user->identity->kampus);
+            $query->andWhere(['IN','c.kampus',$list_kampus]);
+            
         }
 
         $query->andFilterWhere(['like', 'nim', $this->nim])
@@ -267,16 +266,7 @@ class TagihanSearch extends Tagihan
         if(!empty($this->tahun))
             $query->andWhere([self::tableName().'.tahun' => $this->tahun]);
 
-        if(Yii::$app->user->identity->access_role == 'admin')
-        {
-            $list_kampus = explode(',', Yii::$app->user->identity->kampus);
-            $query->andWhere(['IN','c.kampus',$list_kampus]);
-            // $query->andFilterWhere(['or',
-            //     ['c.kampus'=>Yii::$app->user->identity->kampus],
-            //     ['c.kampus'=>Yii::$app->user->identity->kampus2]
-                
-            // ]);
-        }
+        
 
         if(!empty($this->komponen_id))
         {
@@ -302,6 +292,13 @@ class TagihanSearch extends Tagihan
                     break;
                 
             }
+        }
+
+        if(Yii::$app->user->identity->access_role == 'admin')
+        {
+            $list_kampus = explode(',', Yii::$app->user->identity->kampus);
+            $query->andWhere(['IN','c.kampus',$list_kampus]);
+            
         }
 
         $query->andFilterWhere(['like', 'nim', $this->nim])

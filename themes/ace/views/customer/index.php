@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'nim_mhs',
         
         'nama_mahasiswa',
+        'jenis_kelamin',
         [
             'attribute'=>'kampus',
             'filter' => \app\helpers\MyHelper::getKampusList(),
@@ -57,7 +58,18 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         // 'kampus',
         'semester',
-        'va_code',
+         [
+            'class' => 'kartik\grid\EditableColumn',
+            'attribute' => 'va_code',
+            'readonly' => !Yii::$app->user->can('theCreator'),
+            'editableOptions' => [
+                'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                
+                // 'asPopover' => false
+                
+                
+            ],
+        ],
         [
             'attribute'=>'status_aktivitas',
             'filter' => \app\helpers\MyHelper::getStatusAktivitas(),

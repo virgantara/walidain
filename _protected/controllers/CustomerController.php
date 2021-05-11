@@ -319,6 +319,30 @@ class CustomerController extends AppController
         $searchModel = new SimakMastermahasiswaSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        if (Yii::$app->request->post('hasEditable')) {
+            // instantiate your book model for saving
+            $id = Yii::$app->request->post('editableKey');
+            $model = SimakMastermahasiswa::findOne($id);
+
+            // store a default json response as desired by editable
+            $out = json_encode(['output'=>'', 'message'=>'']);
+
+            
+            $posted = current($_POST['SimakMastermahasiswa']);
+            $post = ['SimakMastermahasiswa' => $posted];
+
+            // load model like any single model validation
+            if ($model->load($post)) {
+            // can save model or do something before saving model
+                $model->save();
+
+                
+            }
+            // return ajax json encoded response and exit
+            echo $out;
+            return;
+        }
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

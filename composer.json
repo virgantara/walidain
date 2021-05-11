@@ -38,7 +38,9 @@
         "guzzlehttp/guzzle": "^6.3",
         "phpoffice/phpspreadsheet": "^1.6",
         "kartik-v/yii2-number": "@dev",
-        "firebase/php-jwt": "^5.2"
+        "firebase/php-jwt": "^5.2",
+        "kartik-v/yii2-editable": "dev-master",
+        "geniusts/hijri-dates": "^1.1"
     
     },
     "require-dev": {

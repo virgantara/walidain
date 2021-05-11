@@ -91,11 +91,13 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
 
         if(Yii::$app->user->identity->access_role == 'admin')
         {
-            $query->andFilterWhere(['or',
-                ['kampus'=>Yii::$app->user->identity->kampus],
-                ['kampus'=>Yii::$app->user->identity->kampus2]
+            $list_kampus = explode(',', Yii::$app->user->identity->kampus);
+            $query->andWhere(['IN','kampus',$list_kampus]);
+            // $query->andFilterWhere(['or',
+            //     ['kampus'=>Yii::$app->user->identity->kampus],
+            //     ['kampus'=>Yii::$app->user->identity->kampus2]
                 
-            ]);
+            // ]);
         }
 
         if(!empty($this->kode_prodi))

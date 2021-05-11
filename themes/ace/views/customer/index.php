@@ -31,7 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'nim_mhs',
         
         'nama_mahasiswa',
-        'jenis_kelamin',
+        [
+            'attribute' => 'jenis_kelamin',
+            'format' => 'raw',
+            'filter' => ['L'=>'L','P'=>'P'],
+            'value' => function($data){
+                return $data->jenis_kelamin;
+            }
+        ],
         [
             'attribute'=>'kampus',
             'filter' => \app\helpers\MyHelper::getKampusList(),

@@ -1,7 +1,7 @@
 <?php
 use app\helpers\CssHelper;
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\UserSearch */
@@ -19,13 +19,18 @@ $this->params['breadcrumbs'][] = $this->title;
         </span>         
     </h1>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'summary' => false,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            'username',
+     <?php 
+    $gridColumns = [
+    [
+        'class'=>'kartik\grid\SerialColumn',
+        'contentOptions'=>['class'=>'kartik-sheet-style'],
+        'width'=>'36px',
+        'pageSummary'=>'Total',
+        'pageSummaryOptions' => ['colspan' => 6],
+        'header'=>'',
+        'headerOptions'=>['class'=>'kartik-sheet-style']
+    ],
+        'username',
             'email:email',
             // status
             [
@@ -49,10 +54,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     return ['class'=>CssHelper::roleCss($model->roleName)];
                 }
             ],
-            // buttons
-            ['class' => 'yii\grid\ActionColumn',
-            'header' => "Menu",
-            'template' => '{view} {update} {delete}',
+            [
+                'class' => 'kartik\grid\EditableColumn',
+                'attribute' => 'kampus',
+                'readonly' => !Yii::$app->user->can('theCreator'),
+                'editableOptions' => [
+                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                    
+                ],
+            ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header' => "Menu",
+                'template' => '{view} {update} {delete}',
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                         return Html::a('', $url, ['title'=>'View user', 'class'=>'glyphicon glyphicon-eye-open']);
@@ -72,9 +86,52 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
 
             ], // ActionColumn
+    ]
+    ?>
+     <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => $gridColumns,
+        'containerOptions' => ['style' => 'overflow: auto'], 
+        'headerRowOptions' => ['class' => 'kartik-sheet-style'],
+        'filterRowOptions' => ['class' => 'kartik-sheet-style'],
+        'containerOptions' => ['style'=>'overflow: auto'], 
+        'beforeHeader'=>[
+            [
+                'columns'=>[
+                    ['content'=> $this->title, 'options'=>['colspan'=>16, 'class'=>'text-center warning']], //cuma satu 
+                ], 
+                'options'=>['class'=>'skip-export'] 
+            ]
+        ],
+        'exportConfig' => [
+              GridView::PDF => ['label' => 'Save as PDF'],
+              GridView::EXCEL => ['label' => 'Save as EXCEL'], //untuk menghidupkan button export ke Excell
+              GridView::HTML => ['label' => 'Save as HTML'], //untuk menghidupkan button export ke HTML
+              GridView::CSV => ['label' => 'Save as CSV'], //untuk menghidupkan button export ke CVS
+          ],
+          
+        'toolbar' =>  [
+            '{export}', 
 
-        ], // columns
-
+           '{toggleData}' //uncoment untuk menghidupkan button menampilkan semua data..
+        ],
+        'toggleDataContainer' => ['class' => 'btn-group mr-2'],
+    // set export properties
+        'export' => [
+            'fontAwesome' => true
+        ],
+        'pjax' => true,
+        'bordered' => true,
+        'striped' => true,
+        // 'condensed' => false,
+        // 'responsive' => false,
+        'hover' => true,
+        // 'floatHeader' => true,
+        // 'showPageSummary' => true, //true untuk menjumlahkan nilai di suatu kolom, kebetulan pada contoh tidak ada angka.
+        'panel' => [
+            'type' => GridView::TYPE_PRIMARY
+        ],
     ]); ?>
 
 </div>

@@ -59,6 +59,39 @@ class UserController extends AppController
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $this->_pageSize);
 
+        if (Yii::$app->request->post('hasEditable')) {
+            // instantiate your book model for saving
+            $id = Yii::$app->request->post('editableKey');
+            $model = User::findOne($id);
+
+            // store a default json response as desired by editable
+            $out = json_encode(['output'=>'', 'message'=>'']);
+
+            
+            $posted = current($_POST['User']);
+            $post = ['User' => $posted];
+
+            // load model like any single model validation
+            if ($model->load($post)) {
+            // can save model or do something before saving model
+                if($model->save())
+                {
+                    // $out = json_encode(['output'=>'', 'message'=>'']);
+                }
+
+                else{
+                    $errors = \app\helpers\MyHelper::logError($model);
+                    $out = json_encode(['output'=>'', 'message'=>$errors]);
+                }
+            }
+
+            echo $out;
+
+            // return ajax json encoded response and exit
+            
+            return ;
+        }
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

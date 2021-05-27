@@ -144,7 +144,7 @@ class TagihanSearch extends Tagihan
         }
 
         if(!empty($this->namaKampus))
-            $query->where(['kps.nama_kampus'=> $this->namaKampus]);
+            $query->andWhere(['kps.nama_kampus'=> $this->namaKampus]);
 
         // grid filtering conditions
         $query->andFilterWhere([

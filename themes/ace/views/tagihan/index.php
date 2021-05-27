@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'namaKampus',
                 'label' => 'Kampus',
                 'format' => 'raw',
-                'filter'=>["Siman"=>"A","Mantingan"=>"C3","Mantingan Reguler"=>"C1"],
+                'filter'=>["Siman"=>"A","Mantingan"=>"C3","Mantingan Reguler"=>"C1","Gontor"=>"B"],
                 'value'=>function($model,$url){
 
                     

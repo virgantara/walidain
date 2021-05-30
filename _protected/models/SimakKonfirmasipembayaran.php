@@ -38,7 +38,7 @@ class SimakKonfirmasipembayaran extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nim', 'pembayaran', 'semester', 'jumlah', 'bank'], 'required'],
+            [['nim', 'pembayaran', 'semester', 'jumlah', 'bank','tahun_id'], 'required'],
             [['tahun_id', 'status'], 'integer'],
             [['tanggal', 'date_created', 'created_at', 'updated_at'], 'safe'],
             [['file', 'keterangan'], 'string'],

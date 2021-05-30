@@ -82,6 +82,7 @@ class TagihanController extends AppController
                         $k = new SimakKonfirmasipembayaran;
                         $k->nim = $model->nim;
                         $k->pembayaran = '01';
+                        $k->tahun_id = $model->tahun;
                         $k->semester = $model->nim0->semester;
                         $k->jumlah = $model->terbayar;
                         $k->bank = '-';
@@ -106,7 +107,14 @@ class TagihanController extends AppController
                                 $mhs->status_aktivitas = 'N';
                                 $mhs->save(false,['status_aktivitas']);
                             }
+
+                            $results = [
+                                'code' => 200,
+                                'message' => 'Data inserted'
+                            ];
                         }
+
+                        
                     }
 
                     else
@@ -115,26 +123,36 @@ class TagihanController extends AppController
                         {
                             $konfirmasi->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
                            
-                            $konfirmasi->save();
+                            if($konfirmasi->save())
+                            {
+                                if($konfirmasi->status == 1){
+                                    $mhs = $model->nim0;
+                                    $mhs->status_aktivitas = 'A';
+                                    $mhs->save(false,['status_aktivitas']);
+                                }
 
-                            if($konfirmasi->status == 1){
-                                $mhs = $model->nim0;
-                                $mhs->status_aktivitas = 'A';
-                                $mhs->save(false,['status_aktivitas']);
+                                else{
+                                    $mhs = $model->nim0;
+                                    $mhs->status_aktivitas = 'N';
+                                    $mhs->save(false,['status_aktivitas']);
+                                }
+
                             }
 
+                                
                             else{
-                                $mhs = $model->nim0;
-                                $mhs->status_aktivitas = 'N';
-                                $mhs->save(false,['status_aktivitas']);
+                                $errors .= \app\helpers\MyHelper::logError($konfirmasi);
+                                throw new \Exception;
                             }
                         }
+
+                        $results = [
+                            'code' => 200,
+                            'message' => 'Data updated'
+                        ];
                     }
 
-                    $results = [
-                        'code' => 200,
-                        'message' => 'Data updated'
-                    ];
+                    
 
                 }
 

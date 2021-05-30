@@ -294,7 +294,7 @@ $(document).on('click','.btn-quick-update',function(e){
             Swal.fire({
               icon: 'success',
               title: 'Yeay...',
-              text: 'Data updated!',
+              text: result.value.message,
             })    ;
             $.pjax.reload({container:'#pjax-container'});
         }

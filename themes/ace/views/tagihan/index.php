@@ -75,8 +75,30 @@ $this->params['breadcrumbs'][] = $this->title;
             'namaSemester',
             //'komponen_id',
             'nilai',
-            'nilai_minimal',
-            'terbayar',
+            [
+                'class' => 'kartik\grid\EditableColumn',
+                'attribute' => 'nilai_minimal',
+                'readonly' => !Yii::$app->user->can('admin'),
+                'editableOptions' => [
+                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                    
+                    'asPopover' => false
+                    
+                    
+                ],
+            ],
+            [
+                'class' => 'kartik\grid\EditableColumn',
+                'attribute' => 'terbayar',
+                'readonly' => !Yii::$app->user->can('admin'),
+                'editableOptions' => [
+                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                    
+                    'asPopover' => false
+                    
+                    
+                ],
+            ],
             [
                 
                 'attribute' => 'urutan',
@@ -146,7 +168,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{quick-update} {view} {update} {delete}',
+                'template' => ' {view} {update} {delete}',
                 'visibleButtons' => [
                     
                     'delete' => function ($model) {

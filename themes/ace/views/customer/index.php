@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'editableOptions' => [
                 'inputType' => \kartik\editable\Editable::INPUT_TEXT,
                 
-                // 'asPopover' => false
+                'asPopover' => false
                 
                 
             ],

@@ -74,10 +74,18 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'namaSemester',
             //'komponen_id',
-            'nilai',
+            [
+                 'class' => 'kartik\grid\EditableColumn',
+                'attribute'=>'nilai',
+                'readonly' => true,
+                'format' => ['decimal',2],
+                'refreshGrid' => 2,
+            ],
             [
                 'class' => 'kartik\grid\EditableColumn',
                 'attribute' => 'nilai_minimal',
+                'format' => ['decimal',2],
+                'refreshGrid' => 2,
                 'readonly' => !Yii::$app->user->can('admin'),
                 'editableOptions' => [
                     'inputType' => \kartik\editable\Editable::INPUT_TEXT,
@@ -90,6 +98,8 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'kartik\grid\EditableColumn',
                 'attribute' => 'terbayar',
+                'format' => ['decimal',2],
+                'refreshGrid' => 2,
                 'readonly' => !Yii::$app->user->can('admin'),
                 'editableOptions' => [
                     'inputType' => \kartik\editable\Editable::INPUT_TEXT,

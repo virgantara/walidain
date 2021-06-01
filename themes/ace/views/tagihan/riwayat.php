@@ -72,9 +72,21 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'namaSemester',
             //'komponen_id',
-            'nilai',
-            'nilai_minimal',
-            'terbayar',
+            [
+                'attribute'=>'nilai',
+                'format' => ['decimal',2],
+                'contentOptions' => ['class' => 'text-right'],
+            ],
+            [
+                'attribute'=>'nilai_minimal',
+                'format' => ['decimal',2],
+                'contentOptions' => ['class' => 'text-right'],
+            ],
+            [
+                'attribute'=>'terbayar',
+                'format' => ['decimal',2],
+                'contentOptions' => ['class' => 'text-right'],
+            ],
             [
                 
                 'attribute' => 'urutan',

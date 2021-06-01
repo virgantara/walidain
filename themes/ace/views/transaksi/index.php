@@ -74,8 +74,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'NOREFF',
             //'FIDBANK',
             //'KDCHANNEL',
-            'DEBET',
-            'KREDIT',
+            [
+                'attribute'=>'DEBET',
+                'format' => ['decimal',2],
+            ],
+            [
+                'attribute'=>'KREDIT',
+                'format' => ['decimal',2],
+            ],
             //'REFFBANK',
             //'TRANSNO',
             [

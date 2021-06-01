@@ -699,8 +699,6 @@ class TagihanController extends AppController
                                         'message' => 'Data inserted'
                                     ];
                                 }
-
-                                
                             }
 
                             else
@@ -709,7 +707,7 @@ class TagihanController extends AppController
                                 {
                                     $konfirmasi->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
                                    
-                                    if($konfirmasi->save())
+                                    if($konfirmasi->save(false,['status']))
                                     {
                                         if($konfirmasi->status == 1){
                                             $mhs = $model->nim0;

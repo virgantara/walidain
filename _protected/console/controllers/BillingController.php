@@ -4,6 +4,7 @@ namespace app\console\controllers;
 
 use Yii;
 use app\models\Tagihan;
+use app\models\SimakDatakrs;
 use app\models\SimakMastermahasiswa;
 use app\models\SimakKonfirmasipembayaran;
 use yii\console\Controller;
@@ -28,6 +29,7 @@ class BillingController extends Controller
         {
             $counter = 0;
             $labels = '';
+            $krs_counter = 0;
             foreach($list as $mhs)
             {
                 $query = Tagihan::find();
@@ -39,24 +41,40 @@ class BillingController extends Controller
                 $tagihan = $query->one();
                 if(!empty($tagihan))
                 {
-                    $konfirmasi = \app\models\SimakKonfirmasipembayaran::find()->where([
+                    $konfirmasis = \app\models\SimakKonfirmasipembayaran::find()->where([
                         'pembayaran' => '01',
                         'nim' => $mhs->nim_mhs,
                         'tahun_id' => $tahun
-                    ])->one();    
+                    ])->all();  
 
-                    if(!empty($konfirmasi))
+                    foreach($konfirmasis as $konfirmasi)
                     {
-                        if(in_array($mhs->kampus,[1,8]))
+                        if(!empty($konfirmasi))
                         {
-                            $konfirmasi->delete();
-                            $labels .= "Mhs: ".$mhs->nama_mahasiswa." \n";
-                            $counter++;
-                        }
-                    }
+                            if(in_array($mhs->kampus,[1,8]))
+                            {
+                                $list_krs = SimakDatakrs::find()->where(['mahasiswa'=>$mhs->nim_mhs,'tahun_akademik'=>$tahun])->all();
+
+                                foreach($list_krs as $krs)
+                                {
+                                    if(!empty($krs->nilai_huruf))
+                                    {
+                                        $krs->delete();
+                                        $krs_counter++;
+                                    }
+                                }
+
+                                $konfirmasi->delete();
+                                $labels .= "Mhs: \n".$mhs->nim_mhs." - ".$mhs->nama_mahasiswa." KRS deleted : ".$krs_counter." \n";
+                                $counter++;
+                            }
+                        } 
+                    }  
+
+                    
                 }
             }
-            echo 'Data updated. Konfirmasi deleted='.$counter;
+            echo 'Data updated. Konfirmasi deleted='.$counter.' ket: '.$labels;
             $transaction->commit();
         }
 

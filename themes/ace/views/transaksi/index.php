@@ -77,10 +77,12 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute'=>'DEBET',
                 'format' => ['decimal',2],
+                'contentOptions' => ['class' => 'text-right'],
             ],
             [
                 'attribute'=>'KREDIT',
                 'format' => ['decimal',2],
+                'contentOptions' => ['class' => 'text-right'],
             ],
             //'REFFBANK',
             //'TRANSNO',

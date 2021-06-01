@@ -36,7 +36,8 @@ class BillingController extends Controller
                 $query->alias('t');
                 $query->joinWith(['komponen as k']);
                 $query->andWhere(['k.kode' => '01','t.tahun'=>$tahun,'nim'=>$mhs->nim_mhs]);
-                $query->andWhere('t.terbayar < t.nilai_minimal');
+                $query->andWhere('t.terbayar < t.nilai_minimal and t.nilai > 0');
+
 
                 $tagihan = $query->one();
                 if(!empty($tagihan))

@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\SimakMasterprogramstudi;
 use app\models\TagihanSearch;
 use app\models\Transaksi;
 use app\models\TransaksiSearch;
@@ -15,6 +16,7 @@ use yii\httpclient\Client;
 use app\models\Bulan;
 use app\models\SimakKampus;
 use app\models\Tagihan;
+use app\models\Tahun;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -37,6 +39,86 @@ class LaporanController extends AppController
                 ],
             ],
         ];
+    }
+
+    public function actionRekapHitungPembayaran()
+    {
+        $results = [];
+        $tahun = Tahun::find()->where(['buka' => 'Y'])->one();
+        $list_jenjang = ['A'=>'Doktoral','B'=>'Magister','C'=>'Sarjana','D'=>'Diploma'];
+        foreach($list_jenjang as $q => $v)
+        {
+            $list_prodi = SimakMasterprogramstudi::find()->where(['kode_jenjang_studi'=>$q])->orderBy(['kode_fakultas'=>SORT_ASC,'nama_prodi'=>SORT_ASC])->all();
+
+            foreach($list_prodi as $p)
+            {
+                $query = Tagihan::find();
+                $query->alias('t');
+                $query->joinWith(['komponen as k','nim0 as mhs','komponen.kategori as kk']);
+                $query->andWhere([
+                    'kk.kode' => '01',
+                    't.tahun' => $tahun->id,
+                    'mhs.kode_prodi' => $p->kode_prodi,
+                    
+                ]);
+                $query->andWhere('terbayar >= nilai');
+                $lunas = $query->count();
+
+                $query = Tagihan::find();
+                $query->alias('t');
+                $query->joinWith(['komponen as k','nim0 as mhs','komponen.kategori as kk']);
+                $query->andWhere([
+                    'kk.kode' => '01',
+                    't.tahun' => $tahun->id,
+                    'mhs.kode_prodi' => $p->kode_prodi,
+                    
+                ]);
+                $query->andWhere('terbayar < nilai_minimal AND terbayar > 0');
+                $kurang_50 = $query->count();
+
+                $query = Tagihan::find();
+                $query->alias('t');
+                $query->joinWith(['komponen as k','nim0 as mhs','komponen.kategori as kk']);
+                $query->andWhere([
+                    'kk.kode' => '01',
+                    't.tahun' => $tahun->id,
+                    'mhs.kode_prodi' => $p->kode_prodi,
+                    
+                ]);
+                $query->andWhere('terbayar >= nilai_minimal AND terbayar < nilai');
+                $minimal = $query->count();
+
+                $query = Tagihan::find();
+                $query->alias('t');
+                $query->joinWith(['komponen as k','nim0 as mhs','komponen.kategori as kk']);
+                $query->andWhere([
+                    'kk.kode' => '01',
+                    't.tahun' => $tahun->id,
+                    'mhs.kode_prodi' => $p->kode_prodi,
+                    
+                ]);
+                $query->andWhere('nilai > 0 AND terbayar = 0');
+                $belum_bayar = $query->count();
+
+                $results[$q][] = [
+                    'prodi' => $p->nama_prodi,
+                    'kode_prodi' => $p->kode_prodi,
+                    'total_lunas' => $lunas,
+                    'total_kurang_50' => $kurang_50,
+                    'total_minimal' => $minimal,
+                    'total_belum_bayar' => $belum_bayar
+                ];
+            }
+        } 
+         
+//         echo '<pre>';
+//         print_r($results);
+//         echo '</pre>';
+// exit;
+        return $this->render('rekap_hitung_pembayaran',[
+            'results' => $results,
+            'list_jenjang' => $list_jenjang
+        ]);
     }
 
     public function actionAjaxRincianTagihanExport()

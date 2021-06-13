@@ -176,7 +176,7 @@ class TagihanSearch extends Tagihan
                     $query->andWhere('terbayar > 0 AND terbayar < nilai');
                     break;
                 case 3:
-                    $query->andWhere('terbayar = 0');
+                    $query->andWhere('terbayar = 0 AND nilai > 0');
                     break;
                 
             }
@@ -288,7 +288,7 @@ class TagihanSearch extends Tagihan
                     $query->andWhere('terbayar > 0 AND terbayar < nilai');
                     break;
                 case 3:
-                    $query->andWhere('terbayar = 0');
+                    $query->andWhere('terbayar = 0 AND nilai > 0');
                     break;
                 
             }

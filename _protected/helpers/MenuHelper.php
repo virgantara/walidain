@@ -99,6 +99,10 @@ class MenuHelper
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	         'visible' => Yii::$app->user->can('admin'),
 	        'items'=>[
+	        	[
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Rekap Hitung Pembayaran',  
+	                'url' => ['/laporan/rekap-hitung-pembayaran'],	         
+	            ],
 	           	[
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i> Laporan Pembayaran',  
 	                'url' => ['/laporan/pembayaran'],	         

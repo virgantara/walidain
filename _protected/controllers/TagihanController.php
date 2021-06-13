@@ -37,7 +37,7 @@ class TagihanController extends AppController
                     
                     [
                         'actions' => [
-                            'create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat','du-nonaktif','ajax-quick-update'
+                            'create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat','du-nonaktif','ajax-quick-update','list-mhs'
                         ],
                         'allow' => true,
                         'roles' => ['admin'],
@@ -52,6 +52,42 @@ class TagihanController extends AppController
                 ],
             ],
         ];
+    }
+
+    public function actionListMhs($prodi, $status=null)
+    {
+        $tahun = Tahun::find()->where(['buka' => 'Y'])->one();
+        $query = Tagihan::find();
+        $query->alias('t');
+        $query->joinWith(['komponen as k','nim0 as mhs','komponen.kategori as kk']);
+        $query->andWhere([
+            'kk.kode' => '01',
+            't.tahun' => $tahun->id,
+            'mhs.kode_prodi' => $prodi,
+            
+        ]);
+
+        switch ($status) {
+            case 1:
+                $query->andWhere('terbayar >= nilai');
+                break;
+            case 2:
+                $query->andWhere('terbayar < nilai_minimal AND terbayar > 0');
+                break;
+            case 3:
+                $query->andWhere('terbayar >= nilai_minimal AND terbayar < nilai');
+                break;
+            case 4:
+                $query->andWhere('terbayar = 0 AND nilai > 0');
+                break;
+            default:
+                break;   
+        }
+
+        $results = $query->all();
+        return $this->render('list_mhs',[
+            'results' => $results
+        ]);
     }
 
     public function actionAjaxQuickUpdate()

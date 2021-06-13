@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 
-$this->title = 'Rekap Hitung Pembayaran';
+$this->title = 'Rekap Hitung Pembayaran Daftar Ulang (DU)';
 ?>
 Tanggal : <?=date('d M Y');?>
 <h3><?=$this->title;?></h3>

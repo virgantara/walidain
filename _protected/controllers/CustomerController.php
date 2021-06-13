@@ -272,7 +272,7 @@ class CustomerController extends AppController
                     ])
                     ->andWhere(['in','status_aktivitas',$sa])
                     ->groupBy(['tahun_masuk'])
-                    ->orderBy(['tahun_masuk'=>SORT_ASC])
+                    ->orderBy(['tahun_masuk'=>SORT_DESC])
                     ->all();
 
                 // the getSubCatList function will query the database based on the

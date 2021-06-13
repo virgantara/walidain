@@ -69,6 +69,12 @@ class TransaksiSearch extends Transaksi
             return $dataProvider;
         }
 
+        if(!empty(Yii::$app->user->identity) && Yii::$app->user->identity->access_role == 'admin')
+        {
+            $list_kampus = explode(',', Yii::$app->user->identity->kampus);
+            $query->andWhere(['IN','m.kampus',$list_kampus]);
+        }
+
         $dataProvider->sort->attributes['namaCustomer'] = [
             'asc' => ['m.nama_mahasiswa'=>SORT_ASC],
             'desc' => ['m.nama_mahasiswa'=>SORT_DESC]

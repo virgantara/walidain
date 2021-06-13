@@ -13,6 +13,7 @@ class KomponenBiayaSearch extends KomponenBiaya
 {
 
     public $namaKategori;
+    public $list_kampus;
 
     /**
      * {@inheritdoc}
@@ -90,6 +91,17 @@ class KomponenBiayaSearch extends KomponenBiaya
         if(!empty($this->kampus_id))
         {
             $query->andWhere(['kampus_id'=>$this->kampus_id]);
+        }
+
+        if(!empty($this->list_kampus))
+        {
+            // $list_kampus = explode(',', Yii::$app->user->identity->kampus);
+            $query->andWhere(['IN','kampus',$list_kampus]);
+            // $query->andFilterWhere(['or',
+            //     ['kampus'=>Yii::$app->user->identity->kampus],
+            //     ['kampus'=>Yii::$app->user->identity->kampus2]
+                
+            // ]);
         }
 
 

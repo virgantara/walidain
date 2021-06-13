@@ -291,6 +291,11 @@ class KomponenBiayaController extends AppController
     public function actionIndex()
     {
         $searchModel = new KomponenBiayaSearch();
+        
+        if(!empty(Yii::$app->user->identity) && Yii::$app->user->identity->access_role == 'admin')
+        {
+            $searchModel->list_kampus = explode(',', Yii::$app->user->identity->kampus);
+        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

@@ -62,7 +62,7 @@ class User extends UserIdentity
                 'message' => Yii::t('app', 'This username has already been taken.')],
 
             ['email', 'filter', 'filter' => 'trim'],
-            [['kampus'], 'safe'],
+            [['kampus','uuid'], 'safe'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],

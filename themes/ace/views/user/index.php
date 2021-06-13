@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'readonly' => !Yii::$app->user->can('theCreator'),
                 'editableOptions' => [
                     'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-                    
+                    'asPopover' => false
                 ],
             ],
             [

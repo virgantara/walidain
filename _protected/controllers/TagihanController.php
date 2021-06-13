@@ -298,12 +298,31 @@ class TagihanController extends AppController
         $listKomponen = KomponenBiaya::find()->where(['tahun'=>$tahun->id])->all();
         
         $dataProvider = $searchModel->searchRiwayat(Yii::$app->request->queryParams);
+        $api_baseurl = Yii::$app->params['api_baseurl'];
+        $client = new Client(['baseUrl' => $api_baseurl]);
+        $client_token = Yii::$app->params['client_token'];
+        $headers = ['x-access-token'=>$client_token];
+        $params = [];
+        $response = $client->get('/p/list', $params,$headers)->send();
 
+        $list_prodi = [];
+
+        if ($response->isOk) {
+            $tmp = $response->data['values'];
+            foreach($tmp as $t)
+            {
+                $list_prodi[$t['kode_prodi']] = $t['nama_prodi'];
+            }
+        }
+
+        $list_kampus = \app\models\SimakKampus::getList();
         return $this->render('riwayat', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'listTahun' => $listTahun,
-            'listKomponen' => $listKomponen
+            'listKomponen' => $listKomponen,
+            'list_prodi' => $list_prodi,
+            'list_kampus' => $list_kampus
         ]);
     }
 
@@ -629,6 +648,25 @@ class TagihanController extends AppController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $tahun = Tahun::getTahunAktif();
 
+        $api_baseurl = Yii::$app->params['api_baseurl'];
+        $client = new Client(['baseUrl' => $api_baseurl]);
+        $client_token = Yii::$app->params['client_token'];
+        $headers = ['x-access-token'=>$client_token];
+        $params = [];
+        $response = $client->get('/p/list', $params,$headers)->send();
+
+        $list_prodi = [];
+
+        if ($response->isOk) {
+            $tmp = $response->data['values'];
+            foreach($tmp as $t)
+            {
+                $list_prodi[$t['kode_prodi']] = $t['nama_prodi'];
+            }
+        }
+
+        $list_kampus = \app\models\SimakKampus::getList();
+
         $listKomponen = KomponenBiaya::find()->where(['tahun'=>$tahun->id])->all();
         if (Yii::$app->request->post('hasEditable')) {
             // instantiate your book model for saving
@@ -783,7 +821,9 @@ class TagihanController extends AppController
             'dataProvider' => $dataProvider,
             'listTahun' => $listTahun,
             'tahun' => $tahun,
-            'listKomponen' => $listKomponen
+            'listKomponen' => $listKomponen,
+            'list_prodi' => $list_prodi,
+            'list_kampus' => $list_kampus
         ]);
     }
 

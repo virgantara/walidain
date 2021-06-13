@@ -54,4 +54,9 @@ class SimakKampus extends \yii\db\ActiveRecord
     {
         return $this->hasMany(SimakMasterkela::className(), ['id_kampus' => 'id']);
     }
+
+    public static function getList()
+    {
+        return SimakKampus::find()->all();
+    }
 }

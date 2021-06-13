@@ -31,20 +31,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'header'=>'',
         'headerOptions'=>['class'=>'kartik-sheet-style']
     ],
-            'nim',
             'namaCustomer',
-            'namaProdi',
+            'nim',
+            
+            [
+                'attribute' => 'namaProdi',
+                'filter' => $list_prodi
+            ],
             [
                 'attribute' => 'namaKampus',
-                'label' => 'Kelas',
-                'format' => 'raw',
-                'filter'=>["Siman"=>"A","Mantingan"=>"C3","Mantingan Reguler"=>"C1"],
-                'value'=>function($model,$url){
-
-                    
-                    return $model->namaKampus;
-                    
-                },
+                
+                'filter'=>\yii\helpers\ArrayHelper::map($list_kampus,'kode_kampus','nama_kampus'),
+                
             ],
             [
                 'attribute' => 'tahun',

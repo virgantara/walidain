@@ -143,8 +143,8 @@ class TagihanSearch extends Tagihan
             return $dataProvider;
         }
 
-        if(!empty($this->namaKampus))
-            $query->andWhere(['kps.nama_kampus'=> $this->namaKampus]);
+        // if(!empty($this->namaKampus))
+        $query->andFilterWhere(['c.kampus'=> $this->namaKampus]);
 
         // grid filtering conditions
         $query->andFilterWhere([
@@ -182,6 +182,8 @@ class TagihanSearch extends Tagihan
             }
         }
 
+        $query->andFilterWhere(['p.kode_prodi'=> $this->namaProdi]);
+
         if(Yii::$app->user->identity->access_role == 'admin')
         {
             $list_kampus = explode(',', Yii::$app->user->identity->kampus);
@@ -191,7 +193,7 @@ class TagihanSearch extends Tagihan
 
         $query->andFilterWhere(['like', 'nim', $this->nim])
             ->andFilterWhere(['like', 'c.nama_mahasiswa', $this->namaCustomer])
-            ->andFilterWhere(['like', 'p.nama_prodi', $this->namaProdi])
+            
             
             ->andFilterWhere(['like', 't.nama', $this->namaTahun]);
 
@@ -254,9 +256,7 @@ class TagihanSearch extends Tagihan
             return $dataProvider;
         }
 
-        if(!empty($this->namaKampus))
-            $query->where(['kps.nama_kampus'=> $this->namaKampus]);
-
+     
         // grid filtering conditions
         $query->andFilterWhere([
             self::tableName().'.semester' => $this->semester,    
@@ -294,6 +294,9 @@ class TagihanSearch extends Tagihan
             }
         }
 
+        $query->andFilterWhere(['p.kode_prodi'=> $this->namaProdi]);
+        $query->andFilterWhere(['c.kampus'=> $this->namaKampus]);
+
         if(Yii::$app->user->identity->access_role == 'admin')
         {
             $list_kampus = explode(',', Yii::$app->user->identity->kampus);
@@ -303,7 +306,6 @@ class TagihanSearch extends Tagihan
 
         $query->andFilterWhere(['like', 'nim', $this->nim])
             ->andFilterWhere(['like', 'c.nama_mahasiswa', $this->namaCustomer])
-            ->andFilterWhere(['like', 'p.nama_prodi', $this->namaProdi])
             
             ->andFilterWhere(['like', 't.nama', $this->namaTahun]);
 

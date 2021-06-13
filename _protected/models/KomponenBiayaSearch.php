@@ -96,7 +96,7 @@ class KomponenBiayaSearch extends KomponenBiaya
         if(!empty($this->list_kampus))
         {
             // $list_kampus = explode(',', Yii::$app->user->identity->kampus);
-            $query->andWhere(['IN','kampus',$list_kampus]);
+            $query->andWhere(['IN','kampus',$this->list_kampus]);
             // $query->andFilterWhere(['or',
             //     ['kampus'=>Yii::$app->user->identity->kampus],
             //     ['kampus'=>Yii::$app->user->identity->kampus2]

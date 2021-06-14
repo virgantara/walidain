@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'nim_mhs',
         
         'nama_mahasiswa',
+        'tgl_lahir',
         [
             'attribute' => 'jenis_kelamin',
             'format' => 'raw',

@@ -137,7 +137,7 @@ class CustomerController extends AppController
                                 $konfirm = new SimakKonfirmasipembayaran;
                                 $konfirm->nim = $c->nim_mhs;
                                 $konfirm->pembayaran = '01';
-                                $konfirm->semester = $c->nim_mhs;
+                                $konfirm->semester = $c->semester;
                                 $konfirm->jumlah = $lunas->terbayar;
                                 $konfirm->bank = 'nama_bank';
                                 $konfirm->tahun_id = $tahun->id;
@@ -287,9 +287,10 @@ class CustomerController extends AppController
             'kode_prodi' => $prodi,
             'tahun_masuk' => $tahun_masuk,
             'kampus' => $kampus,    
+            'status_aktivitas' => $status_aktivitas
         ]);
         $tahun = Tahun::getTahunAktif();
-        $query->andWhere(['NOT IN','status_aktivitas',['A','K']]);
+        // $query->andWhere(['NOT IN','status_aktivitas',['A','K']]);
 
         $list = $query->all();
         $counter=0;

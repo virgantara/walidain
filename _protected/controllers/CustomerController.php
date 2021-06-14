@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\SimakKonfirmasipembayaran;
 use app\models\Customer;
 use app\models\CustomerSearch;
 use app\models\Tagihan;
@@ -115,14 +116,43 @@ class CustomerController extends AppController
                     ]);
 
                     $query->andWhere('terbayar >= nilai_minimal');
-                    $lunas = $query->count();
+                    $lunas = $query->one();
                     
-                    if($lunas > 0)
+                    if(!empty($lunas))
                     {
                         $c->status_aktivitas = 'A';
                         if($c->save(false,['status_aktivitas']))
                         {
-                            $counter++;
+                            $konfirm = SimakKonfirmasipembayaran::find()->where([
+                                'nim' =>$c->nim_mhs,
+                                'pembayaran' => '01',
+                                'semester' => $c->semester,
+                                'jumlah' => $lunas->terbayar,
+                                'bank' => 'nama_bank',
+                                'tahun_id' => $tahun->id
+                            ])->one();
+
+                            if(empty($konfirm))
+                            {
+                                $konfirm = new SimakKonfirmasipembayaran;
+                                $konfirm->nim = $c->nim_mhs;
+                                $konfirm->pembayaran = '01';
+                                $konfirm->semester = $c->nim_mhs;
+                                $konfirm->jumlah = $lunas->terbayar;
+                                $konfirm->bank = 'nama_bank';
+                                $konfirm->tahun_id = $tahun->id;
+                            }
+
+                            if($konfirm->save())
+                            {
+                                $counter++;
+                            }
+
+                            else{
+                                $errors .= \app\helpers\MyHelper::logError($konfirm);
+                                throw new \Exception;
+                            }
+                            
                         }    
 
                         else{

@@ -38,14 +38,14 @@ class CustomerController extends AppController
                 'rules' => [
                     [
                         'actions' => [
-                            'index','view','generate-va','detil'
+                            'index','view','generate-va','detil','aktivasi'
                         ],
                         'allow' => true,
                         'roles' => ['admin'],
                     ],
                     [
                         'actions' => [
-                            'index','view','generate-va','detil'
+                            'index','view','generate-va','detil','aktivasi'
                         ],
                         'allow' => true,
                         'roles' => ['theCreator'],
@@ -59,6 +59,104 @@ class CustomerController extends AppController
                 ],
             ],
         ];
+    }
+
+    public function actionAktivasi()
+    {
+        $model = new Tagihan;
+        $tahun = Tahun::getTahunAktif();
+        
+
+        if(!empty($_POST['status_aktivitas']) && !empty($_POST['prodi']) && !empty($_POST['kampus'])&& !empty($_POST['tahun_masuk']))
+        {
+
+            $sa = $_POST['status_aktivitas'];
+            $query = SimakMastermahasiswa::find()->where([
+                'kode_prodi' => $_POST['prodi'],
+                'kampus' => $_POST['kampus'],
+                'tahun_masuk' => $_POST['tahun_masuk'],
+                'status_aktivitas' => $sa
+            ]);
+
+
+            $listCustomer = $query->all();
+            $transaction = \Yii::$app->db->beginTransaction();
+            $errors = '';
+
+            // print_r($listCustomer);exit;
+            try 
+            {
+
+                if(empty($_POST['prodi']))
+                {
+                    $errors .= 'Prodi harus diisi';
+                        
+                    throw new \Exception;
+                }
+
+                if(empty($_POST['kampus']))
+                {
+                    $errors .= 'Kelas harus diisi';
+                        
+                    throw new \Exception;
+                }
+
+                $counter = 0;
+                foreach($listCustomer as $c)
+                {
+
+                    $query = Tagihan::find();
+                    $query->alias('t');
+                    $query->joinWith(['komponen as k','komponen.kategori as kk']);
+                    $query->andWhere([
+                        'kk.kode' => '01',
+                        't.nim' => $c->nim_mhs,
+                        't.tahun' => $tahun->id,
+                    ]);
+
+                    $query->andWhere('terbayar >= nilai_minimal');
+                    $lunas = $query->count();
+                    
+                    if($lunas > 0)
+                    {
+                        $c->status_aktivitas = 'A';
+                        if($c->save(false,['status_aktivitas']))
+                        {
+                            $counter++;
+                        }    
+
+                        else{
+                            $errors .= \app\helpers\MyHelper::logError($c);
+                            throw new \Exception;
+                        }
+                    }
+
+
+
+                }
+                $transaction->commit();
+                Yii::$app->session->setFlash('success', $counter." Data mahasiswa telah diaktifkan");
+                
+            } catch (\Exception $e) {
+                $errors .= $e->getMessage();
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('danger', $errors);
+                
+                
+            } catch (\Throwable $e) {
+                $errors .= $e->getMessage();
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('danger', $errors);
+                
+                
+                
+            }
+        }
+
+        return $this->render('aktivasi',[
+            'model' => $model,
+            'tahun' => $tahun,
+        ]);
     }
 
     public function actionGenerateVa()
@@ -144,6 +242,56 @@ class CustomerController extends AppController
 
         ]);   
     }
+
+    public function actionGetJumlahMahasiswaPerProdi()
+    {
+        $dataPost = $_POST['dataPost'];
+        $prodi = $dataPost['prodi'];
+        $tahun_masuk = $dataPost['tahun_masuk'];
+        $kampus = $dataPost['kampus'];
+        
+        $status_aktivitas = $dataPost['status_aktivitas'];
+        
+
+        $query = SimakMastermahasiswa::find()->where([
+            'kode_prodi' => $prodi,
+            'tahun_masuk' => $tahun_masuk,
+            'kampus' => $kampus,    
+        ]);
+        $tahun = Tahun::getTahunAktif();
+        $query->andWhere(['NOT IN','status_aktivitas',['A','K']]);
+
+        $list = $query->all();
+        $counter=0;
+        foreach($list as $mhs)
+        {
+            
+            $query = Tagihan::find();
+            $query->alias('t');
+            $query->joinWith(['komponen as k','nim0 as mhs','komponen.kategori as kk']);
+            $query->andWhere([
+                'kk.kode' => '01',
+                't.tahun' => $tahun->id,
+                't.nim' => $mhs->nim_mhs
+            ]);
+
+            $query->andWhere('terbayar >= nilai_minimal');
+            $lunas = $query->count();
+
+            if($lunas > 0)
+                $counter++;
+            
+        }        
+        
+        $out = [
+            'prodi' => $prodi,
+            'jumlah' => $counter
+        ];
+
+        echo \yii\helpers\Json::encode($out);
+        die();
+    }
+
 
     public function actionGetJumlahMahasiswaPerAngkatan()
     {

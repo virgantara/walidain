@@ -73,6 +73,9 @@ class MenuHelper
 	            
 	        ]];
 
+	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-check"></i><span class="menu-text"> Aktivasi </span>', 'url' => ['customer/aktivasi'],
+	       	];
+
 	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Transaksi </span>', 'url' => ['/transaksi'],
 	       ];
 

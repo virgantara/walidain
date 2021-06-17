@@ -21,7 +21,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Create Tagihan', ['tagihan/instant'], ['class' => 'btn btn-success']) ?>
         &nbsp;
-        <?= Html::a(Yii::t('app', 'Update Bulk Tagihan'), ['update-bulk'], ['class' => 'btn btn-primary']);?>
+        <?php
+        if(Yii::$app->user->can('theCreator'))
+        {
+        echo Html::a(Yii::t('app', 'Update Bulk Tagihan'), ['update-bulk'], ['class' => 'btn btn-primary']);
+    }
+        ?>
     </p>
     <div class="table-responsive">
         <?php

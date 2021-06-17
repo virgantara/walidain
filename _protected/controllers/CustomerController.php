@@ -141,6 +141,13 @@ class CustomerController extends AppController
                                 $konfirm->jumlah = $lunas->terbayar;
                                 $konfirm->bank = 'nama_bank';
                                 $konfirm->tahun_id = $tahun->id;
+                                $konfirm->status = 1;
+                            }
+
+                            else{
+                                $konfirm->pembayaran = '01';
+                                $konfirm->jumlah = $lunas->terbayar;
+                                $konfirm->status = 1;
                             }
 
                             if($konfirm->save())

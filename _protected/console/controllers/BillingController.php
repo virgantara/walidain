@@ -19,7 +19,7 @@ use yii\web\NotFoundHttpException;
 class BillingController extends Controller
 {
 
-    public function actionAktivasi()
+    public function actionAktivasi($kampus)
     {
 
         $tahun = Tahun::getTahunAktif();
@@ -29,6 +29,7 @@ class BillingController extends Controller
         $sa = $_POST['status_aktivitas'];
         $query = SimakMastermahasiswa::find()->where([
             'tahun_masuk' => 2021,
+            'kampus' => $kampus
             // 'status_aktivitas' => 'N'
         ]);
 

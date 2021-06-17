@@ -20,8 +20,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create Tagihan', ['tagihan/instant'], ['class' => 'btn btn-success']) ?>
+        &nbsp;
+        <?= Html::a(Yii::t('app', 'Update Bulk Tagihan'), ['update-bulk'], ['class' => 'btn btn-primary']);?>
     </p>
     <div class="table-responsive">
+        <?php
+                  foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
+                      echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
+                  } ?>
           <?php
     $gridColumns = [
     [

@@ -27,6 +27,7 @@ use Yii;
  */
 class Tagihan extends \yii\db\ActiveRecord
 {
+    public $fileUpload;
     /**
      * {@inheritdoc}
      */

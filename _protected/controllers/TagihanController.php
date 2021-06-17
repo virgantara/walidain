@@ -15,7 +15,10 @@ use yii\helpers\ArrayHelper;
 use yii\httpclient\Client;
 use app\models\SimakMastermahasiswa;
 use app\models\SimakKonfirmasipembayaran;
-
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Protection;
+use yii\web\UploadedFile;
 /**
  * TagihanController implements the CRUD actions for Tagihan model.
  */
@@ -42,7 +45,13 @@ class TagihanController extends AppController
                         'allow' => true,
                         'roles' => ['admin'],
                     ],
-                   
+                    [
+                        'actions' => [
+                            'update-bulk'
+                        ],
+                        'allow' => true,
+                        'roles' => ['theCreator'],
+                    ],
                 ],
             ],
             'verbs' => [
@@ -53,6 +62,77 @@ class TagihanController extends AppController
             ],
         ];
     }
+
+    public function actionUpdateBulk()
+    {
+        $model = new Tagihan;
+        $counter = 0;
+        if($model->load(Yii::$app->request->post()))
+        {
+            $tmp = UploadedFile::getInstance($model, 'fileUpload');
+            // print_r($tmp);exit;
+            $tmp_name = $tmp->tempName;
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($tmp_name);
+            $sheet = $spreadsheet->getSheet(0); 
+            $highestRow = $sheet->getHighestDataRow();
+            $connection = \Yii::$app->db;
+            $transaction = $connection->beginTransaction();
+            try 
+            {
+                for ($row = 2; $row <= $highestRow; $row++)
+                {
+                    $id = trim($sheet->getCell('A'.$row)->getValue());
+                    $komponen_id = trim($sheet->getCell('B'.$row)->getValue());
+                    $nim = trim($sheet->getCell('C'.$row)->getValue());
+                    $nilai_minimal = trim($sheet->getCell('D'.$row)->getValue());
+                    $terbayar = trim($sheet->getCell('E'.$row)->getValue());
+                    
+                    $tagihan = Tagihan::find()->where([
+                        'komponen_id' => $komponen_id,
+                        'nim' => $nim
+                    ])->one();
+                   
+                    if(!empty($tagihan))
+                    {
+                        $tagihan->nilai_minimal = $nilai_minimal;
+                        $tagihan->terbayar = $terbayar;
+
+                        if($tagihan->save(false,['nilai_minimal','terbayar']))
+                        {
+                            $counter++;
+                        }
+
+                        else
+                        {
+                            $errors = 'Baris '.$row.' Error: '.\app\helpers\MyHelper::logError($tagihan);
+                            throw new \Exception;
+                        }
+                    }
+                        
+                }
+
+                $transaction->commit();
+                Yii::$app->session->setFlash('success',  $counter.' data updated');
+                return $this->redirect(['update-bulk']);
+                
+            } catch (\Exception $e) {
+                $errors .= $e->getMessage();
+                $transaction->rollBack();
+                
+                Yii::$app->session->setFlash('danger',  $errors);
+            } catch (\Throwable $e) {
+                $errors .= $e->getMessage();
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('danger',  $errors);
+
+            }
+        }
+
+        return $this->render('update_bulk',[
+            'model' => $model
+        ]);
+    }
+
 
     public function actionListMhs($prodi, $status=null)
     {

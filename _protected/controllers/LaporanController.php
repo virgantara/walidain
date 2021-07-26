@@ -421,6 +421,8 @@ class LaporanController extends AppController
 
         else if(!empty($_GET['export']))
         {
+
+            ini_set('max_execution_time', '300');
             
             $client_token = Yii::$app->params['client_token'];
             $headers = ['x-access-token'=>$client_token];

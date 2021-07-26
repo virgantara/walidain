@@ -46,6 +46,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'CUSTID',
             'namaCustomer',
             [
+                'attribute' => 'va_code',
+                'value' => function($data){
+                    return $data->cUST->va_code;
+                }
+            ],
+            [
                 'attribute' => 'semester',
                 'value' => function($data){
                     return $data->cUST->semester;

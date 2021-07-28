@@ -48,13 +48,13 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'va_code',
                 'value' => function($data){
-                    return $data->cUST->va_code;
+                    return !empty($data->cUST) ? $data->cUST->va_code : '-';
                 }
             ],
             [
                 'attribute' => 'semester',
                 'value' => function($data){
-                    return $data->cUST->semester;
+                    return !empty($data->cUST) ? $data->cUST->semester : '-';
                 }
             ],
             
@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'filter'=>\yii\helpers\ArrayHelper::map(\app\models\SimakMasterprogramstudi::getProdiList(),'kode_prodi','nama_prodi'),
                 'value' => function($data){
-                    return $data->cUST->kodeProdi->nama_prodi;
+                    return !empty($data->cUST) && !empty($data->cUST->kodeProdi) ? $data->cUST->kodeProdi->nama_prodi : '-';
                 }
             ],
             [
@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Kampus',
                 'filter' => \app\helpers\MyHelper::getKampusList(),
                 'value' => function ($data) {
-                    return $data->cUST->kampus0->nama_kampus;
+                    return !empty($data->cUST) && !empty($data->cUST->kampus0) ? $data->cUST->kampus0->nama_kampus : '-';
                 },
                 
             ],
@@ -98,7 +98,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value'=>function($model,$url){
 
                     
-                    return $model->tagihan->namaKomponen;
+                    return !empty($model->tagihan) ? $model->tagihan->namaKomponen : '-';
                     
                 },
             ],

@@ -410,7 +410,7 @@ class TagihanController extends AppController
         $searchModel = new TagihanSearch();
 
         $listTahun = Tahun::find()->orderBy(['id'=>SORT_DESC])->all();
-
+        $tahun = Tahun::getTahunAktif();
         $listKomponen = KomponenBiaya::find()->where(['tahun'=>$tahun->id])->all();
         
         $dataProvider = $searchModel->searchRiwayat(Yii::$app->request->queryParams);

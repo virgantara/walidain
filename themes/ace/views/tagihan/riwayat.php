@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value'=>function($model,$url){
 
                     
-                    return $model->komponen->nama;
+                    return !empty($model->komponen) ? $model->komponen->nama : '-';
                     
                 },
             ],

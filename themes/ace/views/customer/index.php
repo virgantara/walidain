@@ -66,6 +66,17 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         // 'kampus',
         'semester',
+        [
+            // 'header' => 'kamar',
+            'label' => 'Kamar',
+            'format' => 'raw',
+            'value'=>function($model,$url){
+                $kamar = !empty($model->kamar) ? 'Kamar '.$model->kamar->nama : '';    
+                $asrama = !empty($model->kamar) && !empty($model->kamar->asrama) ? $model->kamar->asrama->nama : '';
+
+                return !empty($kamar) && !empty($asrama) ? $kamar.' - '.$asrama : '';
+            },
+        ],
          [
             'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'va_code',
@@ -78,6 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 
             ],
         ],
+
         [
             'attribute'=>'status_aktivitas',
             'filter' => \app\helpers\MyHelper::getStatusAktivitas(),

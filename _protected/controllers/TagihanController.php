@@ -759,6 +759,15 @@ class TagihanController extends AppController
      */
     public function actionIndex()
     {
+
+        if(Yii::$app->user->isGuest){
+            $session = Yii::$app->session;
+            $session->remove('token');
+            Yii::$app->user->logout();
+            $url = Yii::$app->params['sso_logout'];
+            return $this->redirect($url);
+        }
+
         $searchModel = new TagihanSearch();
         $listTahun = Tahun::find()->orderBy(['id'=>SORT_DESC])->all();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);

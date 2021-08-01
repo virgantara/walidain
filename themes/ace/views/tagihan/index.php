@@ -12,6 +12,9 @@ use yii\helpers\ArrayHelper;
 
 $this->title = 'Tagihan Pembayaran Mahasiswa';
 $this->params['breadcrumbs'][] = $this->title;
+
+$list_color = ['default','danger','warning','success','info','info'];
+
 ?>
 <div class="tagihan-index">
 
@@ -74,10 +77,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Komponen',
                 'format' => 'raw',
                 'filter'=>ArrayHelper::map($listKomponen,'id','nama'),
-                'value'=>function($model,$url){
+                'value'=>function($model,$url) {
 
+                    // $label = $listPrioritas[$model->urutan];
                     
-                    return !empty($model->komponen) ? $model->komponen->nama : '-';
+                    return (!empty($model->komponen) ? $model->komponen->nama : '-');
                     
                 },
             ],
@@ -134,7 +138,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     '5' => 'LOWEST',
 
                 ],
-                'value'=>function($model,$url){
+                'value'=>function($model,$url) use ($list_color){
                     $listPrioritas = [
                         '1' => 'HIGH',
                         '2' => 'MED',
@@ -143,12 +147,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         '5' => 'LOWEST',
 
                     ];
-                    
                     $label = $listPrioritas[$model->urutan];
-                    
-                    return '<button type="button" class="btn btn-success btn-sm" >
-                               <span>'.$label.'</span>
-                            </button>';
+                    $st = $list_color[$model->urutan];
+                    return '<span class="label label-'.$st.'" >'.$label.'</span>';
                     
                 },
             ],
@@ -157,20 +158,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Status',
                 'format' => 'raw',
                 'filter'=>["1"=>"LUNAS","2"=>"CICILAN","3"=>"BELUM LUNAS"],
-                'value'=>function($model,$url){
-
+                'value'=>function($model,$url)use ($list_color){
+                    $simbol = '';
                     switch($model->statusPembayaran)
                     {
                         case 1 : 
                             $st = 'success';
+                            $simbol = '<i class="fa fa-check"></i>';
                             $label = 'LUNAS';
                         break;
                         case 2 :
                             $st = 'warning';
+                            $simbol = '<i class="fa fa-exclamation"></i>';
                             $label = 'CICILAN'; 
                         break;
                         case 3 :
                             $st = 'danger';
+                            $simbol = '<i class="fa fa-exclamation-triangle"></i>';
                             $label = 'BELUM LUNAS';
                         break;
                         default:
@@ -178,10 +182,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             $label = '';
                         break;
                     }
+
                     
-                    return '<button type="button" class="btn btn-'.$st.' btn-sm" >
-                               <span>'.$label.'</span>
-                            </button>';
+                    return '<span  class="label label-'.$st.' " >'.$simbol.' '.$label.'</span>';
                     
                 },
             ],

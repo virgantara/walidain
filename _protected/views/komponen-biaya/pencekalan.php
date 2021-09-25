@@ -96,7 +96,7 @@ $kampus = !empty($_GET['kampus']) ? $_GET['kampus'] : '';
             <td><?=$v->kategori->kode;?> - <?=$v->kategori->nama;?></td>
             <td><?=$v->nama;?></td>
             <td><?=$list_prioritas[$v->prioritas];?></td>
-            <td><?=$v->bulan->nama;?></td>
+            <td><?=!empty($v->bulan) ? $v->bulan->nama : '<span style="color:red"><i>Syarat Pencekalan belum diset</i></span>';?></td>
             <td>
                 <label class="fancy-checkbox"><input type="checkbox" class="approval" data-item="<?=$v->id;?>" <?=$v->is_pencekalan == '1' ? "checked": "";?> value="<?=$v->is_pencekalan;?>"> <span><strong></strong></span></label>
             </td>    

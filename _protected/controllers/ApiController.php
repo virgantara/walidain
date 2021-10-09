@@ -225,13 +225,13 @@ class ApiController extends AppController
     {
         $dataPost = $_POST['dataPost'];
         $out = [];
-        if(!empty($dataPost['kampus']) && !empty($dataPost['tahun']) && !empty($dataPost['komponen']))
+        if(!empty($dataPost['kampus']) && !empty($dataPost['tahun']))
         {
             // $sd = date('Ymd',strtotime($_POST['sd'])).'000001';
             // $ed = date('Ymd',strtotime($_POST['ed'])).'235959';
             $kampus = $dataPost['kampus'];
             $prodi = $dataPost['prodi'];
-            $komponen = $dataPost['komponen'];
+            $komponen = !empty($dataPost['komponen']) ? $dataPost['komponen'] : null;
             $tahun = $dataPost['tahun'];
             // $list = Pasien::find()->addFilterWhere(['like',])
             // $api_baseurl = Yii::$app->params['api_baseurl'];

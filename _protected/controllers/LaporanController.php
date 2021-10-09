@@ -21,6 +21,8 @@ use app\models\Tahun;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+
 /**
  * PenjualanController implements the CRUD actions for Penjualan model.
  */
@@ -200,9 +202,9 @@ class LaporanController extends AppController
                     $sheet->setCellValue('H'.$ii, $d['terbayar']);
                     $sheet->setCellValue('I'.$ii, $d['piutang']);
 
-                    $sheet->getStyle('G'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-                    $sheet->getStyle('H'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-                    $sheet->getStyle('I'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1); 
+                    $sheet->getStyle('G'.$ii)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                    $sheet->getStyle('H'.$ii)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                    $sheet->getStyle('I'.$ii)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1); 
                     // $sheet->setCellValue('G'.$ii, $d['nl']);
                     $ii++;
 
@@ -222,9 +224,9 @@ class LaporanController extends AppController
                 $sheet->setCellValue('H'.$ii, $total_terbayar);
                 $sheet->setCellValue('I'.$ii, $total_piutang);
 
-                $sheet->getStyle('G'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-                $sheet->getStyle('H'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-                $sheet->getStyle('I'.$ii)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1); 
+                $sheet->getStyle('G'.$ii)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $sheet->getStyle('H'.$ii)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $sheet->getStyle('I'.$ii)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1); 
                 $sheet->setTitle('Data Pembayaran Mahasiswa');
                 
                 // ob_end_clean();

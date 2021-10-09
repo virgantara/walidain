@@ -266,6 +266,11 @@ class ApiController extends AppController
                 $query->andWhere(['k.kategori_id' => $komponen]);   
             }
 
+            if(!empty($dataPost['status_aktivitas']))
+            {
+                $query->andWhere(['m.status_aktivitas' => $dataPost['status_aktivitas']]);
+            }
+
             $query->andWhere('p.terbayar < p.nilai');
 
             $result = $query->all();

@@ -680,6 +680,7 @@ class LaporanController extends AppController
             $prodi = $_GET['prodi'];
             $tahun = $_GET['tahun'];
             $komponen = $_GET['komponen'];
+            $status_aktivitas = $_GET['status_aktivitas'];
             
             
             $query = \app\models\Tagihan::find();
@@ -698,6 +699,11 @@ class LaporanController extends AppController
             if(!empty($komponen))
             {
                 $query->andWhere(['k.kategori_id' => $komponen]);   
+            }
+
+            if(!empty($status_aktivitas))
+            {
+                $query->andWhere(['m.status_aktivitas' => $status_aktivitas]);
             }
 
             $query->andWhere('p.terbayar < p.nilai');

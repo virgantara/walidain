@@ -58,6 +58,7 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
       }),['class' => 'form-control', 'id' => 'tahun','prompt'=>'- Pilih Tahun -']) ?>
         </div>
     </div>
+
     <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kategori Komponen</label>
         <div class="col-lg-2 col-sm-10">
@@ -72,6 +73,12 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
                 'allowClear' => true,
             ],
         ])?>  
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Status Mahasiswa</label>
+        <div class="col-lg-2 col-sm-10">
+          <?= Html::dropDownList('status_aktivitas', null,\app\helpers\MyHelper::getStatusAktivitas(),['class' => 'form-control', 'id' => 'status_aktivitas','prompt'=>'- Semua -']) ?>
         </div>
     </div>
     <div class="col-sm-2">

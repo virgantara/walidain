@@ -67,7 +67,7 @@ $model->tanggal_akhir = !empty($_GET['Tagihan']['tanggal_akhir']) ? $_GET['Tagih
                 return $data->kode.' - '.$data->nama;
             }),
             'name' => 'komponen',
-            'options'=>['placeholder'=>Yii::t('app','- Pilih Kategori -'),'id'=>'komponen'],
+            'options'=>['placeholder'=>Yii::t('app','- Semua Kategori -'),'id'=>'komponen'],
             'pluginOptions' => [
                 'allowClear' => true,
             ],

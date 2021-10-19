@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 
 $this->title = 'Generate Virtual Account';
 $this->params['breadcrumbs'][] = $this->title;
-// $tahun_masuk = !empty($_GET['tahun_masuk']) ? $_GET['tahun_masuk'] : '';
+// $prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : '';
 ?>
 <div class="sales-stok-gudang-index">
 
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="form-group">
         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Prodi</label>
         <div class="col-lg-2 col-sm-10">
-         <?= $form->field($model,'kode_prodi',['options'=>['tag'=>false]])->dropDownList([],['id'=>'prodi','prompt'=>'- Pilih Prodi -'])->label(false);?>
+         <?= $form->field($model,'kode_prodi',['options'=>['tag'=>false]])->dropDownList([],['id'=>'prodi','prompt'=>'- Semua Prodi -'])->label(false);?>
         </div>
     </div>
 

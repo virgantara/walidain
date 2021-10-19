@@ -207,11 +207,18 @@ class CustomerController extends AppController
             $kampus = $model->kampus;
             $status_aktivitas = $model->status_aktivitas;
 
-            $list = SimakMastermahasiswa::find()->where([
-                'kode_prodi' => $prodi,
+            $query = SimakMastermahasiswa::find()->where([
+                
                 'status_aktivitas'=>$status_aktivitas,
                 'kampus' => $kampus
-            ])->all();
+            ]);
+
+            if(!empty($prodi))
+            {
+                $query->andWhere(['kode_prodi' => $prodi]);
+            }
+
+            $list = $query->all();
 
             $kampus = \app\models\SimakKampus::find()->where(['kode_kampus'=>$kampus])->one();
 

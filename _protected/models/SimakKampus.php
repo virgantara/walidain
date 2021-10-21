@@ -161,4 +161,9 @@ class SimakKampus extends \yii\db\ActiveRecord
     {
         return $this->hasMany(SimakMastermahasiswa::className(), ['kampus' => 'kode_kampus']);
     }
+
+    public static function getList()
+    {
+        return SimakKampus::find()->all();
+    }
 }

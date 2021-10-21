@@ -197,6 +197,13 @@ class MenuHelper
 	               
 	            ],
 	            [
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Kampus ',  
+	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
+	                'visible' => Yii::$app->user->can('admin'),
+	                'url' => ['simak-kampus/index'],
+	               
+	            ],
+	            [
 	                'label' => '<i class="menu-icon fa fa-caret-right"></i>Syarat Pencekalan <b class="arrow fa fa-angle-down"></b>',  
 	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	                'visible' => Yii::$app->user->can('admin'),

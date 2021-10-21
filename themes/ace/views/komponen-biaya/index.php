@@ -29,7 +29,11 @@ $list_prioritas = [
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 <div class="table-responsive">
-
+    <?php
+                  foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
+                      echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
+                  } ?>
+    
         <?php
     $gridColumns = [
     [

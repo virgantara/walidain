@@ -456,9 +456,51 @@ class KomponenBiayaController extends AppController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        
+        $transaction = \Yii::$app->db->beginTransaction();
+        $errors = '';   
+        try 
+        {
+            $model = $this->findModel($id);
 
-        return $this->redirect(['index']);
+            if(!$model->delete())
+            {   
+                $errors .= \app\helpers\MyHelper::logError($model);
+                throw new \Exception;
+            }
+
+            return $this->redirect(['index']);
+        }
+
+        catch (\Exception $e) 
+        {
+            $code = $e->getCode();
+            if($code == 23000)
+            {
+                $errors = 'Code: 23000. Data ini sudah dipakai untuk tagihan ke mahasiswa. Silakan hapus tagihan mahasiswa tersebut.';
+            }
+
+            else
+            {
+                $errors .= $e->getMessage();
+            }
+            
+            $transaction->rollBack();
+            Yii::$app->session->setFlash('danger', $errors);
+            return $this->redirect(['index']);
+            
+        } 
+
+        catch (\Throwable $e) 
+        {
+            $errors .= $e->getMessage();
+            $transaction->rollBack();
+            Yii::$app->session->setFlash('danger', $errors);
+            return $this->redirect(['index']);
+            
+        }
+
+        
     }
 
     /**

@@ -60,6 +60,7 @@ class BillingController extends Controller
                     if($status_lunas == 1)
                     {
                         $c->status_aktivitas = 'A';
+                        $counter++;
                     }
 
                     else
@@ -99,7 +100,7 @@ class BillingController extends Controller
 
                         if($konfirm->save())
                         {
-                            $counter++;
+                            echo $c->nama_mahasiswa." Aktivated\n";
                         }
 
                         else{

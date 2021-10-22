@@ -19,18 +19,12 @@ use yii\web\NotFoundHttpException;
 class BillingController extends Controller
 {
 
-    public function actionAktivasi($kampus)
+    public function actionAktivasi($status_aktivitas, $tahun_id)
     {
 
-        $tahun = Tahun::getTahunAktif();
-        
 
-
-        $sa = $_POST['status_aktivitas'];
         $query = SimakMastermahasiswa::find()->where([
-            'tahun_masuk' => 2021,
-            'kampus' => $kampus
-            // 'status_aktivitas' => 'N'
+            'status_aktivitas' => $status_aktivitas
         ]);
 
 
@@ -53,7 +47,7 @@ class BillingController extends Controller
                 $query->andWhere([
                     'kk.kode' => '01',
                     't.nim' => $c->nim_mhs,
-                    't.tahun' => $tahun->id,
+                    't.tahun' => $tahun_id,
                 ]);
 
                 // $query->andWhere('terbayar >= nilai_minimal');
@@ -61,15 +55,19 @@ class BillingController extends Controller
                 
                 if(!empty($lunas))
                 {
-                    $lunas->nilai_minimal = 10000;
-                    $lunas->terbayar = 10000;
-                    if(!$lunas->save(false,['nilai_minimal','terbayar']))
+                    $status_lunas = (int)(($lunas->terbayar >= $lunas->nilai_minimal && $lunas->terbayar < $lunas->nilai) ||  $lunas->terbayar >=$lunas->nilai);
+                    
+                    if($status_lunas == 1)
                     {
-                        $errors .= \app\helpers\MyHelper::logError($lunas);
-                        throw new \Exception;
+                        $c->status_aktivitas = 'A';
                     }
 
-                    $c->status_aktivitas = 'A';
+                    else
+                    {
+                        $c->status_aktivitas = 'N';
+                    }
+
+                    
                     if($c->save(false,['status_aktivitas']))
                     {
                         $konfirm = SimakKonfirmasipembayaran::find()->where([
@@ -78,7 +76,7 @@ class BillingController extends Controller
                             'semester' => $c->semester,
                             'jumlah' => $lunas->terbayar,
                             'bank' => 'nama_bank',
-                            'tahun_id' => $tahun->id
+                            'tahun_id' => $tahun_id
                         ])->one();
 
                         if(empty($konfirm))
@@ -89,14 +87,14 @@ class BillingController extends Controller
                             $konfirm->semester = $c->semester;
                             $konfirm->jumlah = $lunas->terbayar;
                             $konfirm->bank = 'nama_bank';
-                            $konfirm->tahun_id = $tahun->id;
-                            $konfirm->status = 1;
+                            $konfirm->tahun_id = $tahun_id;
+                            $konfirm->status = $status_lunas;
                         }
 
                         else{
                             $konfirm->pembayaran = '01';
                             $konfirm->jumlah = $lunas->terbayar;
-                            $konfirm->status = 1;
+                            $konfirm->status = $status_lunas;
                         }
 
                         if($konfirm->save())

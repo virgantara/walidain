@@ -23,9 +23,8 @@ class BillingController extends Controller
     {
 
 
-        $query = SimakMastermahasiswa::find()->where([
-            'status_aktivitas' => $status_aktivitas
-        ]);
+        $query = SimakMastermahasiswa::find();
+        $query->andWhere(['NOT',['status_aktivitas'=>['K','L','D','C']]]);
 
 
         $listCustomer = $query->all();

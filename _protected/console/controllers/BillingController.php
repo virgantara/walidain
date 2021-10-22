@@ -19,7 +19,7 @@ use yii\web\NotFoundHttpException;
 class BillingController extends Controller
 {
 
-    public function actionAktivasi($status_aktivitas, $tahun_id)
+    public function actionAktivasi($tahun_id)
     {
 
 

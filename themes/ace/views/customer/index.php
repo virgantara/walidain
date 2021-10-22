@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'attribute'=>'kampus',
             'filter' => \app\helpers\MyHelper::getKampusList(),
             'value' => function ($data) {
-                return $data->kampus0->nama_kampus;
+                return !empty($data->kampus0) ? $data->kampus0->nama_kampus : null;
             },
             'contentOptions'=>function($model, $key, $index, $column) {
                 return ['class'=>\app\helpers\CssHelper::roleCss($model->kampus)];

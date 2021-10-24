@@ -120,7 +120,7 @@ class BillingController extends Controller
 
             }
             $transaction->commit();
-            echo $counter." Data mahasiswa telah diaktifkan";
+            echo "Total ".$counter." data mahasiswa telah diaktifkan";
 
             
         } catch (\Exception $e) {

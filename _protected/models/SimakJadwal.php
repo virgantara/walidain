@@ -264,15 +264,8 @@ class SimakJadwal extends \yii\db\ActiveRecord
 
     public function getNamaKelas()
     {
-        $mk = SimakMatakuliah::findOne([
-            'kode_mk' => $this->kode_mk,
-            'prodi' => $this->prodi
-        ]);
-
-        $nama_mk = !empty($mk) ? $mk->nama_mk : 'nama_mk_kosong';
-        $nama_kampus = !empty($this->kampus0) ? $this->kampus0->nama_kampus : 'nama_kampus_kosong';
         $nama_kelas = $this->kelas;
-        $label = 'Classroom '.$this->tahun_akademik.' '.$nama_mk.' '.$nama_kampus.' '.$nama_kelas;
+        $label = $nama_kelas;
 
         return $label;
     }

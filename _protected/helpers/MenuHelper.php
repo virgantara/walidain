@@ -96,6 +96,9 @@ class MenuHelper
 		            
 		        ]
 	       ];
+
+	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Beban Ajar </span>', 'url' => ['simak-jadwal/beban-ajar'],
+	       ];
 	       
 	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-book"></i><span class="menu-text"> Laporan </span><i class="caret"></i>', 'url' => '#',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",

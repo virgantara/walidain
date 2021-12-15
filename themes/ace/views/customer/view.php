@@ -10,10 +10,19 @@ $this->title = $model->nim_mhs;
 $this->params['breadcrumbs'][] = ['label' => 'Customers', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
-?>
-<div class="customer-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+$propinsi = \app\models\SimakPropinsi::findOne([
+    'id' => $model->provinsi
+]);
+
+$kabupaten = \app\models\SimakKabupaten::findOne([
+    'id' => $model->kabupaten
+]);
+?>
+<h1><?= Html::encode($this->title) ?></h1>
+<div class="row">
+    <div class="col-md-6">
+    
 
    
 
@@ -26,8 +35,43 @@ $this->params['breadcrumbs'][] = $this->title;
             'namaProdi',
             'namaKampus',
             'status_aktivitas',
-            'saldo'
-,        ],
-    ]) ?>
+            'saldo',
 
+        ],
+    ]) ?>
+    </div>
+    <div class="col-md-6">
+    
+
+   
+
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'telepon',
+            'hp',
+            'email:email',
+            'alamat',
+            'rt',
+            'rw',
+            'dusun',
+            'kode_pos',
+            'desa',
+            'kecamatan',
+            [
+                'attribute' => 'kabupaten',
+                'value' => function($data) use ($kabupaten){
+                    return !empty($kabupaten) ? $kabupaten->kab : null;
+                }
+            ],
+            [
+                'attribute' => 'provinsi',
+                'value' => function($data) use ($propinsi){
+                    return !empty($propinsi) ? $propinsi->prov : null;
+                }
+            ],
+            
+        ],
+    ]) ?>
+    </div>
 </div>

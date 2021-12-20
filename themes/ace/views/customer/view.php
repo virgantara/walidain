@@ -36,7 +36,13 @@ $kabupaten = \app\models\SimakKabupaten::findOne([
             'namaKampus',
             'status_aktivitas',
             'saldo',
-
+            [
+                'attribute' => 'alamatWali',
+                'format' => 'raw',
+                'value' => function($data){
+                    return $data->alamatWali;
+                }
+            ]
         ],
     ]) ?>
     </div>

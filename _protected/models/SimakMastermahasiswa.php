@@ -227,6 +227,30 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
         ];
     }
 
+    public function getAlamatWali()
+    {
+
+        $results = null;
+
+        foreach($this->simakMahasiswaOrtus as $ortu) {
+            if($ortu->hubungan == 'WALI'){
+                $results = ucwords(strtolower($ortu->alamat));
+                break;
+            }
+
+            else if($ortu->hubungan == 'AYAH'){
+                $results = ucwords(strtolower($ortu->alamat));
+                break;
+            }
+        }
+
+        if(empty($results)){
+            $results = '<i style="color:red">Alamat Wali/Ayah belum diisi</i>';
+        }
+
+        return $results;
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

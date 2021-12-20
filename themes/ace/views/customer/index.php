@@ -7,16 +7,15 @@ use kartik\grid\GridView;
 /* @var $searchModel app\models\CustomerSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Customers';
+$this->title = 'Data Mahasiswa';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="customer-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    <div class="table-responsive">
-  
+    
     <?php 
     $gridColumns = [
     [
@@ -67,9 +66,18 @@ $this->params['breadcrumbs'][] = $this->title;
         // 'kampus',
         'semester',
         [
+            'header' => 'Alamat Wali',
+            'contentOptions' => ['width' => '20%'],
+            'format' => 'raw',
+            'value' => function($data){
+                return $data->alamatWali;
+            }
+        ],
+        [
             // 'header' => 'kamar',
             'label' => 'Kamar',
             'format' => 'raw',
+            'contentOptions' => ['width' => '10%'],
             'value'=>function($model,$url){
                 $kamar = !empty($model->kamar) ? 'Kamar '.$model->kamar->nama : '';    
                 $asrama = !empty($model->kamar) && !empty($model->kamar->asrama) ? $model->kamar->asrama->nama : '';
@@ -126,6 +134,27 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ]
     ?>
+<p>
+<div class="row">
+    <div class="col-lg-4 col-md-12">
+        <h3><?= Html::encode($this->title) ?></h3>
+    </div>
+    <div class="col-lg-8 col-md-12">
+        
+        <div class="pull-right">
+        <?php 
+        // Renders a export dropdown menu
+        echo \kartik\export\ExportMenu::widget([
+            'dataProvider' => $dataProvider,
+            'columns' => $gridColumns,
+            'clearBuffers' => true, //optional
+        ]);
+        ?>
+        </div>
+        
+    </div>
+</div>
+</p>
      <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -150,7 +179,7 @@ $this->params['breadcrumbs'][] = $this->title;
           ],
           
         'toolbar' =>  [
-            '{export}', 
+            // '{export}', 
 
            '{toggleData}' //uncoment untuk menghidupkan button menampilkan semua data..
         ],
@@ -171,7 +200,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'type' => GridView::TYPE_PRIMARY
         ],
     ]); ?>
-</div>
 </div>
 <?php
     yii\bootstrap\Modal::begin(['id' =>'pModal']);

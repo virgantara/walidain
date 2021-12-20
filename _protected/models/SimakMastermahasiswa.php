@@ -244,9 +244,6 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
             }
         }
 
-        if(empty($results)){
-            $results = '<i style="color:red">Alamat Wali/Ayah belum diisi</i>';
-        }
 
         return $results;
     }

@@ -45,9 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'value' => function ($data) {
                 return !empty($data->kampus0) ? $data->kampus0->nama_kampus : null;
             },
-            'contentOptions'=>function($model, $key, $index, $column) {
-                return ['class'=>\app\helpers\CssHelper::roleCss($model->kampus)];
-            }
+            
         ],
         
         //'kode_prodi',
@@ -105,9 +103,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 $tmp = \app\helpers\MyHelper::getStatusAktivitas();
                 return $tmp[$data->status_aktivitas];
             },
-            'contentOptions'=>function($model, $key, $index, $column) {
-                return ['class'=>\app\helpers\CssHelper::roleCss($model->status_aktivitas)];
-            }
+            
         ],
         [
             'class' => 'yii\grid\ActionColumn',

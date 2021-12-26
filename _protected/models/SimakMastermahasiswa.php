@@ -227,6 +227,27 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
         ];
     }
 
+    public function getNamaWali()
+    {
+
+        $results = null;
+
+        foreach($this->simakMahasiswaOrtus as $ortu) {
+            if($ortu->hubungan == 'WALI'){
+                $results = ucwords(strtolower($ortu->nama));
+                break;
+            }
+
+            else if($ortu->hubungan == 'AYAH'){
+                $results = ucwords(strtolower($ortu->nama));
+                break;
+            }
+        }
+
+
+        return $results;
+    }
+
     public function getAlamatWali()
     {
 

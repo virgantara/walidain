@@ -65,6 +65,14 @@ $this->params['breadcrumbs'][] = $this->title;
         // 'kampus',
         'semester',
         [
+            'header' => 'Nama Wali',
+            'contentOptions' => ['width' => '10%'],
+            'format' => 'raw',
+            'value' => function($data){
+                return $data->namaWali;
+            }
+        ],
+        [
             'header' => 'Alamat Wali',
             'contentOptions' => ['width' => '20%'],
             'format' => 'raw',

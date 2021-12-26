@@ -10,6 +10,7 @@ use kartik\grid\GridView;
 $this->title = 'Data Mahasiswa';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+ <h3><?= Html::encode($this->title) ?></h3>
 <div class="customer-index">
 
     
@@ -132,12 +133,10 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 <p>
 <div class="row">
-    <div class="col-lg-4 col-md-12">
-        <h3><?= Html::encode($this->title) ?></h3>
-    </div>
-    <div class="col-lg-8 col-md-12">
+
+    <div class="-md-12">
         
-        <div class="pull-right">
+        
         <?php 
         // Renders a export dropdown menu
         echo \kartik\export\ExportMenu::widget([
@@ -146,7 +145,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'clearBuffers' => true, //optional
         ]);
         ?>
-        </div>
         
     </div>
 </div>

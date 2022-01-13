@@ -24,7 +24,7 @@ use Yii;
  * It is responsible for displaying static pages, logging users in and out,
  * sign up and account activation, and password reset.
  */
-class SiteController extends AppController
+class SiteController extends Controller
 {
     public $successUrl = '';
     
@@ -82,6 +82,12 @@ class SiteController extends AppController
                 'successUrl' => $this->successUrl
             ],
         ];
+    }
+
+    public function beforeAction($action)
+    {
+        
+        return true; // or false to not run the action
     }
 
     public function actionAuthCallback()
@@ -307,16 +313,15 @@ class SiteController extends AppController
         // $hash = Yii::$app->getSecurity()->generatePasswordHash('admingontor');
         // print_r($hash);
         // exit;
-        if (Yii::$app->user->isGuest) {
-            $this->redirect(['/site/login']);
-        }
+        // if (Yii::$app->user->isGuest) {
+        //     $this->redirect(['/site/login']);
+        // }
 
-        else
-        {
+        // else
+        // {
             
-            return $this->render('index',[
-            ]);
-        }
+            return $this->render('index');
+        // }
     }
 
     /**
@@ -365,6 +370,34 @@ class SiteController extends AppController
      */
     public function actionLogin()
     {
+
+        $session = Yii::$app->session;
+
+        if($session->has('token'))
+        {
+
+            try
+            {
+
+                $token = $session->get('token');
+                $key = Yii::$app->params['jwt_key'];
+                $decoded = \Firebase\JWT\JWT::decode($token, base64_decode(strtr($key, '-_', '+/')), ['HS256']);
+
+            }
+
+            catch(\Exception $e) 
+            {
+                \app\helpers\MyHelper::refreshToken($token);
+            }
+            
+             
+        }
+
+        else
+        {
+            return $this->redirect(Yii::$app->params['sso_login']);
+        }
+        
         $this->layout = 'default';
         // user is logged in, he doesn't need to login
         if (!Yii::$app->user->isGuest) {

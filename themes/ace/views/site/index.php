@@ -12,20 +12,7 @@ $status_aktivitas = !empty($_GET['status_aktivitas']) ? $_GET['status_aktivitas'
 
 $list_kampus = ArrayHelper::map(\app\models\SimakKampus::find()->all(),'kode_kampus','nama_kampus');
 ?>
-<div class="alert alert-block alert-success">
-    <button type="button" class="close" data-dismiss="alert">
-        <i class="ace-icon fa fa-times"></i>
-    </button>
 
-    <i class="ace-icon fa fa-check green"></i>
-
-    Welcome to
-    <strong class="green">
-        <?=Yii::$app->name;?>
-        <small>(v1.4)</small>
-    </strong>,
-
-</div>
 <div class="row">
 	<div class="col-sm-12">
 		<?=Html::dropDownList('tahun',$tahun,ArrayHelper::map(Tahun::find()->orderBy(['id'=>SORT_DESC])->all(),'id','nama'),['id'=>'tahun','prompt'=>'- Pilih Tahun -']);?>

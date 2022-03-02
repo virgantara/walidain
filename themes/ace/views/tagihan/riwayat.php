@@ -31,8 +31,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'header'=>'',
         'headerOptions'=>['class'=>'kartik-sheet-style']
     ],
-            'namaCustomer',
-            'nim',
+            // 'namaCustomer',
+            [
+                'attribute' => 'nim',
+                'header' => 'Nama Mahasiswa',
+                'value' => function($data){
+                    return $data->nim0->nama_mahasiswa;
+                },
+                'filter'=>\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),
+            ],
             
             [
                 'attribute' => 'namaProdi',
@@ -154,7 +161,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view}',
+                'template' => '',
                 'visibleButtons' => [
                     
                     'delete' => function ($model) {

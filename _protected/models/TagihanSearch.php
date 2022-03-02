@@ -53,9 +53,13 @@ class TagihanSearch extends Tagihan
             'nim0 as c',
             'tahun0 as t',
             'nim0.kodeProdi as p',
-            'nim0.kampus0 as kps'
+            'nim0.kampus0 as kps',
+            'nim0.simakMahasiswaOrtus as ortu'
         ]);
 
+        if(!Yii::$app->user->isGuest){
+            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
+        }
         // grid filtering conditions
         $query->andWhere([
             'k.tahun' => $this->tahun,
@@ -92,8 +96,12 @@ class TagihanSearch extends Tagihan
             'nim0 as c',
             'tahun0 as t',
             'nim0.kodeProdi as p',
-            'nim0.kampus0 as kps'
+            'nim0.simakMahasiswaOrtus as ortu'
         ]);
+
+        if(!Yii::$app->user->isGuest){
+            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
+        }
 
         $tahun = Tahun::getTahunAktif();
         $this->tahun = $tahun->id;
@@ -158,7 +166,7 @@ class TagihanSearch extends Tagihan
         
         if(!empty($this->komponen_id))
         {
-            $query->andWhere(['komponen_id'=>$this->komponen_id]);
+            $query->andWhere(['k.komponen_id'=>$this->komponen_id]);
         }
 
         if(!empty($this->namaSemester))
@@ -203,14 +211,18 @@ class TagihanSearch extends Tagihan
     public function searchRiwayat($params)
     {
         $query = Tagihan::find();
+        $query->alias('tt');
         $query->joinWith([
             'komponen as k',
             'nim0 as c',
             'tahun0 as t',
             'nim0.kodeProdi as p',
-            'nim0.kampus0 as kps'
+            'nim0.simakMahasiswaOrtus as ortu'
         ]);
 
+        if(!Yii::$app->user->isGuest){
+            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
+        }
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -264,13 +276,13 @@ class TagihanSearch extends Tagihan
         ]);
 
         if(!empty($this->tahun))
-            $query->andWhere([self::tableName().'.tahun' => $this->tahun]);
+            $query->andWhere(['tt.tahun' => $this->tahun]);
 
         
 
         if(!empty($this->komponen_id))
         {
-            $query->andWhere(['komponen_id'=>$this->komponen_id]);
+            $query->andWhere(['tt.komponen_id'=>$this->komponen_id]);
         }
 
         if(!empty($this->namaSemester))
@@ -304,7 +316,7 @@ class TagihanSearch extends Tagihan
             
         }
 
-        $query->andFilterWhere(['like', 'nim', $this->nim])
+        $query->andFilterWhere(['like', 'tt.nim', $this->nim])
             ->andFilterWhere(['like', 'c.nama_mahasiswa', $this->namaCustomer])
             
             ->andFilterWhere(['like', 't.nama', $this->namaTahun]);

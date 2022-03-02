@@ -8,6 +8,31 @@ use Yii;
  */
 class MyHelper
 {
+    public static function dmYtoYmd($tgl){
+        $date = str_replace('/', '-', $tgl);
+        return date('Y-m-d H:i:s',strtotime($date));
+    }
+
+    public static function YmdtodmY($tgl){
+        return date('d-m-Y H:i:s',strtotime($tgl));
+    }
+    public static function hitungDurasi($date1, $date2)
+    {
+        $date1 = new \DateTime($date1);
+        $date2 = new \DateTime($date2);
+        $interval = $date1->diff($date2);
+
+        $elapsed = '';
+        if($interval->d > 0)
+            $elapsed = $interval->format('%a hari %h jam %i menit %s detik');
+        else if($interval->h > 0)
+            $elapsed = $interval->format('%h jam %i menit %s detik');
+        else
+            $elapsed = $interval->format('%i menit %s detik');
+        
+
+        return $elapsed;
+    }
 
     public static function getSemester()
     {

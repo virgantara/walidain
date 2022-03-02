@@ -21,16 +21,6 @@ $list_color = ['default','danger','warning','success','info','info'];
     <h1 class="text-center"><?= Html::encode($this->title) ?> <?=$tahun->nama;?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a('Create Tagihan', ['tagihan/instant'], ['class' => 'btn btn-success']) ?>
-        &nbsp;
-        <?php
-        if(Yii::$app->user->can('theCreator'))
-        {
-        echo Html::a(Yii::t('app', 'Update Bulk Tagihan'), ['update-bulk'], ['class' => 'btn btn-primary']);
-    }
-        ?>
-    </p>
     <div class="table-responsive">
         <?php
                   foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
@@ -47,8 +37,14 @@ $list_color = ['default','danger','warning','success','info','info'];
         'header'=>'',
         'headerOptions'=>['class'=>'kartik-sheet-style']
     ],
-            'namaCustomer',
-            'nim',
+            [
+                'attribute' => 'nim',
+                'header' => 'Nama Mahasiswa',
+                'value' => function($data){
+                    return $data->nim0->nama_mahasiswa;
+                },
+                'filter'=>\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),
+            ],
             
             [
                 'attribute' => 'namaProdi',
@@ -193,7 +189,7 @@ $list_color = ['default','danger','warning','success','info','info'];
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => ' {view} {update} {delete}',
+                'template' => ' ',
                 'visibleButtons' => [
                     
                     'delete' => function ($model) {

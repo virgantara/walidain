@@ -50,10 +50,12 @@ class SimakMahasiswaOrtu extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['hubungan','nama','nim','pendidikan','pekerjaan','penghasilan','alamat'], 'required'],
             [['hubungan'], 'string'],
             [['is_synced'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['nim', 'kota', 'propinsi', 'negara', 'telepon', 'hp', 'email'], 'string', 'max' => 20],
+            [['created_at', 'updated_at','nik','tanggal_lahir'], 'safe'],
+            [['nim', 'kota', 'propinsi', 'negara', 'telepon', 'hp'], 'string', 'max' => 20],
+            ['email', 'email'],
             [['nama'], 'string', 'max' => 100],
             [['agama', 'pendidikan', 'pekerjaan', 'penghasilan', 'hidup', 'pos'], 'string', 'max' => 10],
             [['alamat'], 'string', 'max' => 255],
@@ -73,18 +75,20 @@ class SimakMahasiswaOrtu extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'nim' => 'Nim',
+            'nik' => 'NIK',
+            'tanggal_lahir' => 'Tanggal Lahir',
             'hubungan' => 'Hubungan',
-            'nama' => 'Nama',
+            'nama' => 'Nama Ortu',
             'agama' => 'Agama',
             'pendidikan' => 'Pendidikan',
             'pekerjaan' => 'Pekerjaan',
             'penghasilan' => 'Penghasilan',
             'hidup' => 'Hidup',
-            'alamat' => 'Alamat',
+            'alamat' => 'Alamat Ortu',
             'kota' => 'Kota',
             'propinsi' => 'Propinsi',
             'negara' => 'Negara',
-            'pos' => 'Pos',
+            'pos' => 'Kodepos',
             'telepon' => 'Telepon',
             'hp' => 'Hp',
             'email' => 'Email',
@@ -101,7 +105,7 @@ class SimakMahasiswaOrtu extends \yii\db\ActiveRecord
      */
     public function getAgama0()
     {
-        return $this->hasOne(SimakPilihan::className(), ['value' => 'agama']);
+        return $this->hasOne(SimakPilihan::className(), ['value' => 'agama'])->onCondition(['kode' => '51']);
     }
 
     /**
@@ -142,5 +146,20 @@ class SimakMahasiswaOrtu extends \yii\db\ActiveRecord
     public function getPenghasilan0()
     {
         return $this->hasOne(SimakPilihan::className(), ['value' => 'penghasilan'])->onCondition(['kode' => '69']);
+    }
+
+     public function getNamaPekerjaan()
+    {
+        return $this->getPekerjaan0()->where(['kode' => '55']);
+    }
+
+    public function getNamaPenghasilan()
+    {
+        return $this->getPenghasilan0()->where(['kode' => '69']);
+    }
+
+    public function getNamaPendidikan()
+    {
+        return $this->getPendidikan0()->where(['kode' => '01']);
     }
 }

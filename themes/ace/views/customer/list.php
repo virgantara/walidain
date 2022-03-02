@@ -27,9 +27,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="customer-index">
 
-    
+    <p>
     <?=Html::a('<i class="fa fa-plus"></i> Klaim Data Ananda',['javascript:void(0)'],['class' => 'btn btn btn-success','id'=>
 'btn-add']);?>
+</p>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     
     <?php 
@@ -69,7 +70,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'attribute' => 'kode_prodi',
             'label' => 'Prodi',
             'format' => 'raw',
-            'filter'=>\yii\helpers\ArrayHelper::map(\app\models\SimakMasterprogramstudi::getProdiList(),'kode_prodi','nama_prodi'),
             'value'=>function($model,$url){
 
                 
@@ -136,27 +136,10 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ]
     ?>
-<p>
-<div class="row">
 
-    <div class="col-md-12">
-        
-        
-        <?php 
-        // Renders a export dropdown menu
-        echo \kartik\export\ExportMenu::widget([
-            'dataProvider' => $dataProvider,
-            'columns' => $gridColumns,
-            'clearBuffers' => true, //optional
-        ]);
-        ?>
-        
-    </div>
-</div>
-</p>
      <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        // 'filterModel' => $searchModel,
         'columns' => $gridColumns,
         'responsiveWrap' => false,
         'summary' => '',

@@ -58,6 +58,25 @@ class MenuHelper
 	            
 	        ]];
 
+	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-money"></i><span class="menu-text"> Pembayaran </span><i class="caret"></i>', 'url' => '#',
+	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
+	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
+	         'visible' => Yii::$app->user->can('ortu'),
+	        'items'=>[	           
+	            
+	            [
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Tagihan',  
+	                'url' => ['/tagihan/index'],	           
+	            ],
+     			[
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Riwayat',  
+	                'url' => ['/tagihan/riwayat'],	           
+	            ],
+	            
+	           
+	            
+	        ]];
+
 	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-home"></i><span class="menu-text"> Asrama </span><i class="caret"></i>', 'url' => '#',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
@@ -66,17 +85,17 @@ class MenuHelper
 	            
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Kegiatan',  
-	                'url' => ['/tagihan/du'],	           
+	                'url' => ['/asrama/kegiatan'],	           
 	            ],
      			[
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Asrama',  
-	                'url' => ['/tagihan/du-nonaktif'],	           
+	                'url' => ['/asrama/kesantrian'],	           
 	            ],
 	            
-	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Pelanggaran',  
-	                'url' => ['/tagihan/instant'],	        
-	            ],
+	            // [
+	            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i>Pelanggaran',  
+	            //     'url' => ['/asrama/pelanggaran'],	        
+	            // ],
 	            
 	           
 	            

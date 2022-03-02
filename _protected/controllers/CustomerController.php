@@ -70,7 +70,31 @@ class CustomerController extends Controller
         ];
     }
 
-      public function actionAjaxCariMahasiswa() {
+    function getImage($url){
+        $ch = curl_init ($url);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
+        $resource = curl_exec($ch);
+        curl_close ($ch);
+
+        return $resource;
+    }
+
+    public function actionFoto($id){
+        $model = SimakMastermahasiswa::findOne($id);
+        if(!empty($model->foto_path)){
+            $image = imagecreatefromstring($this->getImage($model->foto_path));
+
+            header('Content-Type: image/png');
+            imagepng($image);    
+        }
+        
+
+        die();
+    }
+
+    public function actionAjaxCariMahasiswa() {
 
         $q = $_GET['term'];
         

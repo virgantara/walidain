@@ -170,7 +170,7 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
             'kode_fakultas' => 'Kode Fakultas',
             'kode_prodi' => 'Kode Prodi',
             'kode_jenjang_studi' => 'Kode Jenjang Studi',
-            'nim_mhs' => 'Nim Mhs',
+            'nim_mhs' => 'NIM',
             'nama_mahasiswa' => 'Nama Mahasiswa',
             'tempat_lahir' => 'Tempat Lahir',
             'tgl_lahir' => 'Tgl Lahir',
@@ -241,7 +241,7 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
             'is_synced' => 'Is Synced',
             'va_code' => 'Va Code',
             'is_eligible' => 'Is Eligible',
-            'kamar_id' => 'Kamar ID',
+            'kamar_id' => 'Kamar',
             'order_mount' => Yii::t('app', 'Order Amount'),
             'foto_path' => 'Profil',
             'created_at' => 'Created At',
@@ -253,6 +253,48 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
             'kode_pd' => 'Kode FEEDER',
             'apakah_4_tahun' => 'Lama Rencana Studi'
         ];
+    }
+
+    public function getNamaWali()
+    {
+
+        $results = null;
+
+        foreach($this->simakMahasiswaOrtus as $ortu) {
+            if($ortu->hubungan == 'WALI'){
+                $results = ucwords(strtolower($ortu->nama));
+                break;
+            }
+
+            else if($ortu->hubungan == 'AYAH'){
+                $results = ucwords(strtolower($ortu->nama));
+                break;
+            }
+        }
+
+
+        return $results;
+    }
+
+    public function getAlamatWali()
+    {
+
+        $results = null;
+
+        foreach($this->simakMahasiswaOrtus as $ortu) {
+            if($ortu->hubungan == 'WALI'){
+                $results = ucwords(strtolower($ortu->alamat));
+                break;
+            }
+
+            else if($ortu->hubungan == 'AYAH'){
+                $results = ucwords(strtolower($ortu->alamat));
+                break;
+            }
+        }
+
+
+        return $results;
     }
 
     public function getInvalidAttributes()

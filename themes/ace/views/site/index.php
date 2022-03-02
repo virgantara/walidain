@@ -15,13 +15,7 @@ $list_kampus = ArrayHelper::map(\app\models\SimakKampus::find()->all(),'kode_kam
 
 <div class="row">
 	<div class="col-sm-12">
-		<?=Html::dropDownList('tahun',$tahun,ArrayHelper::map(Tahun::find()->orderBy(['id'=>SORT_DESC])->all(),'id','nama'),['id'=>'tahun','prompt'=>'- Pilih Tahun -']);?>
-
-		<?=Html::dropDownList('tahun',$tahun,$list_kampus,['id'=>'kampus','prompt'=>'- Pilih Kelas -']);?>
-
-		<?=Html::dropDownList('status_aktivitas',$status_aktivitas,['A'=>'Aktif','N'=>'Non-Aktif','K'=>'Keluar','C'=>'Cuti','L'=>'Lulus','D'=>'DO'],['id'=>'status_aktivitas','prompt'=>'- Pilih Status -']);?>
-
-		<button id="btn-filter" type="button" class="btn btn-primary">Show</button>
+		<h1>Selamat datang di Walidain, aplikasi monitoring mahasiswa Universitas Darussalam Gontor</h1>
 	</div>
 </div>
 <div class="row">
@@ -36,44 +30,7 @@ $list_kampus = ArrayHelper::map(\app\models\SimakKampus::find()->all(),'kode_kam
 <div class="row">
 	<div class="col-sm-12">
 		
-			<div class="widget-box transparent">
-				<div class="widget-header widget-header-flat">
-					<h4 class="widget-title lighter">
-						<i class="ace-icon fa fa-star orange"></i>
-						Data Pembayaran Mahasiswa
-					</h4>
-
-					<div class="widget-toolbar">
-						<input type="hidden" id="singkatan"/>
-						<a href="javascript:void(0)" class="btn btn-sm btn-success" title="download data ini" id="btn-download">
-							<i class="ace-icon fa fa-download"></i> Download
-						</a>
-					</div>
-				</div>
-
-				<div class="widget-body">
-					<div class="widget-main no-padding">
-						<table class="table table-bordered table-striped" id="tabel_rincian">
-							<thead class="thin-border-bottom">
-								<tr>
-									<th>No</th>
-									<th>NIM</th>
-									<th>Nama / Semester </th>
-									<th >Kelas</th>
-									<th >Prodi</th>
-									<th >Tagihan</th>
-									<th >Terbayar</th>
-									<th >Sisa Tagihan</th>
-								</tr>
-							</thead>
-
-							<tbody>
-								
-							</tbody>
-						</table>
-					</div><!-- /.widget-main -->
-				</div><!-- /.widget-body -->
-			</div><!-- /.widget-box -->
+			
 									
 	</div>
 </div>

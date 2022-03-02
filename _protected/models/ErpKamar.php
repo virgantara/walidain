@@ -11,8 +11,8 @@ use Yii;
  * @property string $nama
  * @property int $asrama_id
  * @property int $kapasitas
- * @property string $created_at
- * @property string $updated_at
+ * @property string|null $created_at
+ * @property string|null $updated_at
  *
  * @property ErpAsrama $asrama
  * @property ErpRiwayatKamar[] $erpRiwayatKamars
@@ -57,7 +57,13 @@ class ErpKamar extends \yii\db\ActiveRecord
         ];
     }
 
+    public function getNamaAsrama()
+    {
+        return $this->asrama->nama;
+    }
     /**
+     * Gets query for [[Asrama]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getAsrama()
@@ -66,6 +72,8 @@ class ErpKamar extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[ErpRiwayatKamars]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getErpRiwayatKamars()
@@ -74,6 +82,8 @@ class ErpKamar extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[ErpRiwayatKamars0]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getErpRiwayatKamars0()

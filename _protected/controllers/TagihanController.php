@@ -40,10 +40,10 @@ class TagihanController extends AppController
                     
                     [
                         'actions' => [
-                            'create','update','delete','index','du','generate','generate-instant','komponen-tahun','bulanan','bulk','instant','riwayat','du-nonaktif','ajax-quick-update','list-mhs'
+                            'index','riwayat'
                         ],
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'roles' => ['ortu'],
                     ],
                     [
                         'actions' => [
@@ -407,6 +407,14 @@ class TagihanController extends AppController
 
     public function actionRiwayat()
     {
+        $query = SimakMastermahasiswa::find();
+        $query->joinWith(['kampus0 as k','simakMahasiswaOrtus as ortu']);
+
+        if(!Yii::$app->user->isGuest){
+            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
+        }
+
+        $list_anak = $query->all();
         $searchModel = new TagihanSearch();
 
         $listTahun = Tahun::find()->orderBy(['id'=>SORT_DESC])->all();
@@ -438,7 +446,8 @@ class TagihanController extends AppController
             'listTahun' => $listTahun,
             'listKomponen' => $listKomponen,
             'list_prodi' => $list_prodi,
-            'list_kampus' => $list_kampus
+            'list_kampus' => $list_kampus,
+            'list_anak' => $list_anak
         ]);
     }
 
@@ -759,15 +768,16 @@ class TagihanController extends AppController
      */
     public function actionIndex()
     {
+        $query = SimakMastermahasiswa::find();
+        $query->joinWith(['kampus0 as k','simakMahasiswaOrtus as ortu']);
 
-        if(Yii::$app->user->isGuest){
-            $session = Yii::$app->session;
-            $session->remove('token');
-            Yii::$app->user->logout();
-            $url = Yii::$app->params['sso_logout'];
-            return $this->redirect($url);
+        if(!Yii::$app->user->isGuest){
+            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
         }
 
+        $list_anak = $query->all();
+
+        
         $searchModel = new TagihanSearch();
         $listTahun = Tahun::find()->orderBy(['id'=>SORT_DESC])->all();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -793,160 +803,14 @@ class TagihanController extends AppController
         $list_kampus = \app\models\SimakKampus::getList();
 
         $listKomponen = KomponenBiaya::find()->where(['tahun'=>$tahun->id])->all();
-        if (Yii::$app->request->post('hasEditable')) {
-            // instantiate your book model for saving
-            $id = Yii::$app->request->post('editableKey');
-            $model = Tagihan::findOne($id);
-
-            // store a default json response as desired by editable
-            $out = json_encode(['output'=>'', 'message'=>'']);
-
-            
-            $posted = current($_POST['Tagihan']);
-            $post = ['Tagihan' => $posted];
-
-            // load model like any single model validation
-            if ($model->load($post)) {
-                $transaction = \Yii::$app->db->beginTransaction();
-                $errors = '';
-                $results = [];
-
-                try 
-                {
-                    if($model->save())
-                    {
-                        
-                    
-                        
-                        if($model->komponen->kategori->kode == '01')
-                        {
-                            $konfirmasis = SimakKonfirmasipembayaran::find()->where([
-                                'nim' => $model->nim,
-                                'pembayaran' => '01',
-                                'tahun_id' => $model->tahun
-                            ])->all();
-
-                            if(count($konfirmasis) == 0)
-                            {
-                                $k = new SimakKonfirmasipembayaran;
-                                $k->nim = $model->nim;
-                                $k->pembayaran = '01';
-                                $k->tahun_id = $model->tahun;
-                                $k->semester = $model->nim0->semester;
-                                $k->jumlah = $model->terbayar;
-                                $k->bank = '-';
-                                $k->tanggal = date('Y-m-d');
-                                $k->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
-                                if(!$k->save())
-                                {
-                                    $errors .= \app\helpers\MyHelper::logError($k);
-                                    
-                                    throw new \Exception;
-                                }
-
-                                else{
-                                    if($k->status == 1){
-                                        $mhs = $model->nim0;
-                                        $mhs->status_aktivitas = 'A';
-                                        $mhs->save(false,['status_aktivitas']);
-                                    }
-
-                                    else{
-                                        $mhs = $model->nim0;
-                                        $mhs->status_aktivitas = 'N';
-                                        $mhs->save(false,['status_aktivitas']);
-                                    }
-
-                                    $results = [
-                                        'code' => 200,
-                                        'message' => 'Data inserted'
-                                    ];
-                                }
-                            }
-
-                            else
-                            {
-                                foreach($konfirmasis as $konfirmasi)
-                                {
-                                    $konfirmasi->status = (int)(($model->terbayar >= $model->nilai_minimal && $model->terbayar < $model->nilai) ||  $model->terbayar >=$model->nilai);
-                                   
-                                    if($konfirmasi->save(false,['status']))
-                                    {
-                                        if($konfirmasi->status == 1){
-                                            $mhs = $model->nim0;
-                                            $mhs->status_aktivitas = 'A';
-                                            $mhs->save(false,['status_aktivitas']);
-                                        }
-
-                                        else{
-                                            $mhs = $model->nim0;
-                                            $mhs->status_aktivitas = 'N';
-                                            $mhs->save(false,['status_aktivitas']);
-                                        }
-
-                                    }
-
-                                        
-                                    else{
-                                        $errors .= \app\helpers\MyHelper::logError($konfirmasi);
-                                        throw new \Exception;
-                                    }
-                                }
-
-                                $results = [
-                                    'code' => 200,
-                                    'message' => 'Data updated'
-                                ];
-                            }
-
-                            
-
-                        }
-
-                        $transaction->commit();
-                        if (!Yii::$app->request->isAjax) {
-                            return $this->redirect(['index']);
-                        }
-                    
-                    }
-
-                    else{
-                        $errors = \app\helpers\MyHelper::logError($model);
-                        $out = json_encode(['output'=>'', 'message'=>$errors]);
-                    }
-
-                } catch (\Exception $e) {
-                    $errors .= $e->getMessage();
-                    $results = [
-                        'code' => 500,
-                        'message' => $errors
-                    ];
-                    $transaction->rollBack();
-                    $out = json_encode(['output'=>'', 'message'=>$errors]);
-                } catch (\Throwable $e) {
-                    $errors .= $e->getMessage();
-                    $results = [
-                        'code' => 500,
-                        'message' => $errors
-                    ];
-                    $transaction->rollBack();
-                    $out = json_encode(['output'=>'', 'message'=>$errors]);
-                    
-                }
-            }
-
-            echo $out;
-
-            // return ajax json encoded response and exit
-            
-            return ;
-        }
+        
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'listTahun' => $listTahun,
             'tahun' => $tahun,
             'listKomponen' => $listKomponen,
+            'list_anak' => $list_anak,
             'list_prodi' => $list_prodi,
             'list_kampus' => $list_kampus
         ]);

@@ -419,11 +419,8 @@ class SiteController extends Controller
     public function actionLogout()
     {
         
-        $session = Yii::$app->session;
-        $session->remove('token');
         Yii::$app->user->logout();
-        $url = Yii::$app->params['sso_logout'];
-        return $this->redirect($url);
+        return $this->redirect(['login']);
     }
 
 /*----------------*
@@ -451,7 +448,7 @@ class SiteController extends Controller
         }
 
         Yii::$app->session->setFlash('success', Yii::t('app', 'Silakan cek inbox email Anda. Jika tidak ada, mohon cek spam Anda'));
-
+        
         return $this->goHome();
     }
 
@@ -555,9 +552,9 @@ class SiteController extends Controller
         }
 
         // everything is OK
-        Yii::$app->session->setFlash('success', Yii::t('app', 'Hello').' '.Html::encode($user->username). '. ' .
-            Yii::t('app', 'To be able to log in, you need to confirm your registration. 
-                Please check your email, we have sent you a message.'));
+        Yii::$app->session->setFlash('success', Yii::t('app', 'Halo').' '.Html::encode($user->username). '. ' .
+            Yii::t('app', 'Supaya bisa login, Anda harus konfirmasi registrasi. 
+                Silakan cek inbox atau spam di email Anda, kami telah mengirimakan pesan.'));
     }
 
 /*--------------------*

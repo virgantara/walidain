@@ -56,15 +56,18 @@ class PasswordResetRequestForm extends Model
         $to      = $this->email;
         $subject = 'Password reset for ' . Yii::$app->name;
 
+        $mailer = Yii::$app->mailer->compose();
         $message = Yii::$app->controller->renderPartial('passwordResetToken',[
             'user' => $user
-        ]);
+        ]); 
 
-        $headers =  'MIME-Version: 1.0' . "\r\n"; 
-        $headers .= 'From: Admin Tracer UNIDA Gontor<'.Yii::$app->params['supportEmail'].'>' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-
-        mail($to, $subject, $message, $headers);
+        $subject = 'Password reset for ' . Yii::$app->name;
+        $mailer->setTo($this->email);
+        $mailer->setFrom([Yii::$app->params['supportEmail'] => 'UPT PPTIK UNIDA Gontor']);
+        $mailer->setSubject($subject);
+        $mailer->setHtmlBody($message);
+        $mailer->send();
+        
         return true;
         // return Yii::$app->mailer->compose('passwordResetToken', ['user' => $user])
         //                         ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])

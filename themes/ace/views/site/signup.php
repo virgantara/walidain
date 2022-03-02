@@ -7,7 +7,7 @@ use kartik\password\PasswordInput;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
-$this->title = Yii::t('app', 'Signup');
+$this->title = Yii::t('app', 'Form Pendaftaran Aplikasi Walidain UNIDA Gontor');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-signup">
@@ -19,7 +19,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <p><?= Yii::t('app', 'Please fill out the following fields to signup:') ?></p>
 
         <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
-
+        <?php
+                  foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
+                      echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
+                  } ?>
+                  <?=$form->errorSummary($model,['header'=>'<div class="alert alert-danger">','footer'=>'</div>']);?>
+                
             <?= $form->field($model, 'username')->textInput(
                 ['placeholder' => Yii::t('app', 'Create your username'), 'autofocus' => true]) ?>
 

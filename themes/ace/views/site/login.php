@@ -2,7 +2,7 @@
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model \app\models\LoginForm */
-
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
@@ -57,8 +57,13 @@ $this->title = Yii::t('app', 'Login | '.Yii::$app->name);
             ?>
         
           </div>
+          <div>
+              <a href="<?= Url::to(['site/signup']) ?>" data-target="#signup-box" class="user-signup-link">
+                Daftar di sini
+                <i class="ace-icon fa fa-arrow-right"></i>
+              </a>
+            </div>
 
-        
         </div>
     
       </div><!-- /.widget-body -->

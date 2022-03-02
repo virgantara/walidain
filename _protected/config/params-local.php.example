@@ -3,9 +3,15 @@
 return [
 
    'api_baseurl' => 'http://localhost:1926',
-   'client_token' => '',
+   'sso_url' => 'http://local.sso.com:30101',
+   'consumer_secret' => '',
+   'consumer_id' => '',
+   'crypt_algo' => '',
    'jwt_key' => '',
+   'client_token' => '',
    'sso_login' => 'http://local.central.com/site/login?callback=http://local.ebilling.com',
    'sso_logout' => 'http://local.central.com/site/sess-logout',
-   'invoke_token_uri' => 'http://local.central.com/site/invoke-token'
+   'invoke_token_uri' => 'http://local.central.com/site/invoke-token',
+   'GoogleClientId' => '',
+   'GoogleClientSecret' => ''
 ];

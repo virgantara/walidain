@@ -111,8 +111,21 @@ class SignupForm extends Model
             $user->generateAccountActivationToken();
         }
 
+        $user->created_at = date('Y-m-d H:i:s');
+        $user->updated_at = date('Y-m-d H:i:s');
+
+        if($user->save()){
+            return RbacHelper::assignRole($user->getId()) ? $user : null;
+        }
+
+        else{
+
+            print_r(\app\helpers\MyHelper::logError($user));exit;
+            return null;
+        }
+
         // if user is saved and role is assigned return user object
-        return $user->save() && RbacHelper::assignRole($user->getId()) ? $user : null;
+        
     }
 
     /**
@@ -126,17 +139,29 @@ class SignupForm extends Model
 
 
         $to      = $this->email;
-        $subject = 'Account activation for ' . Yii::$app->name;
+        $subject = 'Aktivasi Walidain UNIDA Gontor untuk akun ' . Yii::$app->name;
 
+        // $message = Yii::$app->controller->renderPartial('accountActivationToken',[
+        //     'user' => $user
+        // ]);
+
+        // $headers =  'MIME-Version: 1.0' . "\r\n"; 
+        // $headers .= 'From: Admin Tracer UNIDA Gontor <'.Yii::$app->params['supportEmail'].'>' . "\r\n";
+        // $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+
+        // mail($to, $subject, $message, $headers);
+
+        $mailer = Yii::$app->mailer->compose();
         $message = Yii::$app->controller->renderPartial('accountActivationToken',[
             'user' => $user
-        ]);
+        ]); 
 
-        $headers =  'MIME-Version: 1.0' . "\r\n"; 
-        $headers .= 'From: Admin Tracer UNIDA Gontor <'.Yii::$app->params['supportEmail'].'>' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+        $mailer->setTo($to);
+        $mailer->setFrom([Yii::$app->params['supportEmail'] => 'UPT PPTIK UNIDA Gontor']);
+        $mailer->setSubject($subject);
+        $mailer->setHtmlBody($message);
+        $mailer->send();
 
-        mail($to, $subject, $message, $headers);
         return true;
         // return Yii::$app->mailer->compose('accountActivationToken', ['user' => $user])
         //                         ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])

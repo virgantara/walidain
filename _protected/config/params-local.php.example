@@ -13,5 +13,11 @@ return [
    'sso_logout' => 'http://local.central.com/site/sess-logout',
    'invoke_token_uri' => 'http://local.central.com/site/invoke-token',
    'GoogleClientId' => '',
-   'GoogleClientSecret' => ''
+   'GoogleClientSecret' => '',
+   'mail' => [
+      'password' => '',
+      'port' => '587',
+      'encryption' => 'tls',
+      'username' => ''
+   ]
 ];

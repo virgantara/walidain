@@ -134,10 +134,10 @@ $config = [
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'smtp.gmail.com',
-                'username' => 'noreply@unida.gontor.ac.id',
-                'password' => '35SLe<>B',
-                'port' => '587',
-                'encryption' => 'tls',                                  
+                'username' => $params['mail']['email'],
+                'password' => $params['mail']['password'],
+                'port' => $params['mail']['port'],
+                'encryption' => $params['mail']['encryption'],                                  
             ],  
         ],
         'log' => [

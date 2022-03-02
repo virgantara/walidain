@@ -241,10 +241,22 @@ class MenuHelper
 	            ],
 	            
 	            [
-	                'label' => '<i class="menu-icon fa fa-caret-right"></i>VA Generator',  
+	                'label' => '<i class="menu-icon fa fa-caret-right"></i>VA Generator <b class="arrow fa fa-angle-down"></b>',  
+	                'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	                'visible' => Yii::$app->user->can('admin'),
-	                'url' => ['customer/generate-va'],
-	                
+	                'url' => ['#'],
+	                 'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
+	                'items' => [
+
+	                    [
+	                    	'label' => ( '<i class="menu-icon fa fa-caret-right"></i>Muamalat'),
+	                    	'url' => ['customer/generate-va']
+	                    ],
+	                    [
+	                        'label' => ( '<i class="menu-icon fa fa-caret-right"></i>Oppal'),
+	                        'url' => ['customer/generate-va-oppal']
+	                    ]
+	                ],
 	            ],
 	            
 	        ]];

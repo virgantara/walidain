@@ -35,18 +35,18 @@ class CustomerController extends AppController
                 'denyCallback' => function ($rule, $action) {
                     throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page');
                 },
-                'only' => ['view','index','generate-va','detil'],
+                'only' => ['view','index','generate-va','detil','generate-va-oppal'],
                 'rules' => [
                     [
                         'actions' => [
-                            'index','view','generate-va','detil','aktivasi'
+                            'index','view','generate-va','detil','aktivasi','generate-va-oppal'
                         ],
                         'allow' => true,
                         'roles' => ['admin'],
                     ],
                     [
                         'actions' => [
-                            'index','view','generate-va','detil','aktivasi'
+                            'index','view','generate-va','detil','aktivasi','generate-va-oppal'
                         ],
                         'allow' => true,
                         'roles' => ['theCreator'],
@@ -60,6 +60,97 @@ class CustomerController extends AppController
                 ],
             ],
         ];
+    }
+
+    public function actionGenerateVaOppal()
+    {
+
+        $model = new SimakMastermahasiswa;
+        $count = 0;
+        if($model->load(Yii::$app->request->get()))
+        {
+            $prodi = $model->kode_prodi;
+            $kampus = $model->kampus;
+            $status_aktivitas = $model->status_aktivitas;
+
+            $query = SimakMastermahasiswa::find()->where([
+                
+                'status_aktivitas'=>$status_aktivitas,
+                'kampus' => $kampus
+            ]);
+
+            if(!empty($prodi))
+            {
+                $query->andWhere(['kode_prodi' => $prodi]);
+            }
+
+            $list = $query->all();
+
+            $kampus = \app\models\SimakKampus::find()->where(['kode_kampus'=>$kampus])->one();
+
+            // $prefix = '751050';
+
+            $transaction = \Yii::$app->db->beginTransaction();
+            $errors = '';
+
+            // print_r($listCustomer);exit;
+            try 
+            {
+                foreach($list as $m)
+                {
+                    
+                    $nim = str_replace('.', '', $m->nim_mhs);
+                    if(strlen($nim) < 8)
+                    {
+                        $suffix = $nim;
+                    }
+
+                    else
+                    {
+                        $suffix = str_replace(substr($nim, 2, 4),'',$nim);
+                    }
+
+                    
+                    $prefix = '792600';
+                    $code = $prefix.\app\helpers\MyHelper::appendZeros($suffix, 10);
+
+                    $m->va_oppal = $code;
+                    if($m->save(false,['va_oppal']))
+                    {
+                        $count++;
+                    }
+
+                    else
+                    {
+                        $errors .= \app\helpers\MyHelper::logError($m);
+                        throw new Exception;
+                        
+                    }
+                    
+                }  
+                Yii::$app->session->setFlash('success', $count." virtual account sudah dibuat");
+                $transaction->commit();
+
+                return $this->redirect(['generate-va']);
+            } catch (\Exception $e) {
+                $errors .= $e->getMessage();
+                Yii::$app->session->setFlash('danger', $errors);
+                $transaction->rollBack();
+                
+            } catch (\Throwable $e) {
+                $errors .= $e->getMessage();
+                Yii::$app->session->setFlash('danger', $errors);
+                $transaction->rollBack();
+                
+                
+            }
+            die(); 
+        }
+
+        return $this->render('generate_va_oppal',[
+            'model' => $model,
+
+        ]);   
     }
 
     public function actionAktivasi()

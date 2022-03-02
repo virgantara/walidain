@@ -113,7 +113,7 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
     {
         return [
             [['nim_mhs', 'nama_mahasiswa'], 'required'],
-            [['va_code'], 'unique'],
+            [['va_code','va_oppal'], 'unique'],
             [['tgl_lahir', 'tgl_masuk', 'tgl_lulus', 'tgl_sk_yudisium', 'created_at', 'updated_at'], 'safe'],
             [['keterangan'], 'string'],
             [['status_bayar', 'status_mahasiswa', 'is_synced', 'kamar_id', 'is_eligible'], 'integer'],

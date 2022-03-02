@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 /* @var $searchModel app\models\SalesStokGudangSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Generate Virtual Account Muamalat';
+$this->title = 'Generate Virtual Account Oppal';
 $this->params['breadcrumbs'][] = $this->title;
 // $prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : '';
 ?>
@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
   
     <?php $form = ActiveForm::begin([
         'method' => 'get',
-        'action' => ['customer/generate-va'],
+        'action' => ['customer/generate-va-oppal'],
         'options' => [
             'class' => 'form-horizontal'
         ]

@@ -104,7 +104,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 
             ],
         ],
-
+        [
+            'class' => 'kartik\grid\EditableColumn',
+            'attribute' => 'va_oppal',
+            'readonly' => !Yii::$app->user->can('theCreator'),
+            'editableOptions' => [
+                'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                
+                'asPopover' => false
+                
+                
+            ],
+        ],
         [
             'attribute'=>'status_aktivitas',
             'filter' => \app\helpers\MyHelper::getStatusAktivitas(),

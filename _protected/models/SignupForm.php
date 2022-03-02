@@ -113,9 +113,19 @@ class SignupForm extends Model
 
         $user->created_at = date('Y-m-d H:i:s');
         $user->updated_at = date('Y-m-d H:i:s');
+        $user->access_role = 'ortu';
 
         if($user->save()){
-            return RbacHelper::assignRole($user->getId()) ? $user : null;
+            $auth = Yii::$app->authManager;
+            $role = $auth->getRole($user->access_role);
+            $info = $auth->assign($role, $user->getId());
+
+            if (!$info) {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'There was some error while saving user role.'));
+                return null;
+            }
+
+            return $user;
         }
 
         else{

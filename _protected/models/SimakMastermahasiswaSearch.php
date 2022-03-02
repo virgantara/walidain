@@ -41,6 +41,115 @@ class SimakMastermahasiswaSearch extends SimakMastermahasiswa
      *
      * @return ActiveDataProvider
      */
+    
+    public function searchAnanda($params)
+    {
+        $query = SimakMastermahasiswa::find();
+        $query->joinWith(['kampus0 as k','simakMahasiswaOrtus as ortu']);
+
+        if(!Yii::$app->user->isGuest){
+            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
+        }
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort'=> ['defaultOrder' => ['status_aktivitas'=>SORT_ASC,'kode_prodi' => SORT_ASC,'nama_mahasiswa' => SORT_ASC]],
+        ]);
+
+        // $query->where(['status_aktivitas'=>'A']);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $dataProvider->sort->attributes['namaKampus'] = [
+            'asc' => ['k.nama_kampus'=>SORT_ASC],
+            'desc' => ['k.nama_kampus'=>SORT_DESC]
+        ];
+
+        $dataProvider->sort->attributes['namaProdi'] = [
+            'asc' => ['p.nama_prodi'=>SORT_ASC],
+            'desc' => ['p.nama_prodi'=>SORT_DESC]
+        ];
+
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'semester' => $this->semester,
+            'tgl_lahir' => $this->tgl_lahir,
+            'tgl_masuk' => $this->tgl_masuk,
+            'tgl_lulus' => $this->tgl_lulus,
+            'status_bayar' => $this->status_bayar,
+            'tgl_sk_yudisium' => $this->tgl_sk_yudisium,
+            'status_mahasiswa' => $this->status_mahasiswa,
+            'is_synced' => $this->is_synced,
+            'kamar_id' => $this->kamar_id,
+            'is_eligible' => $this->is_eligible,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ]);
+
+        
+        if(!empty($this->kode_prodi))
+        {
+            $query->andWhere(['kode_prodi'=>$this->kode_prodi]);
+        }
+
+        if(!empty($this->kampus))
+        {
+            $query->andWhere(['kampus'=>$this->kampus]);
+        }
+
+        if(!empty($this->nim_mhs))
+        {
+            $query->andWhere(['nim_mhs'=>$this->nim_mhs]);
+        }
+
+        if(Yii::$app->user->identity->access_role == 'admin')
+        {
+            $list_kampus = explode(',', Yii::$app->user->identity->kampus);
+            $query->andWhere(['IN','kampus',$list_kampus]);
+            // $query->andFilterWhere(['or',
+            //     ['kampus'=>Yii::$app->user->identity->kampus],
+            //     ['kampus'=>Yii::$app->user->identity->kampus2]
+                
+            // ]);
+        }
+
+
+
+        $query->andFilterWhere(['like', 'kode_fakultas', $this->kode_fakultas])
+            
+            ->andFilterWhere(['like', 'nama_mahasiswa', $this->nama_mahasiswa])
+            ->andFilterWhere(['like', 'tempat_lahir', $this->tempat_lahir])
+            ->andFilterWhere(['like', 'jenis_kelamin', $this->jenis_kelamin])
+            ->andFilterWhere(['like', 'status_aktivitas', $this->status_aktivitas])
+            ->andFilterWhere(['like', 'keterangan', $this->keterangan])
+            ->andFilterWhere(['like', 'telepon', $this->telepon])
+            ->andFilterWhere(['like', 'hp', $this->hp])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'alamat', $this->alamat])
+            ->andFilterWhere(['like', 'ktp', $this->ktp])
+            ->andFilterWhere(['like', 'kecamatan', $this->kecamatan])
+            ->andFilterWhere(['like', 'kecamatan_feeder', $this->kecamatan_feeder])
+            ->andFilterWhere(['like', 'jenis_tinggal', $this->jenis_tinggal])
+            ->andFilterWhere(['like', 'provinsi', $this->provinsi])
+            ->andFilterWhere(['like', 'kabupaten', $this->kabupaten])
+            ->andFilterWhere(['like', 'status_warga', $this->status_warga])
+            ->andFilterWhere(['like', 'warga_negara', $this->warga_negara])
+            ->andFilterWhere(['like', 'warga_negara_feeder', $this->warga_negara_feeder])
+            ->andFilterWhere(['like', 'status_sipil', $this->status_sipil])
+            ->andFilterWhere(['like', 'va_code', $this->va_code]);
+
+        return $dataProvider;
+    }
+
     public function search($params)
     {
         $query = SimakMastermahasiswa::find();

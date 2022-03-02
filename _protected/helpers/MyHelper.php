@@ -9,6 +9,19 @@ use Yii;
 class MyHelper
 {
 
+    public static function getSemester()
+    {
+        $list_semester = [
+          0 => [1=>1,2=>2],
+          1 => [3=>3,4=>4],
+          2 => [5=>5,6=>6],
+          3 => [7=>7,8=>8],
+        ];
+
+        return $list_semester;
+    }
+
+
     public static function getListPrioritas(){
         $list_prioritas = [
             '1' => 'HIGH',

@@ -6,7 +6,6 @@ $params = array_merge(
     require(__DIR__ . '/params-local.php')
 );
 
-
 $config = [
     'id' => 'basic',
     'name' => 'Sistem Informasi Wali Mahasiswa',
@@ -134,7 +133,7 @@ $config = [
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'smtp.gmail.com',
-                'username' => $params['mail']['email'],
+                'username' => $params['mail']['username'],
                 'password' => $params['mail']['password'],
                 'port' => $params['mail']['port'],
                 'encryption' => $params['mail']['encryption'],                                  

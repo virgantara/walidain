@@ -9,6 +9,7 @@ use app\models\CustomerSearch;
 use app\models\Tagihan;
 use app\models\Tahun;
 use app\models\SimakMastermahasiswa;
+use app\models\SimakMahasiswaOrtu;
 use app\models\SimakMastermahasiswaSearch;
 
 use yii\filters\AccessControl;
@@ -22,7 +23,7 @@ use yii\httpclient\Client;
 /**
  * CustomerController implements the CRUD actions for Customer model.
  */
-class CustomerController extends AppController
+class CustomerController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -35,14 +36,21 @@ class CustomerController extends AppController
                 'denyCallback' => function ($rule, $action) {
                     throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page');
                 },
-                'only' => ['view','index','generate-va','detil','generate-va-oppal'],
+                'only' => ['view','index','detil','list'],
                 'rules' => [
                     [
                         'actions' => [
-                            'index','view','generate-va','detil','aktivasi','generate-va-oppal'
+                            'index','view','detil'
                         ],
                         'allow' => true,
                         'roles' => ['admin'],
+                    ],
+                    [
+                        'actions' => [
+                            'list','view','detil'
+                        ],
+                        'allow' => true,
+                        'roles' => ['ortu'],
                     ],
                     [
                         'actions' => [
@@ -62,449 +70,113 @@ class CustomerController extends AppController
         ];
     }
 
-    public function actionGenerateVaOppal()
-    {
+      public function actionAjaxCariMahasiswa() {
 
-        $model = new SimakMastermahasiswa;
-        $count = 0;
-        if($model->load(Yii::$app->request->get()))
+        $q = $_GET['term'];
+        
+        $api_baseurl = Yii::$app->params['api_baseurl'];
+        $client = new Client(['baseUrl' => $api_baseurl]);
+        $client_token = Yii::$app->params['client_token'];
+        $headers = ['x-access-token'=>$client_token];
+
+        $prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : null;
+        if(Yii::$app->user->identity->access_role == 'sekretearis')
         {
-            $prodi = $model->kode_prodi;
-            $kampus = $model->kampus;
-            $status_aktivitas = $model->status_aktivitas;
-
-            $query = SimakMastermahasiswa::find()->where([
-                
-                'status_aktivitas'=>$status_aktivitas,
-                'kampus' => $kampus
-            ]);
-
-            if(!empty($prodi))
-            {
-                $query->andWhere(['kode_prodi' => $prodi]);
-            }
-
-            $list = $query->all();
-
-            $kampus = \app\models\SimakKampus::find()->where(['kode_kampus'=>$kampus])->one();
-
-            // $prefix = '751050';
-
-            $transaction = \Yii::$app->db->beginTransaction();
-            $errors = '';
-
-            // print_r($listCustomer);exit;
-            try 
-            {
-                foreach($list as $m)
-                {
-                    
-                    $nim = str_replace('.', '', $m->nim_mhs);
-                    if(strlen($nim) < 8)
-                    {
-                        $suffix = $nim;
-                    }
-
-                    else
-                    {
-                        $suffix = str_replace(substr($nim, 2, 4),'',$nim);
-                    }
-
-                    
-                    $prefix = '792600';
-                    $code = $prefix.\app\helpers\MyHelper::appendZeros($suffix, 10);
-
-                    $m->va_oppal = $code;
-                    if($m->save(false,['va_oppal']))
-                    {
-                        $count++;
-                    }
-
-                    else
-                    {
-                        $errors .= \app\helpers\MyHelper::logError($m);
-                        throw new Exception;
-                        
-                    }
-                    
-                }  
-                Yii::$app->session->setFlash('success', $count." virtual account Oppal sudah dibuat");
-                $transaction->commit();
-
-                return $this->redirect(['generate-va-oppal']);
-            } catch (\Exception $e) {
-                $errors .= $e->getMessage();
-                Yii::$app->session->setFlash('danger', $errors);
-                $transaction->rollBack();
-                
-            } catch (\Throwable $e) {
-                $errors .= $e->getMessage();
-                Yii::$app->session->setFlash('danger', $errors);
-                $transaction->rollBack();
-                
-                
-            }
-            die(); 
+            $prodi = Yii::$app->user->identity->prodi;
         }
 
-        return $this->render('generate_va_oppal',[
-            'model' => $model,
+        $params = [
+            'key' => $q,
+            'kampus' => !empty($_GET['kampus']) ? $_GET['kampus'] : null,
+            'prodi' => $prodi,
+            'semester' => !empty($_GET['semester']) ? $_GET['semester'] : null,
+            'status' => !empty($_GET['status']) ? $_GET['status'] : null
+        ];
+        $response = $client->get('/m/cari', $params,$headers)->send();
+        
+        $out = [];
 
-        ]);   
-    }
+        
+        if ($response->isOk) {
+            $result = $response->data['values'];
+            // print_r($result);exit;
+            if(!empty($result))
+            {
+                foreach ($result as $d) {
+                    $out[] = [
+                        'id' => $d['id'],
+                        'nim' => $d['nim_mhs'],
+                        'label'=> $d['nim_mhs'].' - '.$d['nama_mahasiswa'].' - '.$d['nama_prodi'].' - '.$d['nama_kampus'],
+                        'prodi' => $d['kode_prodi'],
+                        'nama_prodi' => $d['nama_prodi'],
+                        'kampus' => $d['kampus'],
+                        'nama_kampus' => $d['nama_kampus'],
+                        'semester' => $d['semester']
 
-    public function actionAktivasi()
-    {
-        $model = new Tagihan;
-        $tahun = Tahun::getTahunAktif();
+                    ];
+                }
+            }
+
+            else
+            {
+                $out[] = [
+                    'id' => 0,
+                    'label'=> 'Data mahasiswa tidak ditemukan',
+
+                ];
+            }
+        }
         
 
-        if(!empty($_POST['status_aktivitas']) && !empty($_POST['prodi']) && !empty($_POST['kampus'])&& !empty($_POST['tahun_masuk']))
-        {
-
-            $sa = $_POST['status_aktivitas'];
-            $query = SimakMastermahasiswa::find()->where([
-                'kode_prodi' => $_POST['prodi'],
-                'kampus' => $_POST['kampus'],
-                'tahun_masuk' => $_POST['tahun_masuk'],
-                'status_aktivitas' => $sa
-            ]);
+        echo \yii\helpers\Json::encode($out);
 
 
-            $listCustomer = $query->all();
-            $transaction = \Yii::$app->db->beginTransaction();
-            $errors = '';
+    }
 
-            // print_r($listCustomer);exit;
-            try 
-            {
+    public function actionList()
+    {
+        $searchModel = new SimakMastermahasiswaSearch();
+        $dataProvider = $searchModel->searchAnanda(Yii::$app->request->queryParams);
 
-                if(empty($_POST['prodi']))
-                {
-                    $errors .= 'Prodi harus diisi';
-                        
-                    throw new \Exception;
-                }
+        // if (Yii::$app->request->post('hasEditable')) {
+        //     // instantiate your book model for saving
+        //     $id = Yii::$app->request->post('editableKey');
+        //     $model = SimakMastermahasiswa::findOne($id);
 
-                if(empty($_POST['kampus']))
-                {
-                    $errors .= 'Kelas harus diisi';
-                        
-                    throw new \Exception;
-                }
+        //     // store a default json response as desired by editable
+        //     $out = json_encode(['output'=>'', 'message'=>'']);
 
-                $counter = 0;
-                foreach($listCustomer as $c)
-                {
+            
+        //     $posted = current($_POST['SimakMastermahasiswa']);
+        //     $post = ['SimakMastermahasiswa' => $posted];
 
-                    $query = Tagihan::find();
-                    $query->alias('t');
-                    $query->joinWith(['komponen as k','komponen.kategori as kk']);
-                    $query->andWhere([
-                        'kk.kode' => '01',
-                        't.nim' => $c->nim_mhs,
-                        't.tahun' => $tahun->id,
-                    ]);
+        //     // load model like any single model validation
+        //     if ($model->load($post)) {
+        //     // can save model or do something before saving model
+        //         if($model->save(false,['va_code']))
+        //         {
+        //             // $out = json_encode(['output'=>'', 'message'=>'']);
+        //         }
 
-                    $query->andWhere('terbayar >= nilai_minimal');
-                    $lunas = $query->one();
-                    
-                    if(!empty($lunas))
-                    {
-                        $c->status_aktivitas = 'A';
-                        if($c->save(false,['status_aktivitas']))
-                        {
-                            $konfirm = SimakKonfirmasipembayaran::find()->where([
-                                'nim' =>$c->nim_mhs,
-                                'pembayaran' => '01',
-                                'semester' => $c->semester,
-                                'jumlah' => $lunas->terbayar,
-                                'bank' => 'nama_bank',
-                                'tahun_id' => $tahun->id
-                            ])->one();
+        //         else{
+        //             $errors = \app\helpers\MyHelper::logError($model);
+        //             $out = json_encode(['output'=>'', 'message'=>$errors]);
+        //         }
+        //     }
 
-                            if(empty($konfirm))
-                            {
-                                $konfirm = new SimakKonfirmasipembayaran;
-                                $konfirm->nim = $c->nim_mhs;
-                                $konfirm->pembayaran = '01';
-                                $konfirm->semester = $c->semester;
-                                $konfirm->jumlah = $lunas->terbayar;
-                                $konfirm->bank = 'nama_bank';
-                                $konfirm->tahun_id = $tahun->id;
-                                $konfirm->status = 1;
-                            }
+        //     echo $out;
 
-                            else{
-                                $konfirm->pembayaran = '01';
-                                $konfirm->jumlah = $lunas->terbayar;
-                                $konfirm->status = 1;
-                            }
+        //     // return ajax json encoded response and exit
+            
+        //     return ;
+        // }
 
-                            if($konfirm->save())
-                            {
-                                $counter++;
-                            }
-
-                            else{
-                                $errors .= \app\helpers\MyHelper::logError($konfirm);
-                                throw new \Exception;
-                            }
-                            
-                        }    
-
-                        else{
-                            $errors .= \app\helpers\MyHelper::logError($c);
-                            throw new \Exception;
-                        }
-                    }
-
-
-
-                }
-                $transaction->commit();
-                Yii::$app->session->setFlash('success', $counter." Data mahasiswa telah diaktifkan");
-                
-            } catch (\Exception $e) {
-                $errors .= $e->getMessage();
-                $transaction->rollBack();
-                Yii::$app->session->setFlash('danger', $errors);
-                
-                
-            } catch (\Throwable $e) {
-                $errors .= $e->getMessage();
-                $transaction->rollBack();
-                Yii::$app->session->setFlash('danger', $errors);
-                
-                
-                
-            }
-        }
-
-        return $this->render('aktivasi',[
-            'model' => $model,
-            'tahun' => $tahun,
+        return $this->render('list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
-
-    public function actionGenerateVa()
-    {
-
-        $model = new SimakMastermahasiswa;
-        $count = 0;
-        if($model->load(Yii::$app->request->get()))
-        {
-            $prodi = $model->kode_prodi;
-            $kampus = $model->kampus;
-            $status_aktivitas = $model->status_aktivitas;
-
-            $query = SimakMastermahasiswa::find()->where([
-                
-                'status_aktivitas'=>$status_aktivitas,
-                'kampus' => $kampus
-            ]);
-
-            if(!empty($prodi))
-            {
-                $query->andWhere(['kode_prodi' => $prodi]);
-            }
-
-            $list = $query->all();
-
-            $kampus = \app\models\SimakKampus::find()->where(['kode_kampus'=>$kampus])->one();
-
-            // $prefix = '751050';
-
-            $transaction = \Yii::$app->db->beginTransaction();
-            $errors = '';
-
-            // print_r($listCustomer);exit;
-            try 
-            {
-                foreach($list as $m)
-                {
-                    
-                    $nim = str_replace('.', '', $m->nim_mhs);
-                    if(strlen($nim) < 8)
-                    {
-                        $suffix = $nim;
-                    }
-
-                    else
-                    {
-                        $suffix = str_replace(substr($nim, 2, 4),'',$nim);
-                    }
-
-                    
-                    $prefix = $kampus->prefix;
-                    $code = $prefix.\app\helpers\MyHelper::appendZeros($suffix, 10);
-
-                    $m->va_code = $code;
-                    if($m->save(false,['va_code']))
-                    {
-                        $count++;
-                    }
-
-                    else
-                    {
-                        $errors .= \app\helpers\MyHelper::logError($m);
-                        throw new Exception;
-                        
-                    }
-                    
-                }  
-                Yii::$app->session->setFlash('success', $count." virtual account sudah dibuat");
-                $transaction->commit();
-
-                return $this->redirect(['generate-va']);
-            } catch (\Exception $e) {
-                $errors .= $e->getMessage();
-                Yii::$app->session->setFlash('danger', $errors);
-                $transaction->rollBack();
-                
-            } catch (\Throwable $e) {
-                $errors .= $e->getMessage();
-                Yii::$app->session->setFlash('danger', $errors);
-                $transaction->rollBack();
-                
-                
-            }
-            die(); 
-        }
-
-        return $this->render('generateVa',[
-            'model' => $model,
-
-        ]);   
-    }
-
-    public function actionGetJumlahMahasiswaPerProdi()
-    {
-        $dataPost = $_POST['dataPost'];
-        $prodi = $dataPost['prodi'];
-        $tahun_masuk = $dataPost['tahun_masuk'];
-        $kampus = $dataPost['kampus'];
-        
-        $status_aktivitas = $dataPost['status_aktivitas'];
-        
-
-        $query = SimakMastermahasiswa::find()->where([
-            'kode_prodi' => $prodi,
-            'tahun_masuk' => $tahun_masuk,
-            'kampus' => $kampus,    
-            'status_aktivitas' => $status_aktivitas
-        ]);
-        $tahun = Tahun::getTahunAktif();
-        // $query->andWhere(['NOT IN','status_aktivitas',['A','K']]);
-
-        $list = $query->all();
-        $counter=0;
-        foreach($list as $mhs)
-        {
-            
-            $query = Tagihan::find();
-            $query->alias('t');
-            $query->joinWith(['komponen as k','nim0 as mhs','komponen.kategori as kk']);
-            $query->andWhere([
-                'kk.kode' => '01',
-                't.tahun' => $tahun->id,
-                't.nim' => $mhs->nim_mhs
-            ]);
-
-            $query->andWhere('terbayar >= nilai_minimal');
-            $lunas = $query->count();
-
-            if($lunas > 0)
-                $counter++;
-            
-        }        
-        
-        $out = [
-            'prodi' => $prodi,
-            'jumlah' => $counter
-        ];
-
-        echo \yii\helpers\Json::encode($out);
-        die();
-    }
-
-
-    public function actionGetJumlahMahasiswaPerAngkatan()
-    {
-        $dataPost = $_POST['dataPost'];
-        $prodi = $dataPost['prodi'];
-        $tahun_masuk = $dataPost['tahun_masuk'];
-        $kampus = $dataPost['kampus'];
-        $komponen_id = $dataPost['komponen_id'];
-        $status_aktivitas = $dataPost['status_aktivitas'];
-        // $sa = ['A','N'];
-        $tahun = Tahun::getTahunAktif();
-
-        $listMhs = SimakMastermahasiswa::find()->where([
-            'kode_prodi' => $prodi,
-            'tahun_masuk' => $tahun_masuk,
-            'kampus' => $kampus,
-            'status_aktivitas' => $status_aktivitas
-        ])->all();        
-
-        $counter = 0;
-        foreach($listMhs as $m)
-        {
-            $t = Tagihan::find()->where([
-                'komponen_id'=>$komponen_id,
-                'tahun' => $tahun->id,
-                'nim' =>$m->nim_mhs       
-            ])->one();
-
-            if(empty($t))
-                $counter++;
-        }
-
-        // $out = (new \yii\db\Query())
-        //     ->select(['semester as id', 'semester as name'])
-        //     ->from('simak_mastermahasiswa')
-
-        //     ->where([
-        //       'kode_prodi' => $prodi,
-        //       'tahun_masuk' => $tahun_masuk
-        //     ])
-        //     ->andWhere(['in','status_aktivitas',$sa])
-        //     ->groupBy(['semester'])
-        //     ->orderBy(['semester'=>SORT_ASC])
-        //     ->all();
-
-        $out = [
-            'prodi' => $prodi,
-            'jumlah' => $counter
-        ];
-
-        echo \yii\helpers\Json::encode($out);
-        die();
-    }
-
-    public function actionGetJumlahMahasiswaPerSemester()
-    {
-        $dataPost = $_POST['dataPost'];
-        $prodi = $dataPost['prodi'];
-        $semester = $dataPost['semester'];
-        $kampus = $dataPost['kampus'];
-
-        $jml = SimakMastermahasiswa::find()->where([
-            'kode_prodi' => $prodi,
-            'status_aktivitas'=>'A',
-            'semester' => $semester,
-            'kampus' => $kampus
-        ])->count();        
-
-        $out = [
-            'prodi' => $prodi,
-            'jumlah' => $jml
-        ];
-
-        echo \yii\helpers\Json::encode($out);
-        die();
-    }
-
+   
     public function actionSubsemester()
     {
         $out = [];
@@ -572,28 +244,7 @@ class CustomerController extends AppController
         // select semester from simak_mastermahasiswa where kode_prodi = 1 and status_aktivitas = 'A' group by semester order by semester
     }
 
-    public function actionFixPembayaran($tahun)
-    {
-        $listKonfirmasi = \app\models\SimakKonfirmasipembayaran::find()->where([
-            'pembayaran' => '01',
-            'tahun_id' => $tahun
-        ])->all();
-
-        foreach($listKonfirmasi as $item)
-        {
-            $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$item->nim])->one();
-
-            if(!empty($mhs))
-            {
-                $mhs->status_aktivitas = 'A';
-                $mhs->save(false,['status_aktivitas']);
-            }
-        }
-
-        die();
-    }
-
-
+   
     /**
      * Lists all Customer models.
      * @return mixed

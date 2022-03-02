@@ -25,39 +25,43 @@ class MenuHelper
 	    // we do not need to display About and Contact pages to employ
 
 
-	    if (Yii::$app->user->can('admin'))
+	    if (Yii::$app->user->can('ortu'))
 	    {
 
 
+	    	$menuItems[] = [
+		        'label' => '<i class="menu-icon fa fa-users"></i><span class="menu-text"> Data Ananda </span>', 
+		        'url' => ['customer/list']
+		    ];
 
-	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-users"></i><span class="menu-text"> Perkuliahan </span><i class="caret"></i>', 'url' => '#',
+	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-university"></i><span class="menu-text"> Perkuliahan </span><i class="caret"></i>', 'url' => '#',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	         'visible' => Yii::$app->user->can('admin'),
+	         'visible' => Yii::$app->user->can('ortu'),
 	        'items'=>[	           
 	            
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Nilai Per Semester',  
-	                'url' => ['/tagihan/du'],	           
+	                'url' => ['/akademik/riwayat-khs'],	           
 	            ],
      			[
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Transkrip',  
-	                'url' => ['/tagihan/du-nonaktif'],	           
+	                'url' => ['/akademik/transkrip'],	           
 	            ],
 	            
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Jadwal Kuliah',  
-	                'url' => ['/tagihan/instant'],	        
+	                'url' => ['/akademik/jadwal'],	        
 	            ],
 	            
 	           
 	            
 	        ]];
 
-	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-users"></i><span class="menu-text"> Asrama </span><i class="caret"></i>', 'url' => '#',
+	        $menuItems[] = ['label' => '<i class="menu-icon fa fa-home"></i><span class="menu-text"> Asrama </span><i class="caret"></i>', 'url' => '#',
 	         'submenuTemplate' => "\n<ul class='submenu'>\n{items}\n</ul>\n",
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
-	         'visible' => Yii::$app->user->can('admin'),
+	         'visible' => Yii::$app->user->can('ortu'),
 	        'items'=>[	           
 	            
 	            [
@@ -77,6 +81,8 @@ class MenuHelper
 	           
 	            
 	        ]];
+
+	        
 
 	     }
 

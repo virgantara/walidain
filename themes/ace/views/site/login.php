@@ -20,6 +20,11 @@ $this->title = Yii::t('app', 'Login | '.Yii::$app->name);
           <div class="space-6"></div>
 
          <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
+         <?php
+            foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
+                echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
+            } ?>
+            <?=$form->errorSummary($model,['header'=>'<div class="alert alert-danger">','footer'=>'</div>']);?>
 <label class="block clearfix">
   <span class="block input-icon input-icon-right">
       <?= $form->field($model, 'username')->textInput(

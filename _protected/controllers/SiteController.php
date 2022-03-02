@@ -178,38 +178,7 @@ class SiteController extends Controller
 // STATIC PAGES
 //------------------------------------------------------------------------------------------------//
 
-    public function actionTest()
-    {
-        $tahun = 20201;
-        $rows = (new \yii\db\Query())
-            ->select(['nim'])
-            ->from('bill_tagihan t')
-            ->join('join','simak_mastermahasiswa m','m.nim_mhs = t.nim')
-            ->where(['t.tahun' => $tahun,'m.status_aktivitas'=>'A'])
-            ->andWhere('terbayar < nilai_minimal')
-            // ->andWhere(['>','terbayar',0])
-            ->all();
-
-
-        $connection = \Yii::$app->db;
-        foreach($rows as $r)
-        {
-            $nim = $r['nim'];
-            $m = \app\models\SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
-            $m->status_aktivitas = 'N';
-            $m->save(false,['status_aktivitas']);
-
-            $model = $connection->createCommand('DELETE FROM simak_datakrs WHERE mahasiswa=:p1 AND tahun_akademik = :p2');
-            $model->bindParam(':p1', $nim);
-            $model->bindParam(':p2', $tahun);
-            
-            $model->execute();
-        }
-        exit;
-    }
-
     
-
     public function actionAjaxRincianTagihan()
     {
         if(Yii::$app->request->isPost)
@@ -448,8 +417,8 @@ class SiteController extends Controller
         }
 
         Yii::$app->session->setFlash('success', Yii::t('app', 'Silakan cek inbox email Anda. Jika tidak ada, mohon cek spam Anda'));
-        
-        return $this->goHome();
+
+        return $this->redirect(['login']);
     }
 
     /**

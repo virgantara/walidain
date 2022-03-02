@@ -128,10 +128,10 @@ class CustomerController extends AppController
                     }
                     
                 }  
-                Yii::$app->session->setFlash('success', $count." virtual account sudah dibuat");
+                Yii::$app->session->setFlash('success', $count." virtual account Oppal sudah dibuat");
                 $transaction->commit();
 
-                return $this->redirect(['generate-va']);
+                return $this->redirect(['generate-va-oppal']);
             } catch (\Exception $e) {
                 $errors .= $e->getMessage();
                 Yii::$app->session->setFlash('danger', $errors);

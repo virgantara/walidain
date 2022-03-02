@@ -14,7 +14,7 @@ $this->title = Yii::t('app', 'Login | '.Yii::$app->name);
         <div class="widget-main">
           <h4 class="header blue lighter bigger">
             <i class="ace-icon fa fa-coffee green"></i>
-            Please Enter Your Information
+            Silakan mengisi informasi Anda
           </h4>
 
           <div class="space-6"></div>
@@ -22,17 +22,9 @@ $this->title = Yii::t('app', 'Login | '.Yii::$app->name);
          <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
 <label class="block clearfix">
   <span class="block input-icon input-icon-right">
-   <?php if ($model->scenario === 'lwe'): ?>
-
-            <?= $form->field($model, 'email')->input('email', 
-                ['placeholder' => Yii::t('app', 'Enter your e-mail'), 'autofocus' => true]) ?>
-
-        <?php else: ?>
-
-            <?= $form->field($model, 'username')->textInput(
+      <?= $form->field($model, 'username')->textInput(
                 ['placeholder' => Yii::t('app', 'Enter your username'), 'autofocus' => true]) ?>
 
-        <?php endif ?>
 
     <i class="ace-icon fa fa-user"></i>
   </span>
@@ -56,23 +48,12 @@ $this->title = Yii::t('app', 'Login | '.Yii::$app->name);
 <div class="space-4"></div>
 
         <?php ActiveForm::end(); ?>
-<div class="social-or-login center">
-                        <span class="bigger-110">Or Login Using</span>
-                      </div>
 
-                      <div class="space-6"></div>
-
-                      <div class="social-login center">
-                        
-                        <a class="btn btn-danger" href="<?=\yii\helpers\Url::to(['/site/auth','authclient'=>'google']);?>">
-                          <i class="ace-icon fa fa-google-plus"></i>
-                        </a>
-                      </div>
         </div><!-- /.widget-main -->
               <div class="toolbar clearfix">
           <div>
             <?php
-            echo Html::a(Yii::t('app', '<i class="ace-icon fa fa-arrow-left"></i> I forgot my password'), ['site/request-password-reset'],['class'=>'forgot-password-link','data-target'=>'#forgot-box']) 
+            echo Html::a(Yii::t('app', '<i class="ace-icon fa fa-arrow-left"></i> Lupa password'), ['site/request-password-reset'],['class'=>'forgot-password-link','data-target'=>'#forgot-box']) 
             ?>
         
           </div>

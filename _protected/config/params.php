@@ -54,5 +54,5 @@ return [
     'supportEmail' => 'pptik@unida.gontor.ac.id',
      'shortname' => 'E-Billing',
      'icon-framework' => 'fa',
-     'owner' => 'Integrated System',
+     'owner' => 'Universitas Darussalam Gontor',
 ];

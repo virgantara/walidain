@@ -371,32 +371,7 @@ class SiteController extends Controller
     public function actionLogin()
     {
 
-        $session = Yii::$app->session;
-
-        if($session->has('token'))
-        {
-
-            try
-            {
-
-                $token = $session->get('token');
-                $key = Yii::$app->params['jwt_key'];
-                $decoded = \Firebase\JWT\JWT::decode($token, base64_decode(strtr($key, '-_', '+/')), ['HS256']);
-
-            }
-
-            catch(\Exception $e) 
-            {
-                \app\helpers\MyHelper::refreshToken($token);
-            }
-            
-             
-        }
-
-        else
-        {
-            return $this->redirect(Yii::$app->params['sso_login']);
-        }
+       
         
         $this->layout = 'default';
         // user is logged in, he doesn't need to login

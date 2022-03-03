@@ -379,8 +379,11 @@ class ApiController extends AppController
     }
 
     public function actionAjaxDataTagihan()
-    {
-        if(Yii::$app->request->isPost)
+    {   
+        $results = [
+            'total_piutang' => 0
+        ];
+        if(Yii::$app->request->isPost && !Yii::$app->user->isGuest)
         {
             
             $dataItem = $_POST['dataItem'];
@@ -395,7 +398,7 @@ class ApiController extends AppController
                 'nim' => $nim,
             ];
 
-            $results = [];
+            
 
             $response = $client->get('/tagihan/rekap', $params,$headers)->send();
         
@@ -420,10 +423,12 @@ class ApiController extends AppController
                 $results['total_piutang'] = $total_piutang;
             }
 
-            echo json_encode($results);
-
-            die();
+            
         }
+
+        echo json_encode($results);
+
+        die();
     }
 
     public function actionAjaxGetEkd() {

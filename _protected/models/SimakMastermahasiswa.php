@@ -401,7 +401,7 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
      */
     public function getBillTagihans()
     {
-        return $this->hasMany(BillTagihan::className(), ['nim' => 'nim_mhs']);
+        return $this->hasMany(Tagihan::className(), ['nim' => 'nim_mhs']);
     }
 
     /**
@@ -579,9 +579,19 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
         return $this->hasOne(Countries::className(), ['iso2' => 'warga_negara']);
     }
 
+    public function getSaldo()
+    {
+        $query = (new \yii\db\Query())->from('bill_transaksi');
+        $query->where(['custid'=>$this->nim_mhs]);
+        $sumDebet = $query->sum('DEBET');
+        $sumKredit = $query->sum('KREDIT');
+        $saldo = $sumKredit - $sumDebet;
+        return $saldo;
+    }
+
     public static function isTercekalADM($nim)
     {
-        $query = BillTagihan::find();
+        $query = Tagihan::find();
         $query->joinWith(['komponen as k']);
         $query->where([
             'k.is_pencekalan' => '1',
@@ -977,6 +987,18 @@ class SimakMastermahasiswa extends \yii\db\ActiveRecord
         
         
         return $total_sks;
+    }
+
+    public function getFullAlamat(){
+        $propinsi = \app\models\SimakPropinsi::findOne([
+            'id' => $this->provinsi
+        ]);
+
+        $kabupaten = \app\models\SimakKabupaten::findOne([
+            'id' => $this->kabupaten
+        ]);
+
+        return $this->alamat.', RT '.$this->rt.' RW '.$this->rw.', Desa '.$this->desa.', Kab/Kota '.(!empty($kabupaten) ? $kabupaten->kab : null).', Provinsi '.(!empty($propinsi) ? $propinsi->prov : null);
     }
 
     public function getIpk()

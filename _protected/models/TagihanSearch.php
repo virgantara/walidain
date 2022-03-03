@@ -174,21 +174,23 @@ class TagihanSearch extends Tagihan
             $query->andWhere(['c.semester'=>$this->namaSemester]);
         }
 
-        if(!empty($this->status_bayar))
-        {
-            switch ($this->status_bayar) {
-                case 1:
-                    $query->andWhere('terbayar >= nilai');
-                    break;
-                case 2:
-                    $query->andWhere('terbayar > 0 AND terbayar < nilai');
-                    break;
-                case 3:
-                    $query->andWhere('terbayar = 0 AND nilai > 0');
-                    break;
+        // if(!empty($this->status_bayar))
+        // {
+        //     switch ($this->status_bayar) {
+        //         case 1:
+        //             $query->andWhere('terbayar >= nilai');
+        //             break;
+        //         case 2:
+        //             $query->andWhere('terbayar > 0 AND terbayar < nilai');
+        //             break;
+        //         case 3:
+        //             $query->andWhere('terbayar = 0 AND nilai > 0');
+        //             break;
                 
-            }
-        }
+        //     }
+        // }
+
+        $query->andWhere('(terbayar > 0 AND terbayar < nilai) OR (terbayar = 0 AND nilai > 0)');
 
         $query->andFilterWhere(['p.kode_prodi'=> $this->namaProdi]);
 

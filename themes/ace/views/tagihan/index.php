@@ -31,9 +31,9 @@ $list_color = ['default','danger','warning','success','info','info'];
     [
         'class'=>'kartik\grid\SerialColumn',
         'contentOptions'=>['class'=>'kartik-sheet-style'],
-        'width'=>'36px',
+        // 'width'=>'36px',
         'pageSummary'=>'Total',
-        'pageSummaryOptions' => ['colspan' => 6],
+        'pageSummaryOptions' => ['colspan' => 10],
         'header'=>'',
         'headerOptions'=>['class'=>'kartik-sheet-style']
     ],
@@ -121,39 +121,39 @@ $list_color = ['default','danger','warning','success','info','info'];
                     
                 ],
             ],
-            [
+            // [
                 
-                'attribute' => 'urutan',
-                'label' => 'Prioritas',
-                'format' => 'raw',
-                'filter'=>[
-                    '1' => 'HIGH',
-                    '2' => 'MED',
-                    '3' => 'LOW',
-                    '4' => 'SLIGHTLY LOW',
-                    '5' => 'LOWEST',
+            //     'attribute' => 'urutan',
+            //     'label' => 'Prioritas',
+            //     'format' => 'raw',
+            //     'filter'=>[
+            //         '1' => 'HIGH',
+            //         '2' => 'MED',
+            //         '3' => 'LOW',
+            //         '4' => 'SLIGHTLY LOW',
+            //         '5' => 'LOWEST',
 
-                ],
-                'value'=>function($model,$url) use ($list_color){
-                    $listPrioritas = [
-                        '1' => 'HIGH',
-                        '2' => 'MED',
-                        '3' => 'LOW',
-                        '4' => 'SLIGHTLY LOW',
-                        '5' => 'LOWEST',
+            //     ],
+            //     'value'=>function($model,$url) use ($list_color){
+            //         $listPrioritas = [
+            //             '1' => 'HIGH',
+            //             '2' => 'MED',
+            //             '3' => 'LOW',
+            //             '4' => 'SLIGHTLY LOW',
+            //             '5' => 'LOWEST',
 
-                    ];
-                    $label = $listPrioritas[$model->urutan];
-                    $st = $list_color[$model->urutan];
-                    return '<span class="label label-'.$st.'" >'.$label.'</span>';
+            //         ];
+            //         $label = $listPrioritas[$model->urutan];
+            //         $st = $list_color[$model->urutan];
+            //         return '<span class="label label-'.$st.'" >'.$label.'</span>';
                     
-                },
-            ],
+            //     },
+            // ],
             [
                 'attribute' => 'status_bayar',
                 'label' => 'Status',
                 'format' => 'raw',
-                'filter'=>["1"=>"LUNAS","2"=>"CICILAN","3"=>"BELUM LUNAS"],
+                // 'filter'=>["1"=>"LUNAS","2"=>"CICILAN","3"=>"BELUM LUNAS"],
                 'value'=>function($model,$url)use ($list_color){
                     $simbol = '';
                     switch($model->statusPembayaran)
@@ -184,8 +184,7 @@ $list_color = ['default','danger','warning','success','info','info'];
                     
                 },
             ],
-            'created_at',
-            'updated_at',
+
 
             [
                 'class' => 'yii\grid\ActionColumn',
@@ -239,6 +238,7 @@ $list_color = ['default','danger','warning','success','info','info'];
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => $gridColumns,
+        'responsiveWrap' => false,
         'containerOptions' => ['style' => 'overflow: auto'], 
         'headerRowOptions' => ['class' => 'kartik-sheet-style'],
         'filterRowOptions' => ['class' => 'kartik-sheet-style'],

@@ -378,6 +378,54 @@ class ApiController extends AppController
         die();
     }
 
+    public function actionAjaxDataTagihan()
+    {
+        if(Yii::$app->request->isPost)
+        {
+            
+            $dataItem = $_POST['dataItem'];
+            $nim = $dataItem['nim'];
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+            $client_token = Yii::$app->params['client_token'];
+
+            $headers = ['x-access-token'=>$client_token];
+            
+            $params = [
+                'nim' => $nim,
+            ];
+
+            $results = [];
+
+            $response = $client->get('/tagihan/rekap', $params,$headers)->send();
+        
+            if ($response->isOk) {
+                
+                $tmp = $response->data['values'];
+
+
+                $total_tagihan = 0;
+                $total_terbayar = 0;
+                foreach($tmp as $t)
+                {
+                    $total_tagihan += $t['tagihan'];
+                    $total_terbayar += $t['terbayar'];
+                }
+
+                $total_piutang = $total_tagihan - $total_terbayar;
+
+                $results['rincian'] = $tmp;
+                $results['total_tagihan'] = $total_tagihan;
+                $results['total_terbayar'] = $total_terbayar;
+                $results['total_piutang'] = $total_piutang;
+            }
+
+            echo json_encode($results);
+
+            die();
+        }
+    }
+
     public function actionAjaxGetEkd() {
 
         $tahun = $_POST['tahun'];

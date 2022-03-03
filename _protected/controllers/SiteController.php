@@ -8,6 +8,9 @@ use app\models\PasswordResetRequestForm;
 use app\models\ResetPasswordForm;
 use app\models\SignupForm;
 use app\models\ContactForm;
+use app\models\SimakMastermahasiswa;
+use app\models\SimakIndukKegiatan;
+use app\models\SimakTahfidzNilai;
 
 use yii\httpclient\Client;
 use yii\helpers\Html;
@@ -279,17 +282,94 @@ class SiteController extends Controller
     public function actionIndex()
     {
 
-        // $hash = Yii::$app->getSecurity()->generatePasswordHash('admingontor');
-        // print_r($hash);
-        // exit;
-        // if (Yii::$app->user->isGuest) {
-        //     $this->redirect(['/site/login']);
-        // }
+        $saldo = 0;
+        $mhs = null;
+        $konfirmasi = null;
+        $ta = \app\models\SimakTahunakademik::getTahunAktif();
+        $tahfidz = null;
+        $indukKegiatan = null;
+        $tagihan = null;
 
-        // else
-        // {
-            
-            return $this->render('index');
+
+        $list_tahun = [];
+        
+        $fakultas = [];
+        $results1 = 0;
+        $results2 = 1;
+        $list_kampus = [];
+
+        if(!empty($_GET['nim'])){
+            $nim = $_GET['nim'];
+            $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
+            $indukKegiatan = \app\models\SimakIndukKegiatan::find()->orderBy(['id'=>SORT_ASC])->cache(60 * 20)->all();
+            $api_baseurl = Yii::$app->params['api_baseurl'];
+            $client = new Client(['baseUrl' => $api_baseurl]);
+            $client_token = Yii::$app->params['client_token'];
+            $headers = ['x-access-token'=>$client_token];
+
+            $params = [
+                'nim' => $nim
+            ];
+            $response = $client->get('/b/saldo', $params,$headers)->send();
+           
+            if ($response->isOk) {
+                $saldo = is_numeric($response->data['values']) ? $response->data['values'] : 0 ;            
+            }
+
+
+            $mhs = \app\models\SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
+
+            $list_tahun = \app\models\SimakTahunakademik::find()->where([
+                '>=','tahun',$mhs->tahun_masuk
+            ])->orderBy(['tahun_id' => SORT_DESC])->all();
+
+
+            $konfirmasi = \app\models\SimakKonfirmasipembayaran::find()->where([
+                'pembayaran' => '01',
+                'status' => 1,
+                'nim' => $nim,
+                'tahun_id' => $ta->tahun_id
+            ])->one();
+
+            $query = \app\models\Tagihan::find();
+    
+            $query->joinWith(['komponen as k','komponen.kategori as kat']);
+            $query->where([
+                'nim' => $nim,
+                'bill_tagihan.tahun' => $ta->tahun_id,
+                'kat.kode' => '01'
+            ]);
+
+            $tagihan = $query->one();
+
+
+            $tahfidz = SimakTahfidzNilai::find()->where([
+                'tahun_id' => $ta->tahun_id,
+                'nim'=>$nim
+            ])->one();
+
+        }
+
+        $query = SimakMastermahasiswa::find();
+        $query->joinWith(['kampus0 as k','simakMahasiswaOrtus as ortu']);
+
+        if(!Yii::$app->user->isGuest){
+            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
+        }
+
+        else{
+            $query->andWhere(['ortu.ortu_user_id' => '-']);
+        }
+
+        $list_anak = $query->all();
+    
+        return $this->render('index',[
+            'list_anak' => $list_anak,
+            'mhs' => $mhs,
+            'saldo' => $saldo,
+            'ta' => $ta,
+            'indukKegiatan' => $indukKegiatan
+        ]);
         // }
     }
 

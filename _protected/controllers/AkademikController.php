@@ -51,39 +51,9 @@ class AkademikController extends Controller
                     //     'roles' => ['?'],
                     // ],
                     [
-                        'actions' => ['index','krs','khs','export-khs','export-krs','ajaxKrsList','transkrip','print-transkrip','perwalian','riwayat-khs'],
+                        'actions' => ['index','riwayat-khs','jadwal','kehadiran','transkrip','akpam'],
                         'allow' => true,
-                        'roles' => ['Mahasiswa'],
-                    ],
-                    [
-                        'actions' => ['index','krs','khs','export-khs','export-krs','ajaxKrsList','transkrip','print-transkrip','nilai','export','perwalian','pembatalan','delete','nilai-per-semester', 'rekap-krs'],
-                        'allow' => true,
-                        'roles' => ['baak','baakdata'],
-                    ],
-                    [
-                        'actions' => ['index','krs','khs','export-khs','export-krs','ajaxKrsList','transkrip','print-transkrip','nilai','export','perwalian','pembatalan','nilai-per-semester'],
-                        'allow' => true,
-                        'roles' => ['sekretearis'],
-                    ],
-                    [
-                        'actions' => ['update','update-nilai','delete','absensi','ajax-presensi'],
-                        'allow' => true,
-                        'roles' => ['sekretearis'],
-                    ],
-                    [
-                        'actions' => ['index','krs','khs','export-khs','export-krs','ajaxKrsList','transkrip','print-transkrip','nilai-per-semester'],
-                        'allow' => true,
-                        'roles' => ['sub baak','baakdata'],
-                    ],
-                    [
-                        'actions' => ['create','update','delete','update-nilai','update-gagal','krs-paket','konversi-mk'],
-                        'allow' => true,
-                        'roles' => ['baak','baakdata'],
-                    ],
-                    [
-                        'actions' => ['nilai','export','perwalian','pembatalan','ajaxKrsList','akpam','pelanggaran','transkrip','absensi','riwayat-khs','ajax-presensi','absensi'],
-                        'allow' => true,
-                        'roles' => ['Dosen'],
+                        'roles' => ['ortu'],
                     ],
 
                     [
@@ -104,6 +74,83 @@ class AkademikController extends Controller
         ];
     }
 
+    public function actionKehadiran()
+    {
+
+        $query = SimakMastermahasiswa::find();
+        $query->joinWith(['kampus0 as k','simakMahasiswaOrtus as ortu']);
+
+        if(!Yii::$app->user->isGuest){
+            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
+        }
+
+        $list_anak = $query->all();
+
+
+
+        $listTahun = SimakTahunakademik::find()->orderBy(['tahun_id'=>SORT_DESC])->all();
+        $api_baseurl = Yii::$app->params['api_baseurl'];
+        $client = new Client(['baseUrl' => $api_baseurl]);
+        $client_token = Yii::$app->params['client_token'];
+        $headers = ['x-access-token'=>$client_token];
+        $mhs = null;
+        $results = [];
+        $listKrs = [];
+        $tahun_akademik = null;
+        $tahun_id = null;
+        if(!empty($_GET['nim'])){
+            $nim = $_GET['nim'];
+            $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
+
+            if(!empty($_GET['btn-cari'])) {
+                $tahun_id = $_GET['tahun_id'];
+            }
+
+            else
+                $tahun_id = \app\helpers\MyHelper::getTahunAktif();
+
+            $tahun_akademik = SimakTahunakademik::find()->where(['tahun_id'=>$tahun_id])->one();
+            $params = [
+                'nim' => $mhs->nim_mhs,
+                'tahun' => $tahun_id
+            ];
+            $response = $client->get('/m/krs', $params,$headers)->send();
+            
+            $results = [];
+            $listKrs = [];
+            if ($response->isOk) {
+                $results = $response->data['values'];
+                foreach($results['krs'] as $q => $m)
+                {
+                    $krs = SimakDatakrs::findOne($m['idkrs']);
+                    $matkul = SimakMatakuliah::find()->where([
+                        'kode_mk' => trim($krs->kode_mk),
+                        'prodi' => $krs->kodeJadwal->prodi
+                    ])->one();
+
+                    $dosen = SimakMasterdosen::find()->where(['nidn' => $krs->kodeJadwal->kode_dosen])->one();
+
+                    $listKrs[$m['idkrs']] = [
+                        'krs' => $krs,
+                        'matkul' => $matkul,
+                        'dosen' => $dosen,
+                        'jadwal' => $krs->kodeJadwal
+                    ];    
+                }
+                
+            }
+        }
+
+        return $this->render('kehadiran', [
+            'results' => $results,
+            'listKrs' => $listKrs,
+            'tahun_id' => $tahun_id,
+            'listTahun' => $listTahun,
+            'tahun_akademik' => $tahun_akademik,
+            'mhs' => $mhs,
+            'list_anak' => $list_anak
+        ]);
+    }
 
     public function actionJadwal()
     {

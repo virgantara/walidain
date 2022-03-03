@@ -39,7 +39,14 @@ class MenuHelper
 	         'template' => '<a href="{url}" class="dropdown-toggle">{label}</a>',
 	         'visible' => Yii::$app->user->can('ortu'),
 	        'items'=>[	           
-	            
+	            [
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Jadwal',  
+	                'url' => ['/akademik/jadwal'],	        
+	            ],
+				[
+	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Kehadiran',  
+	                'url' => ['/akademik/kehadiran'],	        
+	            ],
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Nilai Per Semester',  
 	                'url' => ['/akademik/riwayat-khs'],	           
@@ -49,10 +56,6 @@ class MenuHelper
 	                'url' => ['/akademik/transkrip'],	           
 	            ],
 	            
-	            [
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Jadwal Kuliah',  
-	                'url' => ['/akademik/jadwal'],	        
-	            ],
 	            
 	           
 	            

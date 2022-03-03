@@ -8,6 +8,20 @@ use Yii;
  */
 class MyHelper
 {
+
+    public static function getListAbsensi()
+    {
+            $list = [
+                    '1' => 'H',
+                    '2' => 'I',
+                    '3' => 'S',
+                    '4' => 'G'
+
+            ];
+
+            return $list;
+    }
+    
     public static function dmYtoYmd($tgl){
         $date = str_replace('/', '-', $tgl);
         return date('Y-m-d H:i:s',strtotime($date));

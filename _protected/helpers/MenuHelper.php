@@ -43,10 +43,10 @@ class MenuHelper
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Jadwal',  
 	                'url' => ['/akademik/jadwal'],	        
 	            ],
-				[
-	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Kehadiran',  
-	                'url' => ['/akademik/kehadiran'],	        
-	            ],
+				// [
+	            // 	'label' => '<i class="menu-icon fa fa-caret-right"></i>Kehadiran',  
+	            //     'url' => ['/akademik/kehadiran'],	        
+	            // ],
 	            [
 	            	'label' => '<i class="menu-icon fa fa-caret-right"></i>Nilai Per Semester',  
 	                'url' => ['/akademik/riwayat-khs'],	           

@@ -245,103 +245,8 @@ if(!empty($mhs)){
             }
             // }
               
-              $krs = \app\models\SimakDatakrs::find()->where([
-                'tahun_akademik' => $ta->tahun_id,
-                'mahasiswa' => $mhs->nim_mhs,
-
-              ])->all();
-
-              $list_tercekal = [];
-              $is_tercekal_akademik =false;
-              foreach($krs as $k)
-              {
-                $hadir = \app\models\SimakAbsenHarian::find()->where(['kode_jadwal'=>$k->kode_jadwal,'mhs'=>$mhs->nim_mhs,'status_kehadiran'=>1])->count();
-
-                $sakit = \app\models\SimakAbsenHarian::find()->where(['kode_jadwal'=>$k->kode_jadwal,'mhs'=>$mhs->nim_mhs,'status_kehadiran'=>2])->count();
-
-                $izin = \app\models\SimakAbsenHarian::find()->where(['kode_jadwal'=>$k->kode_jadwal,'mhs'=>$mhs->nim_mhs,'status_kehadiran'=>3])->count();
-
-                $remaining = $sakit + $izin >= 3 ? 3 : $sakit + $izin;
-
-                $absens = $hadir + $remaining;
-
-                $persen = round($absens / 14 * 100,2);
-
-                $is_tercekal_akademik = $persen < 75;
-
-                if($is_tercekal_akademik){
-
-                  $list_tercekal[$k->kode_mk] = 'Kehadiran kelas ['.$k->kode_mk.'] '.$k->nama_mk.' - '.$persen.' % dari 75%';
-                  // if($m->nim_mhs == '3920186110301'){
-                  //   // print_r($k->kode_mk);
-                  //   // echo ' ';
-                  //   // print_r($persen);
-                  // }
-                }
-              }
-
-            $tahfidz = \app\models\SimakTahfidzNilai::find()->where([
-                  'tahun_id' => $ta->tahun_id,
-                  'nim'=>$mhs->nim_mhs
-              ])->one();
-
-              $is_tercekal_tahfidz = empty($tahfidz) || (!empty($tahfidz) && $tahfidz->nilai_angka <=2);
-              $label_tercekal = [];
-
-              if($is_tercekal_akademik)
-                $label_tercekal[] = 'Akademik';
-
-              if($is_tercekal_tahfidz)
-                $label_tercekal[] = 'Tahfidz';
-
-              $is_tercekal_adm = \app\models\SimakMastermahasiswa::isTercekalADM($mhs->nim_mhs);
-              if($is_tercekal_adm)
-                $label_tercekal[] = 'ADM';
-
-
-              $subtotal = 0;
-              foreach($indukKegiatan as $induk)
-              {
-                  foreach($induk->simakJenisKegiatans as $jk)
-                  {
-                      $km = \app\models\SimakKegiatanMahasiswa::find()->where([
-                          'id_jenis_kegiatan' => $jk->id,
-                          'nim' => $mhs->nim_mhs,
-                          'tahun_akademik' => $ta->tahun_id,
-                          'is_approved' => 1
-                      ]);
-
-                      $sub = $km->sum('nilai');
-                      if($sub >= $jk->nilai_maximal)
-                      {
-                        $subtotal += $jk->nilai_maximal;
-                      }
-
-                      else{
-                        $subtotal += $sub;
-                      }
-                  }
-              }
-
-              $is_tercekal_akpam = $subtotal < $ta->nilai_lulus_akpam;
-
-              if($is_tercekal_akpam)
-                $label_tercekal[] = 'AKPAM';
-
-              $is_tercekal_akademik = count($list_tercekal) > 0;
-              if($is_tercekal_akademik)
-                $label_tercekal[] = '<br>'.implode('<br> ', $list_tercekal).'';
-
-              if(count($label_tercekal) > 0){
                 ?>
-                <div class="alert alert-danger">
-              <i class="fa fa-ban"></i> Oops, mohon maaf. <?=$mhs->nama_mahasiswa?> tercekal <?=implode(', ', $label_tercekal);?>
-            </div>
-
-                <?php 
-              }
-
-            ?>
+       
 
 											</p>
 										</div>
@@ -399,7 +304,7 @@ if(!empty($mhs)){
 								<div class="profile-activity clearfix">
 
 									<div>
-										<a class="user" href="#"><?=$dosen_pa->nama_dosen;?> </a> sebagai dosen wali. Kontak: <?=$dosen_pa->no_hp_dosen;?>
+										<a class="user" href="#"><?=$dosen_pa->nama_dosen;?> </a> sebagai dosen wali.
 										
 									</div>
 

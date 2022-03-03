@@ -38,7 +38,7 @@ if(!empty($model)){
      
       <div class="form-group">
           <label class="control-label ">Mahasiswa</label>
-          <?= Html::dropDownList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['class'=>'form-control','prompt' => '- Silakan Pilih Data Ananda -']) ?>
+          <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['class'=>'','prompt' => '- Silakan Pilih Data Ananda -','separator' => '<br>']) ?>
       </div>
       <div class="form-group clearfix">
         <button type="submit" class="btn btn-primary" name="btn-cari" value="1"><i class="fa fa-search"></i> Lihat</button>

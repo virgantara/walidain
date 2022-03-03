@@ -19,7 +19,7 @@ $nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
 
 <h3 class="page-title"><?=$this->title;?></h3>
 <div class="row">
-  <div class="col-md-3 col-lg-3 col-xs-12">
+  <div class="col-lg-8 col-lg-offset-2">
      <?php $form = ActiveForm::begin([
       'method' => 'GET',
       'action' => ['akademik/jadwal'],
@@ -36,7 +36,7 @@ $nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
       </div>
       <div class="form-group">
             <label class="control-label ">Ananda</label>
-           <?= Html::dropDownList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['class'=>'form-control','prompt'=>'- Pilih Data Mahasiswa -','id'=>'nim']) ?>
+           <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['class'=>'','prompt'=>'- Pilih Data Mahasiswa -','id'=>'nim','separator' => '<br>']) ?>
         </div>
       <div class="form-group clearfix">
         <button type="submit" class="btn btn-primary" name="btn-cari" value="1"><i class="fa fa-search"></i> Cari</button>

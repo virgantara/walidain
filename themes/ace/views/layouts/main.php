@@ -120,9 +120,9 @@ if(!Yii::$app->user->isGuest)
                                     // 'itemCssClass'=>'item-test',
                                     'encodeLabels'=>false,
                                     'items' => [
-                                        ['label'=>'<i class="ace-icon fa fa-user"></i>Profil', 'url'=>['/pegawai/view','id'=>'']],
-                                        ['label'=> '','itemOptions'=>['class'=>'divider']],
-                                        ['label'=>'Pengguna', 'url'=>['/user/index']],
+                                        // ['label'=>'<i class="ace-icon fa fa-user"></i>Profil', 'url'=>['/pegawai/view','id'=>'']],
+                                        // ['label'=> '','itemOptions'=>['class'=>'divider']],
+                                        // ['label'=>'Pengguna', 'url'=>['/user/index']],
                                         ['label'=> '','itemOptions'=>['class'=>'divider']],
                                         ['label'=>'<li><a data-method="POST" href="'.Url::to(['/site/logout']).'">Logout</a></li>'],
 

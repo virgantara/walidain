@@ -21,7 +21,7 @@ $nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
   </div>
   <div class="panel-body">
     <div class="row">
-      <div class="col-sm-12 col-md-12 col-lg-3 col-xs-12">
+      <div class="col-lg-8 col-lg-offset-2">
          <?php $form = ActiveForm::begin([
           'method' => 'GET',
           'action' => ['akademik/riwayat-khs'],
@@ -36,7 +36,7 @@ $nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
         ?>
             <div class="form-group">
               <label class="control-label ">Ananda</label>
-             <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['maxlength' => true,'prompt'=>'- Pilih Data Mahasiswa -','id'=>'nim']) ?>
+             <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['maxlength' => true,'prompt'=>'- Pilih Data Mahasiswa -','id'=>'nim','separator' => '<br>']) ?>
           </div>
 
           <div class="form-group clearfix">

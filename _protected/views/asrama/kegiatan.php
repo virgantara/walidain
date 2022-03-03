@@ -67,7 +67,7 @@ if(1){
       </div>
       <div class="form-group">
               <label class="control-label ">Ananda</label>
-               <?= Html::dropDownList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['class'=>'form-control','prompt' => '- Pilih Mahasiswa -']) ?>
+               <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['class'=>'','prompt' => '- Pilih Mahasiswa -','separator' => '<br>']) ?>
           </div>
       
       

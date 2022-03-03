@@ -36,7 +36,7 @@ $nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
         ?>
             <div class="form-group">
               <label class="control-label ">Ananda</label>
-             <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['maxlength' => true,'prompt'=>'- Pilih Data Mahasiswa -','id'=>'nim']) ?>
+             <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['maxlength' => true,'prompt'=>'- Pilih Data Mahasiswa -','id'=>'nim','separator' => '<br>']) ?>
           </div>
 
           <div class="form-group clearfix">

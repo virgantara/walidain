@@ -99,7 +99,8 @@ class SignupForm extends Model
     public function signup()
     {
         $user = new User();
-
+        $user->created_at = date('Y-m-d H:i:s');
+        $user->updated_at = date('Y-m-d H:i:s');
         $user->username = $this->username;
         $user->email = $this->email;
         $user->setPassword($this->password);
@@ -111,8 +112,7 @@ class SignupForm extends Model
             $user->generateAccountActivationToken();
         }
 
-        $user->created_at = date('Y-m-d H:i:s');
-        $user->updated_at = date('Y-m-d H:i:s');
+        
         $user->access_role = 'ortu';
 
         if($user->save()){

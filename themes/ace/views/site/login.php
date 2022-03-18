@@ -25,23 +25,23 @@ $this->title = Yii::t('app', 'Login | '.Yii::$app->name);
                 echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
             } ?>
             <?=$form->errorSummary($model,['header'=>'<div class="alert alert-danger">','footer'=>'</div>']);?>
-<label class="block clearfix">
-  <span class="block input-icon input-icon-right">
-      <?= $form->field($model, 'username')->textInput(
-                ['placeholder' => Yii::t('app', 'Enter your username'), 'autofocus' => true]) ?>
+            <label class="block clearfix">
+              <span class="block input-icon input-icon-right">
+                  <?= $form->field($model, 'username')->textInput(
+                            ['placeholder' => Yii::t('app', 'Enter your username'), 'autofocus' => true]) ?>
 
 
-    <i class="ace-icon fa fa-user"></i>
-  </span>
-</label>
-<label class="block clearfix">
-  <span class="block input-icon input-icon-right">
-      <?= $form->field($model, 'password')->passwordInput(['placeholder' => Yii::t('app', 'Enter your password')]) ?>
-    
-    <i class="ace-icon fa fa-user"></i>
-  </span>
-</label>
-
+                <i class="ace-icon fa fa-user"></i>
+              </span>
+            </label>
+            <label class="block clearfix">
+              <span class="block input-icon input-icon-right">
+                  <?= $form->field($model, 'password')->passwordInput(['placeholder' => Yii::t('app', 'Enter your password')]) ?>
+                
+                <i class="ace-icon fa fa-user"></i>
+              </span>
+            </label>
+             
 <div class="space"></div>
 
 <div class="clearfix">

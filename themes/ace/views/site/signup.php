@@ -20,10 +20,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
         <?php
-                  foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
-                      echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
-                  } ?>
-                  <?=$form->errorSummary($model,['header'=>'<div class="alert alert-danger">','footer'=>'</div>']);?>
+          foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
+              echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
+          } ?>
+          <?=$form->errorSummary($model,['header'=>'<div class="alert alert-danger">','footer'=>'</div>']);?>
                 
             <?= $form->field($model, 'username')->textInput(
                 ['placeholder' => Yii::t('app', 'Create your username'), 'autofocus' => true]) ?>
@@ -33,6 +33,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model, 'password')->widget(PasswordInput::classname(), 
                 ['options' => ['placeholder' => Yii::t('app', 'Create your password')]]) ?>
 
+            <div class="form-group">
+                <label class="col-sm-2 control-label"></label>
+                <div class="col-sm-10">
+                    <div class="g-recaptcha" data-sitekey="<?=Yii::$app->params['reCaptcha']['site_key'];?>"></div>
+                </div>
+            </div>
+            <br>
             <div class="form-group">
                 <?= Html::submitButton(Yii::t('app', 'Signup'), 
                     ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
@@ -48,3 +55,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     </div>
 </div>
+
+<?php 
+$this->registerJsFile('https://www.google.com/recaptcha/api.js',['position' => \yii\web\View::POS_HEAD]);
+
+ ?>

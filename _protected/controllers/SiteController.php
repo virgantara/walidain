@@ -572,44 +572,76 @@ class SiteController extends Controller
      */
     public function actionSignup()
     {  
-        // get setting value for 'Registration Needs Activation'
+
         $rna = Yii::$app->params['rna'];
 
         // if 'rna' value is 'true', we instantiate SignupForm in 'rna' scenario
         $model = $rna ? new SignupForm(['scenario' => 'rna']) : new SignupForm();
 
-        // if validation didn't pass, reload the form to show errors
-        if (!$model->load(Yii::$app->request->post()) || !$model->validate()) {
-            return $this->render('signup', ['model' => $model]);  
+        if(isset($_POST['g-recaptcha-response']) && !empty($_POST['g-recaptcha-response'])) {
+             //your site secret key
+            $secret = Yii::$app->params['reCaptcha']['secret_key'];
+            //get verify response data
+            $verify = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$secret.'&response='.$_POST['g-recaptcha-response']);
+            $response = json_decode($verify);
+            if($response->success)
+            {
+                
+
+                // if validation didn't pass, reload the form to show errors
+                if (!$model->load(Yii::$app->request->post()) || !$model->validate()) {
+                    return $this->render('signup', ['model' => $model]);  
+                }
+
+                // try to save user data in database, if successful, the user object will be returned
+                $user = $model->signup();
+
+                if (!$user) {
+                    // display error message to user
+                    Yii::$app->session->setFlash('error', Yii::t('app', 'We couldn\'t sign you up, please contact us.'));
+                    return $this->refresh();
+                }
+
+                // user is saved but activation is needed, use signupWithActivation()
+                if ($user->status === User::STATUS_INACTIVE) {
+                    $this->signupWithActivation($model, $user);
+                    return $this->refresh();
+                }
+
+                // now we will try to log user in
+                // if login fails we will display error message, else just redirect to home page
+            
+                if (!Yii::$app->user->login($user)) {
+                    // display error message to user
+                    Yii::$app->session->setFlash('warning', Yii::t('app', 'Please try to log in.'));
+
+                    // log this error, so we can debug possible problem easier.
+                    Yii::error('Login after sign up failed! User '.Html::encode($user->username).' could not log in.');
+                }
+                              
+                
+                // echo 'Verification Success <br>';
+                // echo 'Your submitted form : <br>';
+                // echo 'Name : '.$_POST['name'].'<br>';
+                // echo 'Address : '.$_POST['address'].'<br>';
+                // echo 'Email : '.$_POST['email'].'<br>';
+                // echo 'Thanks You!';
+         
+                return $this->goHome();
+            }
+            else
+            {
+                Yii::$app->session->setFlash('danger', Yii::t('app', 'Google reCAPTCHA verification failed. please try again'));
+                return $this->refresh();
+                
+            }
         }
 
-        // try to save user data in database, if successful, the user object will be returned
-        $user = $model->signup();
 
-        if (!$user) {
-            // display error message to user
-            Yii::$app->session->setFlash('error', Yii::t('app', 'We couldn\'t sign you up, please contact us.'));
-            return $this->refresh();
-        }
+        return $this->render('signup', ['model' => $model]);
 
-        // user is saved but activation is needed, use signupWithActivation()
-        if ($user->status === User::STATUS_INACTIVE) {
-            $this->signupWithActivation($model, $user);
-            return $this->refresh();
-        }
-
-        // now we will try to log user in
-        // if login fails we will display error message, else just redirect to home page
-    
-        if (!Yii::$app->user->login($user)) {
-            // display error message to user
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'Please try to log in.'));
-
-            // log this error, so we can debug possible problem easier.
-            Yii::error('Login after sign up failed! User '.Html::encode($user->username).' could not log in.');
-        }
-                      
-        return $this->goHome();
+        // get setting value for 'Registration Needs Activation'
+        
     }
 
     /**

@@ -29,6 +29,7 @@ $config = [
     ],
     'timeZone' => 'Asia/Jakarta',
     'components' => [
+        
         'authClientCollection' => [
             'class' => 'yii\authclient\Collection',
             'clients' => [

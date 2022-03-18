@@ -17,6 +17,9 @@ use Yii;
  */
 class User extends UserIdentity
 {
+
+
+
     // the list of status values that can be stored in user table
     const STATUS_ACTIVE   = 10;
     const STATUS_INACTIVE = 1;
@@ -62,7 +65,7 @@ class User extends UserIdentity
                 'message' => Yii::t('app', 'This username has already been taken.')],
 
             ['email', 'filter', 'filter' => 'trim'],
-            [['kampus','uuid'], 'safe'],
+            [['kampus','uuid','reCaptcha'], 'safe'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],

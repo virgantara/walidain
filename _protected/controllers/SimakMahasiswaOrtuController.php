@@ -64,7 +64,8 @@ class SimakMahasiswaOrtuController extends Controller
                 }
 
                 $transaction->commit();
-
+                $session = Yii::$app->session;
+                $session->remove('nim');
                 $results = [
                     'code' => 200,
                     'message' => 'Data telah diupdate'

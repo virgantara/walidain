@@ -99,8 +99,7 @@ class SignupForm extends Model
     public function signup()
     {
         $user = new User();
-        $user->created_at = date('Y-m-d H:i:s');
-        $user->updated_at = date('Y-m-d H:i:s');
+
         $user->username = $this->username;
         $user->email = $this->email;
         $user->setPassword($this->password);
@@ -112,7 +111,8 @@ class SignupForm extends Model
             $user->generateAccountActivationToken();
         }
 
-        
+        $user->created_at = date('Y-m-d H:i:s');
+        $user->updated_at = date('Y-m-d H:i:s');
         $user->access_role = 'ortu';
 
         if($user->save()){
@@ -122,6 +122,47 @@ class SignupForm extends Model
 
             if (!$info) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'There was some error while saving user role.'));
+                return null;
+            }
+
+            return $user;
+        }
+
+        else{
+
+            print_r(\app\helpers\MyHelper::logError($user));exit;
+            return null;
+        }
+
+        // if user is saved and role is assigned return user object
+        
+    }
+
+    public function ajaxSignup()
+    {
+        $user = new User();
+
+        $user->username = $this->username;
+        $user->email = $this->email;
+        $user->setPassword($this->password);
+        $user->generateAuthKey();
+        $user->status = $this->status;
+
+        // if scenario is "rna" ( Registration Needs Activation ) we will generate account activation token
+        if ($this->scenario === 'rna') {
+            $user->generateAccountActivationToken();
+        }
+
+        $user->created_at = date('Y-m-d H:i:s');
+        $user->updated_at = date('Y-m-d H:i:s');
+        $user->access_role = 'ortu';
+
+        if($user->save()){
+            $auth = Yii::$app->authManager;
+            $role = $auth->getRole($user->access_role);
+            $info = $auth->assign($role, $user->getId());
+
+            if (!$info) {
                 return null;
             }
 

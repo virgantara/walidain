@@ -5,6 +5,7 @@
 
 use kartik\password\PasswordInput;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 
 $this->title = Yii::t('app', 'Form Pendaftaran Aplikasi Walidain UNIDA Gontor');
@@ -42,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <br>
             <div class="form-group">
                 <?= Html::submitButton(Yii::t('app', 'Signup'), 
-                    ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+                    ['class' => 'btn btn-primary', 'name' => 'signup-button','id'=>'btn-submit']) ?>
             </div>
 
         <?php ActiveForm::end(); ?>
@@ -60,3 +61,75 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('https://www.google.com/recaptcha/api.js',['position' => \yii\web\View::POS_HEAD]);
 
  ?>
+
+
+<?php
+
+$script = "
+
+function doSubmit(){
+    let obj = new Object;
+    obj = $('#form-signup').serialize();
+    $.ajax({
+        type : 'POST',
+        cache: false,
+        data : {
+            dataPost : obj
+        },
+
+        url : '".Url::to(['/site/ajax-signup'])."',
+        beforeSend : function(){
+            Swal.fire({
+                title : 'Mohon ditunggu',
+                html: 'Sistem sedang memproses pendaftaran Anda...',
+                allowOutsideClick: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading()
+                },
+                
+            })
+        },
+        error : function(err){
+            console.log(err);
+        },
+        success : function(data){
+
+            var data = $.parseJSON(data);
+            if(data.code == 200){
+                Swal.fire({
+                  title: 'Sukses',
+                  text: data.message,
+                  icon: 'info',
+                });
+            }
+
+            else{
+                Swal.fire({
+                  title: 'Oops!',
+                  text: data.message,
+                  icon: 'error',
+                });
+            }
+            
+        }
+
+    });
+    
+
+}
+
+
+$(document).on('click','#btn-submit',function(e){
+    e.preventDefault();
+    doSubmit()
+    
+    
+});
+
+";
+$this->registerJs(
+    $script,
+    \yii\web\View::POS_READY
+);
+// $this->registerJs($script);
+?>

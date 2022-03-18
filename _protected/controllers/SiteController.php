@@ -488,7 +488,7 @@ class SiteController extends Controller
         }
 
         // login was successful, let user go wherever he previously wanted
-        return $this->goBack();
+        return $this->redirect(['index']);
     }
 
     /**
@@ -560,6 +560,103 @@ class SiteController extends Controller
 //------------------------------------------------------------------------------------------------//
 // SIGN UP / ACCOUNT ACTIVATION
 //------------------------------------------------------------------------------------------------//
+
+    public function actionAjaxSignup()
+    {
+        $dataPost = $_POST['dataPost'];
+        parse_str($dataPost, $searcharray);
+        // print_r($searcharray);
+
+        // exit;
+        $post = $searcharray['SignupForm'];
+        $results = [
+            'code' => 404,
+            'message' => ''
+        ];
+
+        
+        if(isset($searcharray['g-recaptcha-response']) && !empty($searcharray['g-recaptcha-response'])) {
+            $secret = Yii::$app->params['reCaptcha']['secret_key'];
+            //get verify response data
+            $verify = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$secret.'&response='.$searcharray['g-recaptcha-response']);
+            $response = json_decode($verify);
+            if($response->success)
+            {
+                $rna = Yii::$app->params['rna'];
+
+                $model = $rna ? new SignupForm(['scenario' => 'rna']) : new SignupForm();
+                $model->attributes = $post;
+                if (!$model->validate()) {
+                    $results = [
+                        'code' => 500,
+                        'message' => \app\helpers\MyHelper::logError($model),
+                    ];
+                    echo json_encode($results);
+                    exit;
+                } 
+
+                $user = $model->ajaxSignup();
+
+                if (!$user) {
+                    // display error message to user
+                    $msg = Yii::t('app', 'We couldn\'t sign you up, please contact us.');
+                    $results = [
+                        'code' => 500,
+                        'message' => $msg,
+                    ];
+                    echo json_encode($results);
+                    exit;
+                }
+
+                // user is saved but activation is needed, use signupWithActivation()
+                if ($user->status === User::STATUS_INACTIVE) {
+                    if (!$model->sendAccountActivationEmail($user)) {
+                        // display error message to user
+                        // Yii::$app->session->setFlash('error', Yii::t('app', 
+                        //     'We couldn\'t send you account activation email, please contact us.'));
+
+                        // // log this error, so we can debug possible problem easier.
+                        // Yii::error('Signup failed! User '.Html::encode($user->username).' could not sign up. 
+                        //     Possible causes: verification email could not be sent.');
+
+                        $results = [
+                            'code' => 500,
+                            'message' => Yii::t('app', 'We couldn\'t send you account activation email, please contact us.'),
+                        ];
+                        echo json_encode($results);
+                        exit;
+                    }
+
+                    // everything is OK
+                    $msg = Yii::t('app', 'Halo').' '.Html::encode($user->username). '. ' .
+                        Yii::t('app', 'Terima kasih atas pendaftaran Anda. Agar bisa login, Anda harus konfirmasi registrasi. 
+                            Silakan cek inbox atau spam di email Anda, kami telah mengirimakan pesan.');
+                    // $this->signupWithActivation($model, $user);
+                    $results = [
+                        'code' => 200,
+                        'message' => $msg,
+                    ];
+                    echo json_encode($results);
+                    exit;
+                }
+
+                
+            }
+
+            else{
+                Yii::$app->session->setFlash('danger', Yii::t('app', 'Google reCAPTCHA verification failed. please try again'));
+                $results = [
+                    'code' => 500,
+                    'message' => 'Google reCAPTCHA verification failed. please try again',
+                ];
+                echo json_encode($results);
+                exit;
+            }
+        }
+
+        echo json_encode($results);
+        exit;
+    }
 
     /**
      * Signs up the user.

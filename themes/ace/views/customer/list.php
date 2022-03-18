@@ -204,6 +204,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <input type="hidden" id="nim">
                         <div class="help-block"></div>
                     <!-- </div> -->
+                    <label for="nama_mahasiswa">Ketik NIK atau Nomor KTP Ananda</label>
                     <?=Html::textInput('nik','',['id'=>'nik','class'=>'form-control','placeholder'=>'..Ketik NIK atau No KTP Ananda..']);?><div class="help-block"></div>
                     <button type="button" id="btn-tambah-mahasiswa" class="btn btn-primary"><i class="fa fa-plus"></i> Klaim data</button>
                        

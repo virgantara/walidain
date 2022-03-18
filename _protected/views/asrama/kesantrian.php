@@ -16,7 +16,7 @@ use app\models\SimakKabupaten;
 $this->title = 'Data Kesantrian';
 $this->params['breadcrumbs'][] = $this->title;
 
-$nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
+$nim = !empty($mhs) ? $mhs->nim_mhs : '';
 $tahun = !empty($_GET['tahun']) ? $_GET['tahun'] : '';
 $kabupaten = null;
 $provinsi = null;
@@ -35,7 +35,9 @@ if(!empty($model)){
             'id' => 'form_validation',
       ]
     ]); ?>
-     
+         <?php 
+      if(count($list_anak) > 1){
+       ?>
       <div class="form-group">
           <label class="control-label ">Mahasiswa</label>
           <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['class'=>'','prompt' => '- Silakan Pilih Data Ananda -','separator' => '<br>']) ?>
@@ -45,7 +47,7 @@ if(!empty($model)){
 
        
       </div>
-    
+    <?php } ?>
      <?php ActiveForm::end(); ?>
   </div>
 </div>
@@ -325,57 +327,6 @@ if(!empty($model))
       <div class="col-xs-12">
             <div class="space-20"></div>
 
-                    <div class="widget-box transparent">
-                        <div class="widget-header widget-header-small">
-                            <h4 class="widget-title blue smaller">
-                                <i class="ace-icon fa fa-rss orange"></i>
-                                Riwayat Pelanggaran
-                            </h4>
-
-                           
-                        </div>
-                        <?php 
-
-                        if(!empty($riwayat)){
-                        foreach ($riwayat as $key => $value) {
-                            # code...
-                        
-                        ?>
-                            <div class="widget-body">
-                                <div class="widget-main padding-8">
-                                    <div id="profile-feed-1" class="profile-feed">
-                                        <div class="profile-activity clearfix">
-                                            <div>
-                                          
-                                               <a class="user" href="#"><?=$model->nama_mahasiswa;?></a>
-                                                melakukan pelanggaran <?=$value->pelanggaran->kategori->nama;?>
-                                                yaitu <?=$value->pelanggaran->nama;?> pada tanggal <?=MyHelper::YmdtodmY($value->tanggal);?>
-
-                                                <div class="time">
-                                                    <i class="ace-icon fa fa-clock-o bigger-110"></i>
-                                                    <?=\app\helpers\MyHelper::hitungDurasi(date('Y-m-d H:i:s'),$value->created_at);?> yang lalu
-                                                </div>
-                                            </div>
-
-                                           
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <?php
-                        }
-                        }
-
-                        else{
-                            ?>
-                            <div class="alert alert-success">Tidak ada pelanggaran</div>
-                            <?php  
-                        }
-                         ?>
-                        
-
-                    </div>
                  
                          <div class="widget-box transparent">
                         <div class="widget-header widget-header-small">

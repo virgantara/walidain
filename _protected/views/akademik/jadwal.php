@@ -13,7 +13,7 @@ $this->title = 'Jadwal Kuliah';
 $this->params['breadcrumbs'][] = $this->title;
 
 $tahun_id = !empty($_GET['tahun_id']) ? $_GET['tahun_id'] : '';
-$nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
+$nim = !empty($mhs) ? $mhs->nim_mhs : '';
 
 ?>
 
@@ -34,10 +34,15 @@ $nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
           
           
       </div>
+      <?php 
+      if(count($list_anak) > 1){
+       ?>
+      
       <div class="form-group">
             <label class="control-label ">Ananda</label>
            <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['class'=>'','prompt'=>'- Pilih Data Mahasiswa -','id'=>'nim','separator' => '<br>']) ?>
         </div>
+      <?php } ?>
       <div class="form-group clearfix">
         <button type="submit" class="btn btn-primary" name="btn-cari" value="1"><i class="fa fa-search"></i> Cari</button>
        

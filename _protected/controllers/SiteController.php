@@ -298,8 +298,32 @@ class SiteController extends Controller
         $results2 = 1;
         $list_kampus = [];
 
+        $query = SimakMastermahasiswa::find();
+        $query->joinWith(['kampus0 as k','simakMahasiswaOrtus as ortu']);
+
+        if(!Yii::$app->user->isGuest){
+            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
+        }
+
+        else{
+            $query->andWhere(['ortu.ortu_user_id' => '-']);
+        }
+
+        $list_anak = $query->all();
+
+        $session = Yii::$app->session;
+
+        if(count($list_anak) == 1){
+            $mhs = $list_anak[0];
+            $session->set('nim',$mhs->nim_mhs);
+        }
+
         if(!empty($_GET['nim'])){
-            $nim = $_GET['nim'];
+            $nim = '-';
+            if($session->has('nim'))
+                $nim = $session->get('nim');
+            else
+                $nim = $_GET['nim'];
             $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
             $indukKegiatan = \app\models\SimakIndukKegiatan::find()->orderBy(['id'=>SORT_ASC])->cache(60 * 20)->all();
             $api_baseurl = Yii::$app->params['api_baseurl'];
@@ -350,18 +374,7 @@ class SiteController extends Controller
 
         }
 
-        $query = SimakMastermahasiswa::find();
-        $query->joinWith(['kampus0 as k','simakMahasiswaOrtus as ortu']);
-
-        if(!Yii::$app->user->isGuest){
-            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
-        }
-
-        else{
-            $query->andWhere(['ortu.ortu_user_id' => '-']);
-        }
-
-        $list_anak = $query->all();
+        
     
         return $this->render('index',[
             'list_anak' => $list_anak,

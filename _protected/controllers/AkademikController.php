@@ -155,6 +155,12 @@ class AkademikController extends Controller
     public function actionJadwal()
     {
 
+        $mhs = null;
+        $results = [];
+        $listKrs = [];
+        $tahun_akademik = null;
+        $tahun_id = null;
+        
         $query = SimakMastermahasiswa::find();
         $query->joinWith(['kampus0 as k','simakMahasiswaOrtus as ortu']);
 
@@ -164,20 +170,28 @@ class AkademikController extends Controller
 
         $list_anak = $query->all();
 
+        $session = Yii::$app->session;
 
+        if(count($list_anak) == 1){
+            $mhs = $list_anak[0];
+            $session->set('nim',$mhs->nim_mhs);
+
+        }
 
         $listTahun = SimakTahunakademik::find()->orderBy(['tahun_id'=>SORT_DESC])->all();
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
         $client_token = Yii::$app->params['client_token'];
         $headers = ['x-access-token'=>$client_token];
-        $mhs = null;
-        $results = [];
-        $listKrs = [];
-        $tahun_akademik = null;
-        $tahun_id = null;
-        if(!empty($_GET['nim'])){
-            $nim = $_GET['nim'];
+
+        if(!empty($_GET['nim']) || $session->has('nim')){
+            $nim = '-';
+            if($session->has('nim'))
+                $nim = $session->get('nim');
+            else{
+                $nim = $_GET['nim'];
+            }
+
             $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
 
             if(!empty($_GET['btn-cari'])) {
@@ -186,6 +200,8 @@ class AkademikController extends Controller
 
             else
                 $tahun_id = \app\helpers\MyHelper::getTahunAktif();
+
+
 
             $tahun_akademik = SimakTahunakademik::find()->where(['tahun_id'=>$tahun_id])->one();
             $params = [
@@ -246,8 +262,20 @@ class AkademikController extends Controller
 
         $list_anak = $query->all();
 
-        if(!empty($_GET['nim'])){
-            $nim = $_GET['nim'];
+        $session = Yii::$app->session;
+
+        if(count($list_anak) == 1){
+            $mhs = $list_anak[0];
+            $session->set('nim',$mhs->nim_mhs);
+
+        }
+
+        if(!empty($_GET['nim']) || $session->has('nim')){
+            if($session->has('nim'))
+                $nim = $session->get('nim');
+            else{
+                $nim = $_GET['nim'];
+            }
             $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>!empty($nim) ? $nim : 0])->one(); 
             $listTahun = SimakTahunakademik::find()->orderBy(['tahun_id'=>SORT_DESC])->all();
         
@@ -668,8 +696,30 @@ class AkademikController extends Controller
         $tahun_akademik = \app\models\SimakTahunakademik::getTahunAktif();
         $list_semester = \app\helpers\MyHelper::getSemester();
         $mhs = null;
-        if(!empty($_GET['nim'])){
-            $nim = $_GET['nim'];
+        $query = SimakMastermahasiswa::find();
+        $query->joinWith(['kampus0 as k','simakMahasiswaOrtus as ortu']);
+
+        if(!Yii::$app->user->isGuest){
+            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
+        }
+
+        $list_anak = $query->all();
+        $session = Yii::$app->session;
+
+        if(count($list_anak) == 1){
+            $mhs = $list_anak[0];
+            $session->set('nim',$mhs->nim_mhs);
+
+        }
+        
+        if(!empty($_GET['nim']) || $session->has('nim')){
+            $nim = '-';
+            if($session->has('nim'))
+                $nim = $session->get('nim');
+            else{
+                $nim = $_GET['nim'];
+            }
+
             $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
             
 
@@ -749,14 +799,7 @@ class AkademikController extends Controller
         
         
         
-        $query = SimakMastermahasiswa::find();
-        $query->joinWith(['kampus0 as k','simakMahasiswaOrtus as ortu']);
-
-        if(!Yii::$app->user->isGuest){
-            $query->andWhere(['ortu.ortu_user_id' => Yii::$app->user->identity->id]);
-        }
-
-        $list_anak = $query->all();
+        
 
         
         return $this->render('transkrip', [

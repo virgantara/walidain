@@ -21,6 +21,25 @@ class MyHelper
 
             return $list;
     }
+
+    public static function getTahunAktif()
+    {
+        $tahun_id = 0;
+        if(!Yii::$app->session->has('tahun_id'))
+        {
+            $tahun_akademik = \app\models\SimakTahunakademik::getTahunAktif();
+            Yii::$app->session->set('tahun_id',$tahun_akademik->tahun_id);
+            $tahun_id = $tahun_akademik->tahun_id;
+        }
+
+        else
+        {
+            $tahun_id = Yii::$app->session->get('tahun_id');   
+        }
+
+        return $tahun_id;
+    }
+
     
     public static function dmYtoYmd($tgl){
         $date = str_replace('/', '-', $tgl);

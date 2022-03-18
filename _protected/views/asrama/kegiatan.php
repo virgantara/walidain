@@ -13,14 +13,8 @@ $this->title = 'Data AKPAM';
 $this->params['breadcrumbs'][] = $this->title;
 
 $alphabet = range('A', 'Z');
-$prodi = !empty($_GET['prodi']) ? $_GET['prodi'] : '';
-$nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
-$kampus = !empty($_GET['kampus']) ? $_GET['kampus'] : '';
-$semester = !empty($_GET['semester']) ? $_GET['semester'] : '';
-$status_aktivitas = !empty($_GET['status_aktivitas']) ? $_GET['status_aktivitas'] : '';
-$tahun_id = !empty($_GET['tahun_id']) ? $_GET['tahun_id'] : '';
-$is_approved = !empty($_GET['is_approved']) ? $_GET['is_approved'] : '';
-$jenis_nilai = !empty($_GET['jenis_nilai']) ? $_GET['jenis_nilai'] : '';
+$nim = !empty($mhs) ? $mhs->nim_mhs : '';
+$tahun_id = !empty($_GET['tahun_id']) ? $_GET['tahun_id'] : $tahun_id;
 
 ?>
 <style type="text/css">
@@ -28,7 +22,7 @@ $jenis_nilai = !empty($_GET['jenis_nilai']) ? $_GET['jenis_nilai'] : '';
   font-size: 1.6rem !important;
 }
 </style>
-<h3 class="page-title"><?=$this->title;?></h3>
+<h3 class="page-title"><?=$this->title;?> Tahun Akademik <?=$tahun_id;?></h3>
 <?php 
 
 $listKampus = [];
@@ -40,8 +34,6 @@ if(Yii::$app->user->identity->access_role =='akpam'){
 $listKampus = $query->all();
 
 $tglnow = date('Y-m-d H:i:s');
-
-if(1){
 
 
 ?>
@@ -65,13 +57,16 @@ if(1){
           <label class="control-label ">Tahun Akademik</label>
           <?= Html::dropDownList('tahun_id',$tahun_id,\yii\helpers\ArrayHelper::map($listTahun,'tahun_id','nama_tahun'),['class'=>'form-control','prompt' => '- Semua -']) ?>
       </div>
+       <?php 
+      if(count($list_anak) > 1){
+       ?>
       <div class="form-group">
               <label class="control-label ">Ananda</label>
                <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['class'=>'','prompt' => '- Pilih Mahasiswa -','separator' => '<br>']) ?>
           </div>
       
       
-     
+      <?php } ?>
   </div>
 
     
@@ -254,7 +249,7 @@ if(!empty($results))
   
 
   }
-}
+
 
 ?>
 <?php 

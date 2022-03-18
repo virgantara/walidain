@@ -9,7 +9,7 @@ $this->title = Yii::t('app', Yii::$app->name);
 
 \app\assets\HighchartAsset::register($this);
 $tahun = !empty($_GET['tahun']) ? $_GET['tahun'] : '';
-$nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
+$nim = !empty($mhs) ? $mhs->nim_mhs : '';
 $status_aktivitas = !empty($_GET['status_aktivitas']) ? $_GET['status_aktivitas'] : 'A';
 
 // $list_kampus = ArrayHelper::map(\app\models\SimakKampus::find()->all(),'kode_kampus','nama_kampus');
@@ -26,7 +26,7 @@ $list_status = \app\helpers\MyHelper::getStatusAktivitas();
 </div>
 <?php 
 if(!Yii::$app->user->isGuest){
-if(!empty($list_anak)){
+if(!empty($list_anak) && count($list_anak) > 1){
  ?>
 
 <div class="panel">
@@ -56,7 +56,12 @@ if(!empty($list_anak)){
     </div>
   </div>
 </div>  
-<?php } 
+<?php 
+}
+
+else if(count($list_anak) == 1){
+
+} 
 else{
 ?>	
 <div class="alert alert-danger">

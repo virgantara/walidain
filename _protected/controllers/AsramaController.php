@@ -89,6 +89,7 @@ class AsramaController extends Controller
         }
 
         $list_anak = $query->all();
+
         $listTahun = SimakTahunakademik::find()->orderBy(['tahun_id'=>SORT_DESC])->all();
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
@@ -97,40 +98,28 @@ class AsramaController extends Controller
         $nim = '';
         $model = null;
         $listMhs = [];
-        $dosen = \app\models\SimakMasterdosen::find()->where(['nidn'=>Yii::$app->user->identity->nim])->one();
-        if(Yii::$app->user->identity->access_role == 'Dosen')
-        {        
-            $listMhs = SimakMastermahasiswa::find()->where([
-                'nip_promotor'=>!empty($dosen) ? $dosen->id : '-',
-                'status_aktivitas' => 'A'
-            ])->orderBy(['nama_mahasiswa'=>SORT_ASC])->all();
-        }
-
-        else if(Yii::$app->user->identity->access_role == 'Mahasiswa')
-        { 
-            $listMhs = SimakMastermahasiswa::find()->where([
-                'nim_mhs'=>Yii::$app->user->identity->nim,
-                'status_aktivitas' => 'A'
-            ])->orderBy(['nama_mahasiswa'=>SORT_ASC])->all();
-
-        }
-
-        else if(Yii::$app->user->identity->access_role == ('sekretearis'))
-        { 
-            $listMhs = SimakMastermahasiswa::find()->where([
-                'kode_prodi'=>Yii::$app->user->identity->prodi,
-                'status_aktivitas' => 'A'
-            ])->orderBy(['nama_mahasiswa'=>SORT_ASC])->all();
-
-        }
+        
 
         $riwayat = [];
         $riwayatKamar = [];
         $querykrsmhs = [];
         $riwayatPembayaran = [];
-        if(!empty($_GET['btn-cari']))
-        {
-            $nim = $_GET['nim'];
+
+        $session = Yii::$app->session;
+
+        if(count($list_anak) == 1){
+            $mhs = $list_anak[0];
+            $session->set('nim',$mhs->nim_mhs);
+
+        }
+
+        if(!empty($_GET['nim'])|| $session->has('nim')) {
+            $nim = '-';
+            if($session->has('nim'))
+                $nim = $session->get('nim');
+            else{
+                $nim = $_GET['nim'];
+            }
 
             $model = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
             $query = ErpRiwayatPelanggaran::find()->where([
@@ -180,23 +169,47 @@ class AsramaController extends Controller
 
         $list_anak = $query->all();
 
-
+        $mhs = null;
         $listTahun = SimakTahunakademik::find()->orderBy(['tahun_id'=>SORT_DESC])->all();
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
         $client_token = Yii::$app->params['client_token'];
         $headers = ['x-access-token'=>$client_token];
-        $nim = '-';
-        $tahun = '';
-        if(!empty($_GET['btn-cari']))
-        {
-            
-            $tahun = $_GET['tahun_id'];
-            $nim = !empty($_GET['nim']) ? $_GET['nim'] : '-';
+        $tahun_id = '';
+        $session = Yii::$app->session;
+
+        if(count($list_anak) == 1){
+            $mhs = $list_anak[0];
+            $session->set('nim',$mhs->nim_mhs);
         }
 
+        else if(count($list_anak) > 1){
+            if($session->has('nim')){
+                $nim = $session->get('nim');
+                $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
+            }
 
-        $ta = \app\models\SimakTahunakademik::find()->where(['tahun_id'=>$tahun])->one();
+            else if(!empty($_GET['nim'])){
+                $nim = $_GET['nim'];
+                $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
+            }
+        }
+
+        if(!empty($_GET['tahun_id']))
+        {
+            
+            $tahun_id = $_GET['tahun_id'];
+            
+        }
+
+        else{
+            $tahun_akademik = \app\models\SimakTahunakademik::getTahunAktif();
+            $tahun_id = $tahun_akademik->tahun_id;
+        }
+
+             
+
+        $ta = \app\models\SimakTahunakademik::find()->where(['tahun_id'=>$tahun_id])->one();
         if(empty($ta))
         {
             $ta = \app\models\SimakTahunakademik::getTahunAktif();
@@ -205,44 +218,29 @@ class AsramaController extends Controller
         $konfirmasi = \app\models\SimakKonfirmasipembayaran::find()->where([
             'pembayaran' => '01',
             'status' => 1,
-            'nim' => Yii::$app->user->identity->nim,
+            'nim' => $mhs->nim_mhs,
             'tahun_id' => $ta->tahun_id
         ])->one();
 
         $tahun_id = $ta->tahun_id;
         
-        $mhs = null;
+        
         $results = [];
 
         $listJenisKegiatan = SimakJenisKegiatan::find()->all();
 
         foreach($listJenisKegiatan as $jk)
         {
-            if(!empty($nim))
-            {
-                $results[$jk->id] = SimakKegiatanMahasiswa::find()->where([
-                    'nim'=>$nim,
-                    'tahun_akademik' => $ta->tahun_id,
-                    'id_jenis_kegiatan' => $jk->id
-                ])->all();
+            $results[$jk->id] = SimakKegiatanMahasiswa::find()->where([
+                'nim'=>$mhs->nim_mhs,
+                'tahun_akademik' => $ta->tahun_id,
+                'id_jenis_kegiatan' => $jk->id
+            ])->all();
      
-                // print_r($results);exit;
-              
-            }    
         }
 
         
 
-        $listMhs = [];
-
-        if(Yii::$app->user->identity->access_role == 'Mahasiswa')
-        { 
-            $listMhs = SimakMastermahasiswa::find()->where([
-                'nim_mhs'=>Yii::$app->user->identity->nim,
-                'status_aktivitas' => 'A'
-            ])->orderBy(['nama_mahasiswa'=>SORT_ASC])->all();
-
-        }
 
         return $this->render('kegiatan', [
             'results' => $results,
@@ -250,7 +248,7 @@ class AsramaController extends Controller
             'tahun_id' => $tahun_id,
             'listTahun' => $listTahun,
             'tahun_akademik' => $ta,
-            'listMhs' => $listMhs,
+            'tahun_id' => $tahun_id,
             'mhs' => $mhs,
             'konfirmasi' => $konfirmasi,
             'list_anak' => $list_anak

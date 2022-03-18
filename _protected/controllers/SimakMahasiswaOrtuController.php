@@ -109,9 +109,31 @@ class SimakMahasiswaOrtuController extends Controller
 
     public function actionAjaxUpdate()
     {
-        $dataPost = $_POST['dataPost'];
         $results = [];
-        $model = SimakMastermahasiswa::find()->where(['nim_mhs'=>$dataPost['mahasiswa']])->one();
+        $dataPost = $_POST['dataPost'];
+        
+        if(empty($dataPost['mahasiswa'])){
+            $results = [
+                'code' => 400,
+                'message' => 'Oops, silakan isi NIM atau Nama Mahasiswa '
+            ];
+            echo json_encode($results);
+            exit;
+        }
+
+        if(empty($dataPost['ktp'])){
+            $results = [
+                'code' => 400,
+                'message' => 'Oops, silakan isi NIK atau No KTP '
+            ];
+            echo json_encode($results);
+            exit;
+        }
+
+        $model = SimakMastermahasiswa::find()->where([
+            'nim_mhs'=>$dataPost['mahasiswa'],
+            'ktp' => $dataPost['ktp']
+        ])->one();
         
         
         if(!empty($model))
@@ -138,7 +160,7 @@ class SimakMahasiswaOrtuController extends Controller
 
                 $results = [
                     'code' => 200,
-                    'message' => 'Data telah diupdate'
+                    'message' => 'Data Ananda telah berhasil diklaim'
                 ];
                 
             }
@@ -168,8 +190,8 @@ class SimakMahasiswaOrtuController extends Controller
         else
         {
             $results = [
-                'code' => 500,
-                'message' => 'Mahasiswa tidak ditemukan'
+                'code' => 404,
+                'message' => 'Mahasiswa dengan NIK dan NIM tersebut tidak ditemukan di database kami.'
             ];
         }
 

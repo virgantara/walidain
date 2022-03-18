@@ -193,15 +193,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
 ?>
 <div class="row">
-   <div class="col-md-12">
+   <div class="col-md-12" style="float:none;">
         <div class="panel">
             
             <div class="panel-body">
                 <p >
-                    Ketik NIM atau Nama Ananda<br>
-                    <?=Html::textInput('nim','',['id'=>'nama_mahasiswa','class'=>'form-control','placeholder'=>'..Ketik NIM / Nama Mahasiswa..']);?>
-                    <input type="hidden" id="nim"><br>
-                    <button type="button" id="btn-tambah-mahasiswa" class="btn btn-primary"><i class="fa fa-plus"></i> Peserta</button>
+                    <label for="nama_mahasiswa">Ketik NIM atau Nama Ananda</label>
+                    <!-- <div class="form-group"> -->
+                        <?=Html::textInput('nim','',['id'=>'nama_mahasiswa','class'=>'form-control','placeholder'=>'..Ketik NIM / Nama Mahasiswa..']);?>
+                        <input type="hidden" id="nim">
+                        <div class="help-block"></div>
+                    <!-- </div> -->
+                    <?=Html::textInput('nik','',['id'=>'nik','class'=>'form-control','placeholder'=>'..Ketik NIK atau No KTP Ananda..']);?><div class="help-block"></div>
+                    <button type="button" id="btn-tambah-mahasiswa" class="btn btn-primary"><i class="fa fa-plus"></i> Klaim data</button>
                        
                 </p>
             </div>
@@ -304,6 +308,7 @@ $(document).on("click","#btn-tambah-mahasiswa",function(e){
     var obj = new Object;
 
     obj.mahasiswa = $("#nim").val();
+    obj.ktp = $("#nik").val()
     var ajax_url= "'.Url::to(['simak-mahasiswa-ortu/ajax-update']).'";
     $.ajax({
         type: "POST",
@@ -330,6 +335,9 @@ $(document).on("click","#btn-tambah-mahasiswa",function(e){
                   text: hasil.message
                 })
                 
+                $(\'#nim\').val("");
+                $(\'#nama_mahasiswa\').val("");
+                $.pjax.reload({container: "#pjax-container-mahasiswa"})
             }
 
             else{
@@ -340,9 +348,7 @@ $(document).on("click","#btn-tambah-mahasiswa",function(e){
                 })
             }
 
-            $(\'#nim\').val("");
-            $(\'#nama_mahasiswa\').val("");
-            $.pjax.reload({container: "#pjax-container-mahasiswa"})
+            
         }
     })
     

@@ -11,7 +11,8 @@ use kartik\grid\GridView;
 
 $this->title = 'Riwayat Kartu Hasil Studi (KHS)';
 $this->params['breadcrumbs'][] = $this->title;
-$nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
+$nim = !empty($mhs) ? $mhs->nim_mhs : '';
+
 ?>
 
 
@@ -34,16 +35,19 @@ $nim = !empty($_GET['nim']) ? $_GET['nim'] : '';
           echo '<div class="flash alert alert-' . $key . '">' . $message . '<button class="close" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button></div>';
         }
         ?>
+        <?php 
+      if(count($list_anak) > 1){
+       ?>
             <div class="form-group">
               <label class="control-label ">Ananda</label>
              <?= Html::radioList('nim',$nim,\yii\helpers\ArrayHelper::map($list_anak,'nim_mhs','nama_mahasiswa'),['maxlength' => true,'prompt'=>'- Pilih Data Mahasiswa -','id'=>'nim','separator' => '<br>']) ?>
           </div>
-
+         
           <div class="form-group clearfix">
             <button type="submit" class="btn btn-primary" name="btn-cari" value="1"><i class="fa fa-search"></i> Cari</button>
             
           </div>
-        
+         <?php } ?>
          <?php ActiveForm::end(); ?>
       </div>
     </div>

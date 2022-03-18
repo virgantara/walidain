@@ -177,7 +177,7 @@ class AkademikController extends Controller
             $session->set('nim',$mhs->nim_mhs);
 
         }
-
+        $nim = '-';
         $listTahun = SimakTahunakademik::find()->orderBy(['tahun_id'=>SORT_DESC])->all();
         $api_baseurl = Yii::$app->params['api_baseurl'];
         $client = new Client(['baseUrl' => $api_baseurl]);
@@ -185,11 +185,21 @@ class AkademikController extends Controller
         $headers = ['x-access-token'=>$client_token];
 
         if(!empty($_GET['nim']) || $session->has('nim')){
-            $nim = '-';
-            if($session->has('nim'))
-                $nim = $session->get('nim');
+            
+            if($session->has('nim')){
+                if(!empty($_GET['nim']) && ($_GET['nim'] == $session->get('nim')))
+                    $nim = $session->get('nim');
+                else if(!empty($_GET['nim'])){
+                    $nim = $_GET['nim'];
+                    $session->set('nim',$nim);
+                }
+                else
+                    $nim = $session->get('nim');
+
+            }
             else{
                 $nim = $_GET['nim'];
+                $session->set('nim',$nim);
             }
 
             $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
@@ -271,10 +281,16 @@ class AkademikController extends Controller
         }
 
         if(!empty($_GET['nim']) || $session->has('nim')){
-            if($session->has('nim'))
+            if(!empty($_GET['nim']) && ($_GET['nim'] == $session->get('nim'))){
                 $nim = $session->get('nim');
-            else{
+
+            }
+            else if(!empty($_GET['nim'])){
                 $nim = $_GET['nim'];
+                $session->set('nim',$nim);
+            }
+            else{
+                $nim = $session->get('nim');
             }
             $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>!empty($nim) ? $nim : 0])->one(); 
             $listTahun = SimakTahunakademik::find()->orderBy(['tahun_id'=>SORT_DESC])->all();
@@ -712,12 +728,20 @@ class AkademikController extends Controller
 
         }
         
+        $nim = '-';
+        
         if(!empty($_GET['nim']) || $session->has('nim')){
-            $nim = '-';
-            if($session->has('nim'))
+            
+            if(!empty($_GET['nim']) && ($_GET['nim'] == $session->get('nim'))){
                 $nim = $session->get('nim');
-            else{
+
+            }
+            else if(!empty($_GET['nim'])){
                 $nim = $_GET['nim'];
+                $session->set('nim',$nim);
+            }
+            else{
+                $nim = $session->get('nim');
             }
 
             $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();

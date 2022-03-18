@@ -115,10 +115,16 @@ class AsramaController extends Controller
 
         if(!empty($_GET['nim'])|| $session->has('nim')) {
             $nim = '-';
-            if($session->has('nim'))
+            if(!empty($_GET['nim']) && ($_GET['nim'] == $session->get('nim'))){
                 $nim = $session->get('nim');
-            else{
+
+            }
+            else if(!empty($_GET['nim'])){
                 $nim = $_GET['nim'];
+                $session->set('nim',$nim);
+            }
+            else{
+                $nim = $session->get('nim');
             }
 
             $model = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
@@ -205,6 +211,23 @@ class AsramaController extends Controller
         else{
             $tahun_akademik = \app\models\SimakTahunakademik::getTahunAktif();
             $tahun_id = $tahun_akademik->tahun_id;
+        }
+
+        if(!empty($_GET['nim']) || $session->has('nim')){
+            
+            if(!empty($_GET['nim']) && ($_GET['nim'] == $session->get('nim'))){
+                $nim = $session->get('nim');
+                $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
+            }
+            else if(!empty($_GET['nim'])){
+                $nim = $_GET['nim'];
+                $session->set('nim',$nim);
+                $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
+            }
+            else{
+                $nim = $session->get('nim');
+                $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
+            }
         }
 
              

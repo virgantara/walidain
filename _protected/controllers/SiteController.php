@@ -289,7 +289,7 @@ class SiteController extends Controller
         $tahfidz = null;
         $indukKegiatan = null;
         $tagihan = null;
-
+        $nim = '-';
 
         $list_tahun = [];
         
@@ -318,12 +318,30 @@ class SiteController extends Controller
             $session->set('nim',$mhs->nim_mhs);
         }
 
-        if(!empty($_GET['nim'])){
-            $nim = '-';
-            if($session->has('nim'))
-                $nim = $session->get('nim');
-            else
+        
+
+        if(!empty($_GET['nim']) || $session->has('nim')){
+            
+            if($session->has('nim')){
+                if(!empty($_GET['nim']) && ($_GET['nim'] == $session->get('nim'))){
+                    $nim = $session->get('nim');
+
+                }
+                else if(!empty($_GET['nim'])){
+                    $nim = $_GET['nim'];
+                    $session->set('nim',$nim);
+                }
+                else{
+                    $nim = $session->get('nim');
+                }
+
+            }
+            else{
                 $nim = $_GET['nim'];
+                $session->set('nim',$nim);
+            }
+
+
             $mhs = SimakMastermahasiswa::find()->where(['nim_mhs'=>$nim])->one();
             $indukKegiatan = \app\models\SimakIndukKegiatan::find()->orderBy(['id'=>SORT_ASC])->cache(60 * 20)->all();
             $api_baseurl = Yii::$app->params['api_baseurl'];

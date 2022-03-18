@@ -52,7 +52,7 @@ return [
      * You will send emails to users from this address.
      */
     'supportEmail' => 'pptik@unida.gontor.ac.id',
-     'shortname' => 'E-Billing',
+     'shortname' => 'WALIDAIN',
      'icon-framework' => 'fa',
      'owner' => 'Universitas Darussalam Gontor',
 ];

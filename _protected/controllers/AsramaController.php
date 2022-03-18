@@ -241,7 +241,7 @@ class AsramaController extends Controller
         $konfirmasi = \app\models\SimakKonfirmasipembayaran::find()->where([
             'pembayaran' => '01',
             'status' => 1,
-            'nim' => $mhs->nim_mhs,
+            'nim' => !empty($mhs) ? $mhs->nim_mhs : '-',
             'tahun_id' => $ta->tahun_id
         ])->one();
 
@@ -255,7 +255,7 @@ class AsramaController extends Controller
         foreach($listJenisKegiatan as $jk)
         {
             $results[$jk->id] = SimakKegiatanMahasiswa::find()->where([
-                'nim'=>$mhs->nim_mhs,
+                'nim'=>!empty($mhs) ? $mhs->nim_mhs : '-',
                 'tahun_akademik' => $ta->tahun_id,
                 'id_jenis_kegiatan' => $jk->id
             ])->all();
